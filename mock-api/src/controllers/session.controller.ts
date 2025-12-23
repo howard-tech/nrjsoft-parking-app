@@ -124,6 +124,12 @@ export class SessionController {
             return;
         }
 
+        // Ensure this is a garage session
+        if (!session.garageId) {
+            res.status(404).json({ error: 'Session not found' });
+            return;
+        }
+
         // If active, calculate current fee
         if (session.status === 'active') {
             const elapsedMinutes = Math.floor(
@@ -247,9 +253,9 @@ export class SessionController {
             return;
         }
 
-        // Get active garage sessions for user, sorted by date desc
+        // Get COMPLETED garage sessions for user, sorted by date desc
         const userSessions = Array.from(sessionStore.values())
-            .filter((s) => s.userId === userId && s.garageId !== undefined)
+            .filter((s) => s.userId === userId && s.garageId !== undefined && s.status === 'completed')
             .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
 
         const pageNum = parseInt(page as string, 10);

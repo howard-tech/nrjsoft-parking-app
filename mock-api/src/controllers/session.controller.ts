@@ -19,8 +19,9 @@ export class SessionController {
             return;
         }
 
+        // Filter for active GARAGE sessions only
         const activeSession = Array.from(sessionStore.values()).find(
-            (s) => s.userId === userId && s.status === 'active'
+            (s) => s.userId === userId && s.status === 'active' && s.garageId !== undefined
         );
 
         if (!activeSession) {
@@ -60,13 +61,13 @@ export class SessionController {
             return;
         }
 
-        // Check if user already has an active session
+        // Check if user already has an active GARAGE session
         const existingSession = Array.from(sessionStore.values()).find(
-            (s) => s.userId === userId && s.status === 'active'
+            (s) => s.userId === userId && s.status === 'active' && s.garageId !== undefined
         );
 
         if (existingSession) {
-            res.status(400).json({ error: 'Already have an active session' });
+            res.status(400).json({ error: 'Already have an active garage session' });
             return;
         }
 
@@ -165,6 +166,12 @@ export class SessionController {
             return;
         }
 
+        // Ensure this is a garage session
+        if (!session.garageId) {
+            res.status(400).json({ error: 'Invalid session type for this endpoint' });
+            return;
+        }
+
         // Calculate final fee
         const endTime = new Date();
         const elapsedMinutes = Math.floor(
@@ -215,6 +222,12 @@ export class SessionController {
             return;
         }
 
+        // Ensure this is a garage session
+        if (!session.garageId) {
+            res.status(400).json({ error: 'Invalid session type for this endpoint' });
+            return;
+        }
+
         // In a real app, this would extend pre-paid time
         // For mock, we just acknowledge the extension
         res.json({
@@ -234,9 +247,9 @@ export class SessionController {
             return;
         }
 
-        // Get all sessions for user, sorted by date desc
+        // Get active garage sessions for user, sorted by date desc
         const userSessions = Array.from(sessionStore.values())
-            .filter((s) => s.userId === userId)
+            .filter((s) => s.userId === userId && s.garageId !== undefined)
             .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
 
         const pageNum = parseInt(page as string, 10);

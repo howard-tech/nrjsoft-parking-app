@@ -1,0 +1,158 @@
+# android/fastlane/Fastfile
+
+default_platform(:android)
+
+platform :android do
+  # ============================================
+  # BEFORE ALL
+  # ============================================
+  before_all do
+    # Set up environment
+  end
+
+  # ============================================
+  # BUILD
+  # ============================================
+  desc "Build Release AAB"
+  private_lane :build_release do
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "android.injected.signing.store.file" => File.expand_path("../app/nrjsoft-release.keystore"),
+        "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
+        "android.injected.signing.key.alias" => "nrjsoft-key",
+        "android.injected.signing.key.password" => ENV['KEY_PASSWORD']
+      }
+    )
+  end
+
+  desc "Build Release APK"
+  private_lane :build_apk do
+    gradle(
+      task: "assemble",
+      build_type: "Release",
+      properties: {
+        "android.injected.signing.store.file" => File.expand_path("../app/nrjsoft-release.keystore"),
+        "android.injected.signing.store.password" => ENV['KEYSTORE_PASSWORD'],
+        "android.injected.signing.key.alias" => "nrjsoft-key",
+        "android.injected.signing.key.password" => ENV['KEY_PASSWORD']
+      }
+    )
+  end
+
+  # ============================================
+  # INTERNAL TESTING
+  # ============================================
+  desc "Deploy to Internal Testing track"
+  lane :internal do
+    build_release
+    
+    upload_to_play_store(
+      track: "internal",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  # ============================================
+  # ALPHA (Closed Testing)
+  # ============================================
+  desc "Deploy to Alpha track"
+  lane :alpha do
+    build_release
+    
+    upload_to_play_store(
+      track: "alpha",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  # ============================================
+  # BETA (Open Testing)
+  # ============================================
+  desc "Deploy to Beta track"
+  lane :beta do
+    build_release
+    
+    upload_to_play_store(
+      track: "beta",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  # ============================================
+  # PRODUCTION
+  # ============================================
+  desc "Deploy to Production"
+  lane :release do
+    build_release
+    
+    upload_to_play_store(
+      track: "production",
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      rollout: "0.1"  # 10% rollout initially
+    )
+  end
+
+  # ============================================
+  # PROMOTE
+  # ============================================
+  desc "Promote from Internal to Production"
+  lane :promote_to_production do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+
+  # ============================================
+  # LOCAL BUILD
+  # ============================================
+  desc "Build debug APK for local testing"
+  lane :build_local do
+    gradle(
+      task: "assemble",
+      build_type: "Debug"
+    )
+    
+    puts "APK built at: app/build/outputs/apk/debug/app-debug.apk"
+  end
+
+  # ============================================
+  # VALIDATE
+  # ============================================
+  desc "Validate AAB before upload"
+  lane :validate do
+    build_release
+    
+    # Validate with bundletool
+    sh("bundletool validate --bundle=app/build/outputs/bundle/release/app-release.aab")
+  end
+
+  # ============================================
+  # ERROR HANDLING
+  # ============================================
+  error do |lane, exception|
+    # Notify via Slack on failure (optional)
+    # slack(
+    #   message: "Android #{lane} failed: #{exception.message}",
+    #   success: false
+    # )
+  end
+end

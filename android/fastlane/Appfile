@@ -1,0 +1,7 @@
+# android/fastlane/Appfile
+
+json_key_file(ENV['SUPPLY_JSON_KEY_DATA'] ? nil : "play-store-key.json")
+package_name("com.nrjsoft.parking")
+
+# For more information about the Appfile, see:
+# https://docs.fastlane.tools/advanced/#appfile

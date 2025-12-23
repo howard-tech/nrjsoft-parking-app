@@ -1,0 +1,10 @@
+# ios/fastlane/Appfile
+
+app_identifier("com.nrjsoft.parking")  # Bundle ID
+apple_id("developer@nrjsoft.com")       # Apple ID email
+
+itc_team_id("XXXXXXXXXX")  # App Store Connect Team ID
+team_id("XXXXXXXXXX")      # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+# https://docs.fastlane.tools/advanced/#appfile

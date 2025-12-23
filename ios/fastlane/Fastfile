@@ -1,0 +1,128 @@
+# ios/fastlane/Fastfile
+
+default_platform(:ios)
+
+platform :ios do
+  # ============================================
+  # BEFORE ALL
+  # ============================================
+  before_all do
+    setup_ci if ENV['CI']
+  end
+
+  # ============================================
+  # MATCH - Certificate Management
+  # ============================================
+  desc "Sync certificates"
+  lane :sync_certs do
+    match(type: "appstore", readonly: true)
+    match(type: "development", readonly: true)
+  end
+
+  # ============================================
+  # BUILD
+  # ============================================
+  desc "Build the app"
+  private_lane :build_app_lane do |options|
+    type = options[:type] || "appstore"
+    
+    # Sync certificates
+    match(type: type, readonly: is_ci)
+    
+    # Increment build number
+    increment_build_number(
+      xcodeproj: "NRJSoftParking.xcodeproj",
+      build_number: ENV['GITHUB_RUN_NUMBER'] || latest_testflight_build_number + 1
+    )
+    
+    # Build
+    build_app(
+      workspace: "NRJSoftParking.xcworkspace",
+      scheme: "NRJSoftParking",
+      export_method: type == "appstore" ? "app-store" : "development",
+      output_directory: "./build",
+      output_name: "NRJSoftParking.ipa",
+      clean: true,
+      xcargs: "-allowProvisioningUpdates"
+    )
+  end
+
+  # ============================================
+  # TESTFLIGHT (Beta)
+  # ============================================
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    build_app_lane(type: "appstore")
+    
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+      key_filepath: "~/.appstoreconnect/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8",
+      in_house: false
+    )
+    
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false,
+      changelog: "Bug fixes and improvements"
+    )
+    
+    # Notify via Slack (optional)
+    # slack(
+    #   message: "iOS build uploaded to TestFlight!",
+    #   success: true
+    # )
+  end
+
+  # ============================================
+  # APP STORE (Production)
+  # ============================================
+  desc "Deploy to App Store"
+  lane :release do
+    build_app_lane(type: "appstore")
+    
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+      key_filepath: "~/.appstoreconnect/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8",
+      in_house: false
+    )
+    
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: true,
+      automatic_release: false,
+      force: true,
+      precheck_include_in_app_purchases: false,
+      submission_information: {
+        add_id_info_uses_idfa: false
+      }
+    )
+  end
+
+  # ============================================
+  # LOCAL BUILD
+  # ============================================
+  desc "Build for local testing"
+  lane :build_local do
+    build_app(
+      workspace: "NRJSoftParking.xcworkspace",
+      scheme: "NRJSoftParking",
+      export_method: "development",
+      output_directory: "./build",
+      skip_codesigning: true
+    )
+  end
+
+  # ============================================
+  # ERROR HANDLING
+  # ============================================
+  error do |lane, exception|
+    # Notify via Slack on failure (optional)
+    # slack(
+    #   message: "iOS #{lane} failed: #{exception.message}",
+    #   success: false
+    # )
+  end
+end

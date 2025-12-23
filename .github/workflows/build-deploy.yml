@@ -1,0 +1,161 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+env:
+  NODE_VERSION: '18'
+  JAVA_VERSION: '17'
+
+jobs:
+  # ===========================================
+  # TEST JOB
+  # ===========================================
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test -- --coverage --watchAll=false
+
+  # ===========================================
+  # ANDROID BUILD & DEPLOY
+  # ===========================================
+  android:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'release'
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android/app/nrjsoft-release.keystore
+
+      - name: Create .env.production
+        run: |
+          cat > .env.production << EOF
+          API_BASE_URL=${{ secrets.API_BASE_URL }}
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          EOF
+
+      - name: Build Release AAB
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew bundleRelease --no-daemon
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: android/app/build/outputs/bundle/release/app-release.aab
+
+      - name: Setup Ruby (for Fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: android
+
+      - name: Deploy to Play Store (Internal)
+        env:
+          SUPPLY_JSON_KEY_DATA: ${{ secrets.PLAY_STORE_JSON_KEY }}
+        run: |
+          cd android
+          bundle exec fastlane internal
+
+  # ===========================================
+  # iOS BUILD & DEPLOY
+  # ===========================================
+  ios:
+    runs-on: macos-latest
+    needs: test
+    if: github.event_name == 'release'
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Ruby (for Fastlane)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+
+      - name: Create .env.production
+        run: |
+          cat > .env.production << EOF
+          API_BASE_URL=${{ secrets.API_BASE_URL }}
+          GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}
+          STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+          GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}
+          EOF
+
+      - name: Setup App Store Connect API Key
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+
+      - name: Build and Deploy to TestFlight
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+        run: |
+          cd ios
+          bundle exec fastlane beta
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release
+          path: ios/build/*.ipa

@@ -4,15 +4,18 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import swaggerUi from 'swagger-ui-express';
 
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import parkingRoutes from './routes/parking.routes';
 import sessionRoutes from './routes/session.routes';
 import walletRoutes from './routes/wallet.routes';
+import paymentMethodsRoutes from './routes/payment-methods.routes';
 import paymentRoutes from './routes/payment.routes';
 import onstreetRoutes from './routes/onstreet.routes';
 import notificationRoutes from './routes/notification.routes';
+import deviceRoutes from './routes/device.routes';
 
 import { authMiddleware } from './middleware/auth';
 import { delayMiddleware } from './middleware/delay';
@@ -20,6 +23,7 @@ import { errorHandler } from './middleware/errorHandler';
 import { setupWebSocket } from './services/websocket.service';
 import { setSocketIO } from './controllers/session.controller';
 import { setOnstreetSocketIO } from './controllers/onstreet.controller';
+import swaggerDocument from './swagger.json';
 
 const app = express();
 const httpServer = createServer(app);
@@ -32,11 +36,17 @@ setSocketIO(io);
 setOnstreetSocketIO(io);
 
 // Middleware
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false })); // Disable CSP for Swagger UI
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(delayMiddleware);
+
+// Swagger API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {
+    customSiteTitle: 'NRJSoft Parking API',
+    customCss: '.swagger-ui .topbar { display: none }',
+}));
 
 // Health check (no auth required)
 app.get('/health', (req, res) => {
@@ -52,15 +62,18 @@ app.get('/api/v1', (req, res) => {
     res.json({
         name: 'NRJSoft Parking Mock API',
         version: '1.0.0',
+        documentation: '/api-docs',
         endpoints: [
             '/api/v1/auth',
             '/api/v1/me',
             '/api/v1/parking',
             '/api/v1/sessions',
             '/api/v1/wallet',
+            '/api/v1/payment-methods',
             '/api/v1/payments',
             '/api/v1/onstreet',
             '/api/v1/notifications',
+            '/api/v1/devices',
         ],
     });
 });
@@ -73,9 +86,11 @@ app.use('/api/v1/me', authMiddleware, userRoutes);
 app.use('/api/v1/parking', authMiddleware, parkingRoutes);
 app.use('/api/v1/sessions', authMiddleware, sessionRoutes);
 app.use('/api/v1/wallet', authMiddleware, walletRoutes);
+app.use('/api/v1/payment-methods', authMiddleware, paymentMethodsRoutes);
 app.use('/api/v1/payments', authMiddleware, paymentRoutes);
 app.use('/api/v1/onstreet', authMiddleware, onstreetRoutes);
 app.use('/api/v1/notifications', authMiddleware, notificationRoutes);
+app.use('/api/v1/devices', authMiddleware, deviceRoutes);
 
 // Error handling
 app.use(errorHandler);

@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { User } from '../types';
 
@@ -10,14 +10,18 @@ export class JwtService {
             phone: user.phone,
             name: user.name
         };
-        const options: SignOptions = { expiresIn: '1h' };
-        return jwt.sign(payload, config.jwtSecret, options);
+        // Use config for expiry time - cast to any to avoid StringValue type issues
+        return jwt.sign(payload, config.jwtSecret, {
+            expiresIn: config.jwtExpiresIn
+        } as jwt.SignOptions);
     }
 
     generateRefreshToken(user: Partial<User>): string {
         const payload = { id: user.id };
-        const options: SignOptions = { expiresIn: '7d' };
-        return jwt.sign(payload, config.jwtSecret, options);
+        // Use config for refresh expiry time
+        return jwt.sign(payload, config.jwtSecret, {
+            expiresIn: config.jwtRefreshExpiresIn
+        } as jwt.SignOptions);
     }
 
     verifyAccessToken(token: string): User {

@@ -1,3 +1,20 @@
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev for build)
+RUN npm ci
+
+# Copy source files
+COPY . .
+
+# Build TypeScript
+RUN npm run build
+
+# Production stage
 FROM node:18-alpine
 
 WORKDIR /app
@@ -5,12 +22,12 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install production dependencies only
 RUN npm ci --only=production
 
-# Copy built files
-COPY dist ./dist
-COPY src/data ./dist/data
+# Copy built files from builder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/data ./dist/data
 
 # Expose port
 EXPOSE 3001

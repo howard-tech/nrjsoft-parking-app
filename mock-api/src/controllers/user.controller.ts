@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 import { User, Vehicle } from '../types';
-import users from '../data/users.json';
-import vehicles from '../data/vehicles.json';
-
-// In-memory stores
-const userStore: Map<string, User> = new Map(
-    users.map((u) => [u.id, u as User])
-);
-const vehicleStore: Map<string, Vehicle> = new Map(
-    vehicles.map((v) => [v.id, v as Vehicle])
-);
+import {
+    getUser,
+    updateUser,
+    getUserVehicles,
+    getVehicle,
+    createVehicle,
+    updateVehicle as updateVehicleStore,
+    deleteVehicle as deleteVehicleStore,
+    setDefaultVehicle,
+} from '../services/data.store';
 
 export class UserController {
     // GET /me
@@ -21,7 +21,7 @@ export class UserController {
             return;
         }
 
-        const user = userStore.get(userId);
+        const user = getUser(userId);
 
         if (!user) {
             res.status(404).json({ error: 'User not found' });
@@ -41,23 +41,16 @@ export class UserController {
             return;
         }
 
-        const user = userStore.get(userId);
-
-        if (!user) {
-            res.status(404).json({ error: 'User not found' });
-            return;
-        }
-
-        // Update user
-        const updatedUser: User = {
-            ...user,
+        const updatedUser = updateUser(userId, {
             ...(name && { name }),
             ...(email && { email }),
             ...(avatar && { avatar }),
-            updatedAt: new Date().toISOString(),
-        };
+        });
 
-        userStore.set(userId, updatedUser);
+        if (!updatedUser) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
 
         res.json(updatedUser);
     };
@@ -71,10 +64,7 @@ export class UserController {
             return;
         }
 
-        const userVehicles = Array.from(vehicleStore.values()).filter(
-            (v) => v.userId === userId
-        );
-
+        const userVehicles = getUserVehicles(userId);
         res.json(userVehicles);
     };
 
@@ -95,11 +85,7 @@ export class UserController {
 
         // If setting as default, unset other defaults
         if (isDefault) {
-            Array.from(vehicleStore.values())
-                .filter((v) => v.userId === userId)
-                .forEach((v) => {
-                    vehicleStore.set(v.id, { ...v, isDefault: false });
-                });
+            setDefaultVehicle(userId, ''); // Clear all defaults first
         }
 
         const vehicle: Vehicle = {
@@ -114,7 +100,12 @@ export class UserController {
             createdAt: new Date().toISOString(),
         };
 
-        vehicleStore.set(vehicle.id, vehicle);
+        createVehicle(vehicle);
+
+        // If this is the default, set it
+        if (isDefault) {
+            setDefaultVehicle(userId, vehicle.id);
+        }
 
         res.status(201).json(vehicle);
     };
@@ -130,33 +121,26 @@ export class UserController {
             return;
         }
 
-        const vehicle = vehicleStore.get(id);
+        const vehicle = getVehicle(id);
 
         if (!vehicle || vehicle.userId !== userId) {
             res.status(404).json({ error: 'Vehicle not found' });
             return;
         }
 
-        // If setting as default, unset other defaults
+        // If setting as default, update all vehicles
         if (isDefault) {
-            Array.from(vehicleStore.values())
-                .filter((v) => v.userId === userId && v.id !== id)
-                .forEach((v) => {
-                    vehicleStore.set(v.id, { ...v, isDefault: false });
-                });
+            setDefaultVehicle(userId, id);
         }
 
-        const updatedVehicle: Vehicle = {
-            ...vehicle,
+        const updatedVehicle = updateVehicleStore(id, {
             ...(plate && { plate: plate.toUpperCase() }),
             ...(nickname !== undefined && { nickname }),
             ...(make && { make }),
             ...(model && { model }),
             ...(color && { color }),
             ...(isDefault !== undefined && { isDefault }),
-        };
-
-        vehicleStore.set(id, updatedVehicle);
+        });
 
         res.json(updatedVehicle);
     };
@@ -171,14 +155,14 @@ export class UserController {
             return;
         }
 
-        const vehicle = vehicleStore.get(id);
+        const vehicle = getVehicle(id);
 
         if (!vehicle || vehicle.userId !== userId) {
             res.status(404).json({ error: 'Vehicle not found' });
             return;
         }
 
-        vehicleStore.delete(id);
+        deleteVehicleStore(id);
 
         res.json({ success: true, message: 'Vehicle deleted' });
     };

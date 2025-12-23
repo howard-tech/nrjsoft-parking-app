@@ -2,15 +2,16 @@ import { Request, Response } from 'express';
 import { JwtService } from '../services/jwt.service';
 import { OtpService } from '../services/otp.service';
 import { User } from '../types';
-import users from '../data/users.json';
+import {
+    userStore,
+    findUserByPhone,
+    findUserByEmail,
+    createUser,
+    getUser,
+} from '../services/data.store';
 
 const jwtService = new JwtService();
 const otpService = new OtpService();
-
-// In-memory user store (extends mock data)
-const userStore: Map<string, User> = new Map(
-    users.map((u) => [u.id, u as User])
-);
 
 export class AuthController {
     // POST /auth/otp-request
@@ -49,21 +50,18 @@ export class AuthController {
             return;
         }
 
-        // Find existing user or create new one
-        let user = Array.from(userStore.values()).find(
-            (u) => u.phone === phone || u.email === email
-        );
+        // Find existing user or create new one (using centralized store)
+        let user = phone ? findUserByPhone(phone) : findUserByEmail(email);
 
         if (!user) {
-            user = {
+            user = createUser({
                 id: `user_${Date.now()}`,
                 phone,
                 email,
                 name: 'New User',
                 provider: phone ? 'phone' : 'email',
                 createdAt: new Date().toISOString(),
-            };
-            userStore.set(user.id, user);
+            });
         }
 
         const accessToken = jwtService.generateAccessToken(user);
@@ -86,18 +84,17 @@ export class AuthController {
             return;
         }
 
-        // Mock Google authentication - create/find user
-        let user = userStore.get('user_google_123');
+        // Mock Google authentication - create/find user (using centralized store)
+        let user = getUser('user_google_123');
 
         if (!user) {
-            user = {
+            user = createUser({
                 id: 'user_google_123',
                 email: 'google.user@gmail.com',
                 name: 'Google User',
                 provider: 'google',
                 createdAt: new Date().toISOString(),
-            };
-            userStore.set(user.id, user);
+            });
         }
 
         const accessToken = jwtService.generateAccessToken(user);
@@ -120,18 +117,17 @@ export class AuthController {
             return;
         }
 
-        // Mock Apple authentication - create/find user
-        let user = userStore.get('user_apple_123');
+        // Mock Apple authentication - create/find user (using centralized store)
+        let user = getUser('user_apple_123');
 
         if (!user) {
-            user = {
+            user = createUser({
                 id: 'user_apple_123',
                 email: 'apple.user@icloud.com',
                 name: 'Apple User',
                 provider: 'apple',
                 createdAt: new Date().toISOString(),
-            };
-            userStore.set(user.id, user);
+            });
         }
 
         const accessToken = jwtService.generateAccessToken(user);
@@ -156,7 +152,7 @@ export class AuthController {
 
         try {
             const decoded = jwtService.verifyRefreshToken(refreshToken);
-            const user = userStore.get(decoded.id);
+            const user = getUser(decoded.id);
 
             if (!user) {
                 res.status(401).json({ error: 'User not found' });

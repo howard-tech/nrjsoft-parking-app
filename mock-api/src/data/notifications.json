@@ -1,61 +1,785 @@
 [
-    {
-        "id": "notif_001",
-        "userId": "user_001",
-        "title": "Parking Session Started",
-        "body": "Your parking session at NRJ Downtown Hub has started.",
-        "type": "session_start",
-        "read": true,
-        "data": {
-            "sessionId": "session_001"
-        },
-        "createdAt": "2024-12-20T09:30:00.000Z"
-    },
-    {
-        "id": "notif_002",
-        "userId": "user_001",
-        "title": "Parking Session Completed",
-        "body": "Your parking session at NRJ Downtown Hub has ended. Total: €15.93",
-        "type": "session_end",
-        "read": true,
-        "data": {
-            "sessionId": "session_001",
-            "totalFee": 15.93
-        },
-        "createdAt": "2024-12-20T12:45:00.000Z"
-    },
-    {
-        "id": "notif_003",
-        "userId": "user_001",
-        "title": "Payment Successful",
-        "body": "Payment of €15.93 was successful.",
-        "type": "payment",
-        "read": false,
-        "data": {
-            "transactionId": "txn_002",
-            "amount": 15.93
-        },
-        "createdAt": "2024-12-20T12:46:00.000Z"
-    },
-    {
-        "id": "notif_004",
-        "userId": "user_001",
-        "title": "Holiday Special!",
-        "body": "Get 20% off on all parking this weekend!",
-        "type": "promo",
-        "read": false,
-        "data": {
-            "promoCode": "HOLIDAY20"
-        },
-        "createdAt": "2024-12-22T08:00:00.000Z"
-    },
-    {
-        "id": "notif_005",
-        "userId": "user_002",
-        "title": "Welcome to NRJSoft Parking!",
-        "body": "Thanks for joining. Start parking smarter today!",
-        "type": "system",
-        "read": true,
-        "createdAt": "2024-02-20T14:45:00.000Z"
-    }
+  {
+    "id": "notif_BvfJAGEz",
+    "userId": "user_yM4DDf7v",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Zboncak, Hills and Lockman Parking",
+    "read": true,
+    "createdAt": "2025-12-23T09:09:31.196Z"
+  },
+  {
+    "id": "notif_tb0Q4IFE",
+    "userId": "user_wpbyX3M6",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €14.79",
+    "read": true,
+    "createdAt": "2025-12-23T01:55:52.990Z"
+  },
+  {
+    "id": "notif_wyipG67v",
+    "userId": "user_Z9N3NwS2",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Get 20% off your next parking session",
+    "read": false,
+    "createdAt": "2025-12-23T01:18:13.780Z"
+  },
+  {
+    "id": "notif_rP3eZbDq",
+    "userId": "user_LXpdyEXJ",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-12-22T20:18:31.483Z"
+  },
+  {
+    "id": "notif_vqxyHRJu",
+    "userId": "user_LXpdyEXJ",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": false,
+    "createdAt": "2025-12-22T11:08:23.838Z"
+  },
+  {
+    "id": "notif_n8lTVV2m",
+    "userId": "user_sEf5X4zi",
+    "type": "payment",
+    "title": "Payment Successful",
+    "body": "€44.91 has been charged",
+    "read": true,
+    "createdAt": "2025-12-21T12:11:51.593Z"
+  },
+  {
+    "id": "notif_7a5spOO0",
+    "userId": "user_49dOCTl8",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €9.61",
+    "read": true,
+    "createdAt": "2025-12-21T08:24:36.788Z"
+  },
+  {
+    "id": "notif_kP5FRm1d",
+    "userId": "user_LXpdyEXJ",
+    "type": "system",
+    "title": "System Update",
+    "body": "App update available with new features",
+    "read": false,
+    "createdAt": "2025-12-21T04:56:47.094Z"
+  },
+  {
+    "id": "notif_R3iOqYuu",
+    "userId": "user_yM4DDf7v",
+    "type": "system",
+    "title": "System Update",
+    "body": "Scheduled maintenance on Sunday 2-4 AM",
+    "read": true,
+    "createdAt": "2025-12-20T10:01:18.196Z"
+  },
+  {
+    "id": "notif_aA9lfNcl",
+    "userId": "user_Z9N3NwS2",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Lynch, Keeling and Boyer Parking",
+    "read": true,
+    "createdAt": "2025-12-20T08:02:17.217Z"
+  },
+  {
+    "id": "notif_9q5hlxWg",
+    "userId": "user_sEf5X4zi",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €3.06",
+    "read": true,
+    "createdAt": "2025-12-19T16:30:14.324Z"
+  },
+  {
+    "id": "notif_8tNGMJMd",
+    "userId": "user_LeNy9yKH",
+    "type": "payment",
+    "title": "Payment Successful",
+    "body": "€15.73 has been charged",
+    "read": false,
+    "createdAt": "2025-12-19T15:48:47.489Z"
+  },
+  {
+    "id": "notif_TjbRBQtZ",
+    "userId": "user_Z9N3NwS2",
+    "type": "payment",
+    "title": "Payment Successful",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": true,
+    "createdAt": "2025-12-19T02:19:27.178Z"
+  },
+  {
+    "id": "notif_nk9NNnNV",
+    "userId": "user_Z9N3NwS2",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Wolf, Kutch and Bernhard Parking",
+    "read": true,
+    "createdAt": "2025-12-18T22:05:29.770Z"
+  },
+  {
+    "id": "notif_G5e84odH",
+    "userId": "user_wpbyX3M6",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Zulauf - Mante Parking",
+    "read": true,
+    "createdAt": "2025-12-18T15:43:32.628Z"
+  },
+  {
+    "id": "notif_ZUgwWmQ9",
+    "userId": "user_Z9N3NwS2",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-12-17T21:26:27.245Z"
+  },
+  {
+    "id": "notif_RS1SHBha",
+    "userId": "user_yM4DDf7v",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €13.61",
+    "read": true,
+    "createdAt": "2025-12-17T17:49:44.588Z"
+  },
+  {
+    "id": "notif_uCejlZKV",
+    "userId": "user_3YBUnHcQ",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Ritchie, Bode and Weissnat Parking",
+    "read": true,
+    "createdAt": "2025-12-17T14:40:43.056Z"
+  },
+  {
+    "id": "notif_wPymzc3V",
+    "userId": "user_yM4DDf7v",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €4.44",
+    "read": true,
+    "createdAt": "2025-12-17T08:23:04.055Z"
+  },
+  {
+    "id": "notif_zuF6S8r8",
+    "userId": "user_wpbyX3M6",
+    "type": "promo",
+    "title": "💰 Save 20% Today!",
+    "body": "Get 20% off your next parking session",
+    "read": false,
+    "createdAt": "2025-12-17T05:48:14.551Z"
+  },
+  {
+    "id": "notif_aSsRZu1p",
+    "userId": "user_vCt11loB",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €4.49",
+    "read": true,
+    "createdAt": "2025-12-16T20:18:19.543Z"
+  },
+  {
+    "id": "notif_UBRnBPs3",
+    "userId": "user_49dOCTl8",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-12-16T17:14:56.354Z"
+  },
+  {
+    "id": "notif_Ot0VNGgD",
+    "userId": "user_3YBUnHcQ",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": false,
+    "createdAt": "2025-12-15T18:31:24.104Z"
+  },
+  {
+    "id": "notif_YFJcW4Z9",
+    "userId": "user_3YBUnHcQ",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "€30.67 has been charged",
+    "read": false,
+    "createdAt": "2025-12-15T15:31:22.292Z"
+  },
+  {
+    "id": "notif_bV9nqWfw",
+    "userId": "user_sEf5X4zi",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": false,
+    "createdAt": "2025-12-15T06:34:41.115Z"
+  },
+  {
+    "id": "notif_3HgpCQhc",
+    "userId": "user_yM4DDf7v",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Mohr LLC Parking",
+    "read": true,
+    "createdAt": "2025-12-14T14:45:05.535Z"
+  },
+  {
+    "id": "notif_I5rDmzpe",
+    "userId": "user_sEf5X4zi",
+    "type": "system",
+    "title": "System Update",
+    "body": "Scheduled maintenance on Sunday 2-4 AM",
+    "read": true,
+    "createdAt": "2025-12-13T18:37:28.859Z"
+  },
+  {
+    "id": "notif_aWoBTNJM",
+    "userId": "user_3YBUnHcQ",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Kuhic, Gerhold and Jacobson Parking",
+    "read": true,
+    "createdAt": "2025-12-12T21:41:02.546Z"
+  },
+  {
+    "id": "notif_vkSmHdyi",
+    "userId": "user_8bnCjB6s",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Get 20% off your next parking session",
+    "read": false,
+    "createdAt": "2025-12-12T06:42:50.243Z"
+  },
+  {
+    "id": "notif_9CZWVk10",
+    "userId": "user_yM4DDf7v",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Kreiger, Rolfson and Cronin Parking",
+    "read": false,
+    "createdAt": "2025-12-11T18:58:44.575Z"
+  },
+  {
+    "id": "notif_jt5l0NcG",
+    "userId": "user_sEf5X4zi",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Rowe and Sons Parking",
+    "read": false,
+    "createdAt": "2025-12-11T08:11:47.825Z"
+  },
+  {
+    "id": "notif_1CgIDHlH",
+    "userId": "user_49dOCTl8",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Volkman Group Parking",
+    "read": false,
+    "createdAt": "2025-12-10T22:21:43.318Z"
+  },
+  {
+    "id": "notif_2nn4RLL3",
+    "userId": "user_49dOCTl8",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "€32.08 has been charged",
+    "read": true,
+    "createdAt": "2025-12-10T11:22:31.156Z"
+  },
+  {
+    "id": "notif_fcfHKSTs",
+    "userId": "user_vCt11loB",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-12-09T20:25:39.158Z"
+  },
+  {
+    "id": "notif_mxoOb2iz",
+    "userId": "user_yM4DDf7v",
+    "type": "payment",
+    "title": "Payment Successful",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": true,
+    "createdAt": "2025-12-09T16:52:54.708Z"
+  },
+  {
+    "id": "notif_wJIl3E3z",
+    "userId": "user_LeNy9yKH",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €8.34",
+    "read": true,
+    "createdAt": "2025-12-09T04:39:34.892Z"
+  },
+  {
+    "id": "notif_GjoWzdB2",
+    "userId": "user_vCt11loB",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €19.76",
+    "read": true,
+    "createdAt": "2025-12-09T04:32:20.361Z"
+  },
+  {
+    "id": "notif_q3kdVZO1",
+    "userId": "user_LeNy9yKH",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Watsica, Moen and Ritchie Parking",
+    "read": true,
+    "createdAt": "2025-12-08T07:23:47.647Z"
+  },
+  {
+    "id": "notif_WFtykhwI",
+    "userId": "user_yM4DDf7v",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Howell, Bode and Durgan Parking",
+    "read": true,
+    "createdAt": "2025-12-08T05:20:02.682Z"
+  },
+  {
+    "id": "notif_UnGRYIAt",
+    "userId": "user_wpbyX3M6",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Get 20% off your next parking session",
+    "read": false,
+    "createdAt": "2025-12-08T04:04:01.955Z"
+  },
+  {
+    "id": "notif_QGfRypZ6",
+    "userId": "user_sEf5X4zi",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-12-08T02:28:58.215Z"
+  },
+  {
+    "id": "notif_LviUrpPc",
+    "userId": "user_49dOCTl8",
+    "type": "promo",
+    "title": "💰 Save 20% Today!",
+    "body": "Double wallet credit on top-ups this week",
+    "read": true,
+    "createdAt": "2025-12-07T15:02:44.408Z"
+  },
+  {
+    "id": "notif_6f9yDn5l",
+    "userId": "user_vCt11loB",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "€22.18 has been charged",
+    "read": false,
+    "createdAt": "2025-12-07T13:20:36.154Z"
+  },
+  {
+    "id": "notif_uIFG6miz",
+    "userId": "user_wpbyX3M6",
+    "type": "system",
+    "title": "System Update",
+    "body": "App update available with new features",
+    "read": true,
+    "createdAt": "2025-12-07T11:19:02.988Z"
+  },
+  {
+    "id": "notif_YYJENnBg",
+    "userId": "user_sEf5X4zi",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "€6.14 has been charged",
+    "read": true,
+    "createdAt": "2025-12-07T10:02:08.306Z"
+  },
+  {
+    "id": "notif_un3IgaiV",
+    "userId": "user_49dOCTl8",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Wolff - McCullough Parking",
+    "read": true,
+    "createdAt": "2025-12-07T04:50:26.652Z"
+  },
+  {
+    "id": "notif_KUEcADVQ",
+    "userId": "user_vCt11loB",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at West Group Parking",
+    "read": true,
+    "createdAt": "2025-12-07T01:02:34.361Z"
+  },
+  {
+    "id": "notif_ReaDHwSY",
+    "userId": "user_wpbyX3M6",
+    "type": "promo",
+    "title": "🅿️ Weekend Parking Deal",
+    "body": "Get 20% off your next parking session",
+    "read": true,
+    "createdAt": "2025-12-07T00:25:31.956Z"
+  },
+  {
+    "id": "notif_x8LZd0C6",
+    "userId": "user_8bnCjB6s",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "€20.47 has been charged",
+    "read": true,
+    "createdAt": "2025-12-05T19:50:51.630Z"
+  },
+  {
+    "id": "notif_QOxhT98j",
+    "userId": "user_sEf5X4zi",
+    "type": "system",
+    "title": "System Update",
+    "body": "App update available with new features",
+    "read": true,
+    "createdAt": "2025-12-05T18:39:09.131Z"
+  },
+  {
+    "id": "notif_rM3mHi64",
+    "userId": "user_LeNy9yKH",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Brekke - Ondricka Parking",
+    "read": true,
+    "createdAt": "2025-12-05T10:29:05.198Z"
+  },
+  {
+    "id": "notif_xivQsguc",
+    "userId": "user_sEf5X4zi",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Hickle - Franey Parking",
+    "read": true,
+    "createdAt": "2025-12-05T05:53:29.563Z"
+  },
+  {
+    "id": "notif_8kQfPM8g",
+    "userId": "user_8bnCjB6s",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Funk and Sons Parking",
+    "read": true,
+    "createdAt": "2025-12-04T07:08:29.953Z"
+  },
+  {
+    "id": "notif_9qqDPmHO",
+    "userId": "user_wpbyX3M6",
+    "type": "promo",
+    "title": "💰 Save 20% Today!",
+    "body": "Free first hour at selected garages",
+    "read": false,
+    "createdAt": "2025-12-04T07:02:16.784Z"
+  },
+  {
+    "id": "notif_7sATYpmF",
+    "userId": "user_wpbyX3M6",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": true,
+    "createdAt": "2025-12-04T04:16:27.740Z"
+  },
+  {
+    "id": "notif_SloTAZM2",
+    "userId": "user_LXpdyEXJ",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Larkin, Sauer and Kuhn Parking",
+    "read": true,
+    "createdAt": "2025-12-03T17:35:43.048Z"
+  },
+  {
+    "id": "notif_7JJ6tJde",
+    "userId": "user_sEf5X4zi",
+    "type": "promo",
+    "title": "💰 Save 20% Today!",
+    "body": "Get 20% off your next parking session",
+    "read": false,
+    "createdAt": "2025-12-03T10:47:48.307Z"
+  },
+  {
+    "id": "notif_gZf4GxGw",
+    "userId": "user_yM4DDf7v",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": false,
+    "createdAt": "2025-12-03T07:05:08.643Z"
+  },
+  {
+    "id": "notif_gkurHXhi",
+    "userId": "user_49dOCTl8",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €6.83",
+    "read": false,
+    "createdAt": "2025-12-03T00:05:48.943Z"
+  },
+  {
+    "id": "notif_d22t06J8",
+    "userId": "user_8bnCjB6s",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Yost - Hoeger Parking",
+    "read": true,
+    "createdAt": "2025-12-02T21:47:43.640Z"
+  },
+  {
+    "id": "notif_IqigIC3A",
+    "userId": "user_LXpdyEXJ",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": true,
+    "createdAt": "2025-12-02T19:03:08.500Z"
+  },
+  {
+    "id": "notif_96i65qpu",
+    "userId": "user_Z9N3NwS2",
+    "type": "system",
+    "title": "System Update",
+    "body": "App update available with new features",
+    "read": true,
+    "createdAt": "2025-12-02T11:25:39.972Z"
+  },
+  {
+    "id": "notif_kU6lRD1w",
+    "userId": "user_LXpdyEXJ",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Free first hour at selected garages",
+    "read": true,
+    "createdAt": "2025-12-02T09:30:14.988Z"
+  },
+  {
+    "id": "notif_kOli8tjl",
+    "userId": "user_8bnCjB6s",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Free first hour at selected garages",
+    "read": false,
+    "createdAt": "2025-12-01T18:36:30.120Z"
+  },
+  {
+    "id": "notif_MqD1UPTV",
+    "userId": "user_LeNy9yKH",
+    "type": "payment",
+    "title": "Payment Successful",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": false,
+    "createdAt": "2025-12-01T12:23:21.454Z"
+  },
+  {
+    "id": "notif_LkjdYoDN",
+    "userId": "user_49dOCTl8",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "€40.79 has been charged",
+    "read": true,
+    "createdAt": "2025-12-01T03:40:03.835Z"
+  },
+  {
+    "id": "notif_B0h01VYX",
+    "userId": "user_sEf5X4zi",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-12-01T00:53:30.080Z"
+  },
+  {
+    "id": "notif_FNYwvVCS",
+    "userId": "user_3YBUnHcQ",
+    "type": "payment",
+    "title": "Payment Successful",
+    "body": "€42.25 has been charged",
+    "read": true,
+    "createdAt": "2025-11-30T19:20:27.913Z"
+  },
+  {
+    "id": "notif_vSM82ath",
+    "userId": "user_49dOCTl8",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Free first hour at selected garages",
+    "read": true,
+    "createdAt": "2025-11-30T12:43:23.873Z"
+  },
+  {
+    "id": "notif_V2CMmuAY",
+    "userId": "user_yM4DDf7v",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €18.96",
+    "read": false,
+    "createdAt": "2025-11-30T11:20:25.785Z"
+  },
+  {
+    "id": "notif_QuIfF1h2",
+    "userId": "user_3YBUnHcQ",
+    "type": "promo",
+    "title": "🅿️ Weekend Parking Deal",
+    "body": "Free first hour at selected garages",
+    "read": true,
+    "createdAt": "2025-11-30T01:45:48.297Z"
+  },
+  {
+    "id": "notif_kOlkqyAy",
+    "userId": "user_sEf5X4zi",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Medhurst, Schumm and Fadel Parking",
+    "read": true,
+    "createdAt": "2025-11-29T22:07:06.045Z"
+  },
+  {
+    "id": "notif_j4IMQcoD",
+    "userId": "user_8bnCjB6s",
+    "type": "promo",
+    "title": "🅿️ Weekend Parking Deal",
+    "body": "Double wallet credit on top-ups this week",
+    "read": false,
+    "createdAt": "2025-11-29T17:26:22.874Z"
+  },
+  {
+    "id": "notif_R9mRPUDK",
+    "userId": "user_sEf5X4zi",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": true,
+    "createdAt": "2025-11-28T22:20:34.463Z"
+  },
+  {
+    "id": "notif_pYroPDhy",
+    "userId": "user_LXpdyEXJ",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Abbott Group Parking",
+    "read": true,
+    "createdAt": "2025-11-28T19:06:05.472Z"
+  },
+  {
+    "id": "notif_dJ8xyGsi",
+    "userId": "user_yM4DDf7v",
+    "type": "promo",
+    "title": "🎉 Special Offer!",
+    "body": "Free first hour at selected garages",
+    "read": true,
+    "createdAt": "2025-11-28T14:59:03.963Z"
+  },
+  {
+    "id": "notif_1aPORuSG",
+    "userId": "user_wpbyX3M6",
+    "type": "payment",
+    "title": "Payment Failed",
+    "body": "Your payment could not be processed. Please update your payment method.",
+    "read": true,
+    "createdAt": "2025-11-28T10:48:25.338Z"
+  },
+  {
+    "id": "notif_u0tzUsgR",
+    "userId": "user_LXpdyEXJ",
+    "type": "promo",
+    "title": "🅿️ Weekend Parking Deal",
+    "body": "Double wallet credit on top-ups this week",
+    "read": true,
+    "createdAt": "2025-11-27T17:33:14.090Z"
+  },
+  {
+    "id": "notif_S7TrCM3F",
+    "userId": "user_yM4DDf7v",
+    "type": "promo",
+    "title": "💰 Save 20% Today!",
+    "body": "Get 20% off your next parking session",
+    "read": true,
+    "createdAt": "2025-11-26T06:28:50.477Z"
+  },
+  {
+    "id": "notif_fgS7E9gb",
+    "userId": "user_vCt11loB",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €17.56",
+    "read": false,
+    "createdAt": "2025-11-26T00:41:03.289Z"
+  },
+  {
+    "id": "notif_oXa687mG",
+    "userId": "user_wpbyX3M6",
+    "type": "system",
+    "title": "System Update",
+    "body": "Scheduled maintenance on Sunday 2-4 AM",
+    "read": false,
+    "createdAt": "2025-11-25T14:30:31.485Z"
+  },
+  {
+    "id": "notif_WE5XhbGT",
+    "userId": "user_49dOCTl8",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-11-25T12:52:51.877Z"
+  },
+  {
+    "id": "notif_FoanoLZ5",
+    "userId": "user_8bnCjB6s",
+    "type": "session_end",
+    "title": "Parking Ended",
+    "body": "Your parking session has ended. Total: €19.38",
+    "read": true,
+    "createdAt": "2025-11-24T23:00:45.056Z"
+  },
+  {
+    "id": "notif_1ov09c8U",
+    "userId": "user_sEf5X4zi",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-11-24T18:26:51.317Z"
+  },
+  {
+    "id": "notif_QvtnXPA0",
+    "userId": "user_49dOCTl8",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at Wisoky - Hand Parking",
+    "read": true,
+    "createdAt": "2025-11-23T23:05:14.339Z"
+  },
+  {
+    "id": "notif_RUZ6NyDZ",
+    "userId": "user_yM4DDf7v",
+    "type": "session_start",
+    "title": "Parking Started",
+    "body": "Your parking session has started at MacGyver, Treutel and Schoen Parking",
+    "read": true,
+    "createdAt": "2025-11-23T18:38:08.946Z"
+  },
+  {
+    "id": "notif_n1RFyYAb",
+    "userId": "user_wpbyX3M6",
+    "type": "system",
+    "title": "System Update",
+    "body": "New garages added in your area",
+    "read": true,
+    "createdAt": "2025-11-23T13:32:05.020Z"
+  }
 ]

@@ -1,167 +1,992 @@
 [
-    {
-        "id": "garage_001",
-        "name": "NRJ Downtown Hub",
-        "address": "23 Marina Blvd, Ruse",
-        "location": {
-            "lat": 43.8356,
-            "lng": 25.9657
-        },
-        "entryMethod": "ANPR",
-        "availableSlots": 45,
-        "totalSlots": 120,
-        "hourlyRate": 4.90,
-        "maxTime": 480,
-        "currency": "EUR",
-        "features": {
-            "evChargers": 4,
-            "security": "ANPR + patrols",
-            "coveredParking": true,
-            "disabledAccess": true
-        },
-        "policies": {
-            "prepayRequired": false,
-            "badgeAfterHour": null,
-            "overstayPenalty": 15
-        },
-        "operatingHours": {
-            "open": "00:00",
-            "close": "24:00"
-        },
-        "images": [
-            "https://images.unsplash.com/photo-1590674899484-13da0f721f44?w=800"
-        ]
+  {
+    "id": "garage_MbFXyPvh",
+    "name": "Premium Parking",
+    "address": "2168 Volkman Plains, Ruse",
+    "location": {
+      "lat": 43.85025377000154,
+      "lng": 25.918338198754803
     },
-    {
-        "id": "garage_002",
-        "name": "Danube Plaza Garage",
-        "address": "6 Freedom Sq, Ruse",
-        "location": {
-            "lat": 43.8489,
-            "lng": 25.9534
-        },
-        "entryMethod": "QR",
-        "availableSlots": 12,
-        "totalSlots": 80,
-        "hourlyRate": 5.20,
-        "maxTime": 240,
-        "currency": "EUR",
-        "features": {
-            "evChargers": 2,
-            "security": "CCTV",
-            "coveredParking": true,
-            "disabledAccess": true
-        },
-        "policies": {
-            "prepayRequired": false,
-            "badgeAfterHour": 22,
-            "overstayPenalty": 12
-        },
-        "operatingHours": {
-            "open": "06:00",
-            "close": "23:00"
-        },
-        "images": [
-            "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800"
-        ]
+    "entryMethod": "ANPR",
+    "availableSlots": 30,
+    "totalSlots": 141,
+    "hourlyRate": 3.29,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 2,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": false
     },
-    {
-        "id": "garage_003",
-        "name": "Central Station Parking",
-        "address": "1 Station Square, Ruse",
-        "location": {
-            "lat": 43.8512,
-            "lng": 25.9701
-        },
-        "entryMethod": "TICKET",
-        "availableSlots": 78,
-        "totalSlots": 200,
-        "hourlyRate": 3.50,
-        "maxTime": null,
-        "currency": "EUR",
-        "features": {
-            "evChargers": 6,
-            "security": "24/7 staff",
-            "coveredParking": false,
-            "disabledAccess": true
-        },
-        "policies": {
-            "prepayRequired": true,
-            "badgeAfterHour": null,
-            "overstayPenalty": 10
-        },
-        "operatingHours": {
-            "open": "00:00",
-            "close": "24:00"
-        },
-        "images": [
-            "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800"
-        ]
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": 20,
+      "overstayPenalty": 13
     },
-    {
-        "id": "garage_004",
-        "name": "Mall Ruse Garage",
-        "address": "15 Lipnik Blvd, Ruse",
-        "location": {
-            "lat": 43.8623,
-            "lng": 25.9412
-        },
-        "entryMethod": "ANPR",
-        "availableSlots": 156,
-        "totalSlots": 500,
-        "hourlyRate": 2.00,
-        "maxTime": 600,
-        "currency": "EUR",
-        "features": {
-            "evChargers": 10,
-            "security": "ANPR + CCTV",
-            "coveredParking": true,
-            "disabledAccess": true
-        },
-        "policies": {
-            "prepayRequired": false,
-            "badgeAfterHour": null,
-            "overstayPenalty": 5
-        },
-        "operatingHours": {
-            "open": "08:00",
-            "close": "22:00"
-        },
-        "images": [
-            "https://images.unsplash.com/photo-1545179605-1296651e9d43?w=800"
-        ]
+    "operatingHours": {
+      "open": "00:00",
+      "close": "24:00"
     },
-    {
-        "id": "garage_005",
-        "name": "City Hospital Parking",
-        "address": "8 Health St, Ruse",
-        "location": {
-            "lat": 43.8278,
-            "lng": 25.9589
-        },
-        "entryMethod": "QR",
-        "availableSlots": 23,
-        "totalSlots": 60,
-        "hourlyRate": 1.50,
-        "maxTime": 720,
-        "currency": "EUR",
-        "features": {
-            "evChargers": 2,
-            "security": "CCTV",
-            "coveredParking": false,
-            "disabledAccess": true
-        },
-        "policies": {
-            "prepayRequired": false,
-            "badgeAfterHour": null,
-            "overstayPenalty": 8
-        },
-        "operatingHours": {
-            "open": "00:00",
-            "close": "24:00"
-        },
-        "images": [
-            "https://images.unsplash.com/photo-1611348586758-5c1e7ec62e5a?w=800"
-        ]
-    }
+    "images": [
+      "https://picsum.photos/seed/hlqMThFu/800/600"
+    ]
+  },
+  {
+    "id": "garage_GKqRh9Ei",
+    "name": "Ruse Central Parking",
+    "address": "1773 Kuhlman Port, Ruse",
+    "location": {
+      "lat": 43.86221424495039,
+      "lng": 25.944975550523967
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 15,
+    "totalSlots": 291,
+    "hourlyRate": 5.78,
+    "maxTime": 240,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 7,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 18
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/oFaUc8UP/800/600"
+    ]
+  },
+  {
+    "id": "garage_SGIwxl51",
+    "name": "Ruse Central Parking",
+    "address": "7522 Thompson Loop, Ruse",
+    "location": {
+      "lat": 43.871814559911066,
+      "lng": 25.922083869046197
+    },
+    "entryMethod": "QR",
+    "availableSlots": 77,
+    "totalSlots": 154,
+    "hourlyRate": 4.75,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 9,
+      "security": "ANPR + patrols",
+      "coveredParking": false,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 18
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/tQhOf6tt/800/600"
+    ]
+  },
+  {
+    "id": "garage_poSiUs16",
+    "name": "Turner Ramp Garage",
+    "address": "94758 Candido Freeway, Ruse",
+    "location": {
+      "lat": 43.84446920395768,
+      "lng": 25.923428192862257
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 15,
+    "totalSlots": 115,
+    "hourlyRate": 6.87,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 9,
+      "security": "24/7 security staff",
+      "coveredParking": true,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 13
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/KU4oqQ4T/800/600"
+    ]
+  },
+  {
+    "id": "garage_P87swe6j",
+    "name": "Schmitt - O'Reilly Parking",
+    "address": "103 Thompson Shore, Ruse",
+    "location": {
+      "lat": 43.87490637861563,
+      "lng": 25.936396177981138
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 175,
+    "totalSlots": 178,
+    "hourlyRate": 6.62,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 5,
+      "security": "ANPR + patrols",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 19
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/iR3uC2kj/800/600"
+    ]
+  },
+  {
+    "id": "garage_ryIv383Y",
+    "name": "Sofia City Garage",
+    "address": "8295 Tillman Camp, Sofia",
+    "location": {
+      "lat": 42.70108639601693,
+      "lng": 23.289952989766697
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 47,
+    "totalSlots": 257,
+    "hourlyRate": 7.45,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 2,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 16
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/jHl8V2Tx/800/600"
+    ]
+  },
+  {
+    "id": "garage_a9xkcVV7",
+    "name": "Bosco Path Garage",
+    "address": "951 Harber Bypass, Sofia",
+    "location": {
+      "lat": 42.66250215519353,
+      "lng": 23.332312149279733
+    },
+    "entryMethod": "QR",
+    "availableSlots": 202,
+    "totalSlots": 255,
+    "hourlyRate": 2.58,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 4,
+      "security": "ANPR + patrols",
+      "coveredParking": true,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 21
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/npegFdAy/800/600"
+    ]
+  },
+  {
+    "id": "garage_LLs2YNhb",
+    "name": "Sofia Central Parking",
+    "address": "26621 Kihn Field, Sofia",
+    "location": {
+      "lat": 42.74025435358518,
+      "lng": 23.333386912418042
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 46,
+    "totalSlots": 254,
+    "hourlyRate": 5.22,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 0,
+      "security": "CCTV",
+      "coveredParking": true,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 18
+    },
+    "operatingHours": {
+      "open": "00:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/mnFFX4IF/800/600"
+    ]
+  },
+  {
+    "id": "garage_1IfBXBrW",
+    "name": "Reichel - Jenkins Parking",
+    "address": "40546 Lamar Orchard, Sofia",
+    "location": {
+      "lat": 42.72736862314783,
+      "lng": 23.369308061678186
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 82,
+    "totalSlots": 274,
+    "hourlyRate": 7.67,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 3,
+      "security": "ANPR + patrols",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 11
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/ZCoNrNw2/800/600"
+    ]
+  },
+  {
+    "id": "garage_Y5sYkj7K",
+    "name": "N Monroe Street Garage",
+    "address": "9781 Leuschke Harbor, Sofia",
+    "location": {
+      "lat": 42.66762213636763,
+      "lng": 23.334177509859416
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 82,
+    "totalSlots": 128,
+    "hourlyRate": 6.42,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 1,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 24
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/mekShtZi/800/600"
+    ]
+  },
+  {
+    "id": "garage_0sE5e7nn",
+    "name": "Nolan LLC Parking",
+    "address": "258 Wellington Street, Munich",
+    "location": {
+      "lat": 48.17107364892702,
+      "lng": 11.601380499273711
+    },
+    "entryMethod": "QR",
+    "availableSlots": 7,
+    "totalSlots": 367,
+    "hourlyRate": 3.07,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 2,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 24
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/s5OgCQ4p/800/600"
+    ]
+  },
+  {
+    "id": "garage_PPo34RUo",
+    "name": "Munich City Garage",
+    "address": "698 Morar Ridges, Munich",
+    "location": {
+      "lat": 48.12501403462555,
+      "lng": 11.58615599382677
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 56,
+    "totalSlots": 89,
+    "hourlyRate": 5.47,
+    "maxTime": 240,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 10,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 14
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/hJHYd0HR/800/600"
+    ]
+  },
+  {
+    "id": "garage_UkCx5ToD",
+    "name": "Munich City Garage",
+    "address": "705 Myah Divide, Munich",
+    "location": {
+      "lat": 48.1233864244119,
+      "lng": 11.585594435570837
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 350,
+    "totalSlots": 359,
+    "hourlyRate": 7.17,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 3,
+      "security": "ANPR + patrols",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 21,
+      "overstayPenalty": 24
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/GZnBS6gt/800/600"
+    ]
+  },
+  {
+    "id": "garage_d6u9j20w",
+    "name": "Munich City Garage",
+    "address": "70826 Brakus Rest, Munich",
+    "location": {
+      "lat": 48.150030982832554,
+      "lng": 11.559740317097935
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 95,
+    "totalSlots": 194,
+    "hourlyRate": 6.18,
+    "maxTime": 480,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 9,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 21,
+      "overstayPenalty": 10
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/6mbrlbcv/800/600"
+    ]
+  },
+  {
+    "id": "garage_IRVmVvxP",
+    "name": "Premium Parking",
+    "address": "21284 S Chestnut Street, Munich",
+    "location": {
+      "lat": 48.10285301183481,
+      "lng": 11.544426611946143
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 65,
+    "totalSlots": 465,
+    "hourlyRate": 2.7,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 6,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 16
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/5LHZOT2A/800/600"
+    ]
+  },
+  {
+    "id": "garage_hZDlYptd",
+    "name": "Tower Parking",
+    "address": "189 Kaycee Squares, Berlin",
+    "location": {
+      "lat": 52.49251584308646,
+      "lng": 13.371226642681364
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 178,
+    "totalSlots": 253,
+    "hourlyRate": 5.71,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 0,
+      "security": "CCTV",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 18
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/nhRbFNwP/800/600"
+    ]
+  },
+  {
+    "id": "garage_AlWj0lUg",
+    "name": "Berlin City Garage",
+    "address": "849 Kingsway, Berlin",
+    "location": {
+      "lat": 52.48344618717881,
+      "lng": 13.446184989055746
+    },
+    "entryMethod": "QR",
+    "availableSlots": 65,
+    "totalSlots": 322,
+    "hourlyRate": 2.96,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 9,
+      "security": "24/7 security staff",
+      "coveredParking": true,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 23,
+      "overstayPenalty": 12
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/HdSVgKxu/800/600"
+    ]
+  },
+  {
+    "id": "garage_DvIFQycq",
+    "name": "Berlin Central Parking",
+    "address": "6389 Cross Lane, Berlin",
+    "location": {
+      "lat": 52.55246196405169,
+      "lng": 13.441918464847275
+    },
+    "entryMethod": "QR",
+    "availableSlots": 45,
+    "totalSlots": 367,
+    "hourlyRate": 7.61,
+    "maxTime": 480,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 3,
+      "security": "CCTV",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 15
+    },
+    "operatingHours": {
+      "open": "00:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/tnHXBGw5/800/600"
+    ]
+  },
+  {
+    "id": "garage_WMR65QZP",
+    "name": "Berlin City Garage",
+    "address": "775 O'Kon Estates, Berlin",
+    "location": {
+      "lat": 52.49431345902574,
+      "lng": 13.378826390048081
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 31,
+    "totalSlots": 96,
+    "hourlyRate": 6.38,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 1,
+      "security": "24/7 security staff",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 20
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/d5Ijmc1V/800/600"
+    ]
+  },
+  {
+    "id": "garage_QzbFHq8i",
+    "name": "Crist, Ratke and Corwin Parking",
+    "address": "81799 Bell Lane, Berlin",
+    "location": {
+      "lat": 52.50297069179354,
+      "lng": 13.419379025920527
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 157,
+    "totalSlots": 337,
+    "hourlyRate": 3.86,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 9,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 21,
+      "overstayPenalty": 13
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/eVjyXRn8/800/600"
+    ]
+  },
+  {
+    "id": "garage_jre9ptt3",
+    "name": "Park&Ride Parking",
+    "address": "68369 VonRueden Harbor, Vienna",
+    "location": {
+      "lat": 48.21304163134877,
+      "lng": 16.38004010228439
+    },
+    "entryMethod": "QR",
+    "availableSlots": 18,
+    "totalSlots": 141,
+    "hourlyRate": 2.53,
+    "maxTime": 120,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 1,
+      "security": "CCTV",
+      "coveredParking": true,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": null,
+      "overstayPenalty": 18
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/xDVFryLx/800/600"
+    ]
+  },
+  {
+    "id": "garage_162rM7PS",
+    "name": "Millie Estate Garage",
+    "address": "73739 Reginald Orchard, Vienna",
+    "location": {
+      "lat": 48.21964613063559,
+      "lng": 16.383589180000477
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 27,
+    "totalSlots": 82,
+    "hourlyRate": 6.97,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 5,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 24
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "23:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/ezTt4bKD/800/600"
+    ]
+  },
+  {
+    "id": "garage_JcgIhKdZ",
+    "name": "Tower Parking",
+    "address": "2966 The Grove, Vienna",
+    "location": {
+      "lat": 48.224594227678466,
+      "lng": 16.3745783754206
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 37,
+    "totalSlots": 351,
+    "hourlyRate": 6.56,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 0,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 21,
+      "overstayPenalty": 25
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/j19EybaI/800/600"
+    ]
+  },
+  {
+    "id": "garage_oNh5oS7X",
+    "name": "Express Parking",
+    "address": "2428 Jefferson Street, Vienna",
+    "location": {
+      "lat": 48.15997273943495,
+      "lng": 16.409888321761798
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 47,
+    "totalSlots": 164,
+    "hourlyRate": 6.91,
+    "maxTime": 480,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 0,
+      "security": "CCTV",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": null,
+      "overstayPenalty": 14
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/kDHUHes7/800/600"
+    ]
+  },
+  {
+    "id": "garage_Jutthcke",
+    "name": "Express Parking",
+    "address": "702 Lansdowne Road, Vienna",
+    "location": {
+      "lat": 48.17778899629749,
+      "lng": 16.356154869889863
+    },
+    "entryMethod": "QR",
+    "availableSlots": 15,
+    "totalSlots": 86,
+    "hourlyRate": 6.29,
+    "maxTime": 1440,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 8,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 15
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/w40VVNtR/800/600"
+    ]
+  },
+  {
+    "id": "garage_TJy72Fbp",
+    "name": "Orn, Ondricka and Hammes Parking",
+    "address": "863 State Street, Prague",
+    "location": {
+      "lat": 50.100118585955194,
+      "lng": 14.465255049896824
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 14,
+    "totalSlots": 433,
+    "hourlyRate": 4.11,
+    "maxTime": 180,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 2,
+      "security": "24/7 security staff",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 21
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/XrdACsw5/800/600"
+    ]
+  },
+  {
+    "id": "garage_snOLeuAr",
+    "name": "Prague Central Parking",
+    "address": "44815 Union Avenue, Prague",
+    "location": {
+      "lat": 50.114084568268815,
+      "lng": 14.44690861669412
+    },
+    "entryMethod": "QR",
+    "availableSlots": 58,
+    "totalSlots": 345,
+    "hourlyRate": 4.76,
+    "maxTime": 240,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 7,
+      "security": "CCTV",
+      "coveredParking": false,
+      "disabledAccess": false
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 21,
+      "overstayPenalty": 21
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/EXw7RxzO/800/600"
+    ]
+  },
+  {
+    "id": "garage_b9zYGSvx",
+    "name": "Prague Central Parking",
+    "address": "17093 Reichel Rapid, Prague",
+    "location": {
+      "lat": 50.06070094137369,
+      "lng": 14.418768305082189
+    },
+    "entryMethod": "TICKET",
+    "availableSlots": 89,
+    "totalSlots": 248,
+    "hourlyRate": 7.59,
+    "maxTime": 120,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 6,
+      "security": "24/7 security staff",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": false,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 13
+    },
+    "operatingHours": {
+      "open": "06:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/iFgi48TY/800/600"
+    ]
+  },
+  {
+    "id": "garage_ZDuXzSgU",
+    "name": "Mayer, Leuschke and Rempel Parking",
+    "address": "226 Beech Drive, Prague",
+    "location": {
+      "lat": 50.11484004298597,
+      "lng": 14.47084501907745
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 281,
+    "totalSlots": 426,
+    "hourlyRate": 6.61,
+    "maxTime": 480,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 9,
+      "security": "ANPR + patrols",
+      "coveredParking": true,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": 22,
+      "overstayPenalty": 12
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "22:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/p09e45QB/800/600"
+    ]
+  },
+  {
+    "id": "garage_9wvsXYIg",
+    "name": "Trantow Hills Garage",
+    "address": "9102 Hegmann Coves, Prague",
+    "location": {
+      "lat": 50.07122136078767,
+      "lng": 14.459119535689428
+    },
+    "entryMethod": "ANPR",
+    "availableSlots": 263,
+    "totalSlots": 405,
+    "hourlyRate": 3.32,
+    "maxTime": 720,
+    "currency": "EUR",
+    "features": {
+      "evChargers": 3,
+      "security": "ANPR + patrols",
+      "coveredParking": false,
+      "disabledAccess": true
+    },
+    "policies": {
+      "prepayRequired": true,
+      "badgeAfterHour": null,
+      "overstayPenalty": 12
+    },
+    "operatingHours": {
+      "open": "07:00",
+      "close": "24:00"
+    },
+    "images": [
+      "https://picsum.photos/seed/lco78tzX/800/600"
+    ]
+  }
 ]

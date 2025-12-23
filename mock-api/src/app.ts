@@ -16,6 +16,7 @@ import paymentRoutes from './routes/payment.routes';
 import onstreetRoutes from './routes/onstreet.routes';
 import notificationRoutes from './routes/notification.routes';
 import deviceRoutes from './routes/device.routes';
+import adminRoutes, { initializeGeneratedData } from './routes/admin.routes';
 
 import { authMiddleware } from './middleware/auth';
 import { delayMiddleware } from './middleware/delay';
@@ -92,6 +93,9 @@ app.use('/api/v1/onstreet', authMiddleware, onstreetRoutes);
 app.use('/api/v1/notifications', authMiddleware, notificationRoutes);
 app.use('/api/v1/devices', authMiddleware, deviceRoutes);
 
+// Admin routes (no auth for dev convenience)
+app.use('/api/v1/admin', adminRoutes);
+
 // Error handling
 app.use(errorHandler);
 
@@ -102,6 +106,9 @@ app.use((req, res) => {
         message: `Cannot ${req.method} ${req.path}`,
     });
 });
+
+// Initialize generated data on startup
+initializeGeneratedData();
 
 // WebSocket setup
 setupWebSocket(io);

@@ -1,0 +1,35 @@
+[
+    {
+        "id": "vehicle_001",
+        "userId": "user_001",
+        "plate": "CB1234AB",
+        "nickname": "My BMW",
+        "make": "BMW",
+        "model": "320d",
+        "color": "Black",
+        "isDefault": true,
+        "createdAt": "2024-01-20T10:00:00.000Z"
+    },
+    {
+        "id": "vehicle_002",
+        "userId": "user_001",
+        "plate": "CB5678CD",
+        "nickname": "Wife's Car",
+        "make": "Audi",
+        "model": "A3",
+        "color": "White",
+        "isDefault": false,
+        "createdAt": "2024-02-15T14:30:00.000Z"
+    },
+    {
+        "id": "vehicle_003",
+        "userId": "user_002",
+        "plate": "PB9876EF",
+        "nickname": "City Car",
+        "make": "VW",
+        "model": "Golf",
+        "color": "Blue",
+        "isDefault": true,
+        "createdAt": "2024-03-01T11:00:00.000Z"
+    }
+]

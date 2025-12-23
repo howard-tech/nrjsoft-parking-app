@@ -1,0 +1,27 @@
+[
+    {
+        "id": "user_001",
+        "phone": "+359888123456",
+        "email": "ivan@example.com",
+        "name": "Ivan Petrov",
+        "avatar": null,
+        "provider": "phone",
+        "createdAt": "2024-01-15T10:30:00.000Z"
+    },
+    {
+        "id": "user_002",
+        "phone": "+359899654321",
+        "email": "maria@example.com",
+        "name": "Maria Ivanova",
+        "avatar": null,
+        "provider": "email",
+        "createdAt": "2024-02-20T14:45:00.000Z"
+    },
+    {
+        "id": "user_003",
+        "email": "google.user@gmail.com",
+        "name": "Google User",
+        "provider": "google",
+        "createdAt": "2024-03-10T09:00:00.000Z"
+    }
+]

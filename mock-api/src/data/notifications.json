@@ -1,0 +1,61 @@
+[
+    {
+        "id": "notif_001",
+        "userId": "user_001",
+        "title": "Parking Session Started",
+        "body": "Your parking session at NRJ Downtown Hub has started.",
+        "type": "session_start",
+        "read": true,
+        "data": {
+            "sessionId": "session_001"
+        },
+        "createdAt": "2024-12-20T09:30:00.000Z"
+    },
+    {
+        "id": "notif_002",
+        "userId": "user_001",
+        "title": "Parking Session Completed",
+        "body": "Your parking session at NRJ Downtown Hub has ended. Total: €15.93",
+        "type": "session_end",
+        "read": true,
+        "data": {
+            "sessionId": "session_001",
+            "totalFee": 15.93
+        },
+        "createdAt": "2024-12-20T12:45:00.000Z"
+    },
+    {
+        "id": "notif_003",
+        "userId": "user_001",
+        "title": "Payment Successful",
+        "body": "Payment of €15.93 was successful.",
+        "type": "payment",
+        "read": false,
+        "data": {
+            "transactionId": "txn_002",
+            "amount": 15.93
+        },
+        "createdAt": "2024-12-20T12:46:00.000Z"
+    },
+    {
+        "id": "notif_004",
+        "userId": "user_001",
+        "title": "Holiday Special!",
+        "body": "Get 20% off on all parking this weekend!",
+        "type": "promo",
+        "read": false,
+        "data": {
+            "promoCode": "HOLIDAY20"
+        },
+        "createdAt": "2024-12-22T08:00:00.000Z"
+    },
+    {
+        "id": "notif_005",
+        "userId": "user_002",
+        "title": "Welcome to NRJSoft Parking!",
+        "body": "Thanks for joining. Start parking smarter today!",
+        "type": "system",
+        "read": true,
+        "createdAt": "2024-02-20T14:45:00.000Z"
+    }
+]

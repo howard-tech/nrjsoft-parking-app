@@ -1,0 +1,157 @@
+import { Request, Response } from 'express';
+import { Garage } from '../types';
+import garages from '../data/garages.json';
+
+// Calculate distance between two points (Haversine formula)
+function calculateDistance(
+    lat1: number,
+    lng1: number,
+    lat2: number,
+    lng2: number
+): number {
+    const R = 6371e3; // Earth's radius in meters
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lng2 - lng1) * Math.PI) / 180;
+
+    const a =
+        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Distance in meters
+}
+
+export class ParkingController {
+    // GET /parking/nearby
+    getNearby = async (req: Request, res: Response): Promise<void> => {
+        const { lat, lng, radius = 5000 } = req.query;
+
+        if (!lat || !lng) {
+            res.status(400).json({ error: 'Latitude and longitude required' });
+            return;
+        }
+
+        const latitude = parseFloat(lat as string);
+        const longitude = parseFloat(lng as string);
+        const radiusMeters = parseInt(radius as string, 10);
+
+        // Filter garages within radius and calculate distances
+        const nearbyGarages = (garages as Garage[])
+            .map((garage) => {
+                const distance = calculateDistance(
+                    latitude,
+                    longitude,
+                    garage.location.lat,
+                    garage.location.lng
+                );
+                return { ...garage, distance: Math.round(distance) };
+            })
+            .filter((garage) => garage.distance <= radiusMeters)
+            .sort((a, b) => a.distance - b.distance);
+
+        // Simulate random availability changes
+        const withUpdatedAvailability = nearbyGarages.map((garage) => ({
+            ...garage,
+            availableSlots: Math.max(
+                0,
+                garage.availableSlots + Math.floor(Math.random() * 5 - 2)
+            ),
+        }));
+
+        res.json({
+            garages: withUpdatedAvailability,
+            total: withUpdatedAvailability.length,
+        });
+    };
+
+    // GET /parking/:garageId
+    getGarage = async (req: Request, res: Response): Promise<void> => {
+        const { garageId } = req.params;
+
+        const garage = (garages as Garage[]).find((g) => g.id === garageId);
+
+        if (!garage) {
+            res.status(404).json({ error: 'Garage not found' });
+            return;
+        }
+
+        // Simulate real-time availability
+        const updatedGarage = {
+            ...garage,
+            availableSlots: Math.max(
+                0,
+                garage.availableSlots + Math.floor(Math.random() * 3 - 1)
+            ),
+        };
+
+        res.json(updatedGarage);
+    };
+
+    // GET /parking/search
+    search = async (req: Request, res: Response): Promise<void> => {
+        const { q, lat, lng, minSlots, maxRate, features } = req.query;
+
+        let results = garages as Garage[];
+
+        // Search by name or address
+        if (q) {
+            const query = (q as string).toLowerCase();
+            results = results.filter(
+                (g) =>
+                    g.name.toLowerCase().includes(query) ||
+                    g.address.toLowerCase().includes(query)
+            );
+        }
+
+        // Filter by minimum available slots
+        if (minSlots) {
+            const min = parseInt(minSlots as string, 10);
+            results = results.filter((g) => g.availableSlots >= min);
+        }
+
+        // Filter by max hourly rate
+        if (maxRate) {
+            const max = parseFloat(maxRate as string);
+            results = results.filter((g) => g.hourlyRate <= max);
+        }
+
+        // Filter by features
+        if (features) {
+            const requestedFeatures = (features as string).split(',');
+            results = results.filter((g) => {
+                return requestedFeatures.every((f) => {
+                    if (f === 'ev' && g.features.evChargers && g.features.evChargers > 0)
+                        return true;
+                    if (f === 'covered' && g.features.coveredParking) return true;
+                    if (f === 'disabled' && g.features.disabledAccess) return true;
+                    return false;
+                });
+            });
+        }
+
+        // If lat/lng provided, sort by distance
+        if (lat && lng) {
+            const latitude = parseFloat(lat as string);
+            const longitude = parseFloat(lng as string);
+
+            results = results
+                .map((garage) => ({
+                    ...garage,
+                    distance: calculateDistance(
+                        latitude,
+                        longitude,
+                        garage.location.lat,
+                        garage.location.lng
+                    ),
+                }))
+                .sort((a, b) => a.distance - b.distance);
+        }
+
+        res.json({
+            garages: results,
+            total: results.length,
+        });
+    };
+}

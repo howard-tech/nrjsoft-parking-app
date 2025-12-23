@@ -1,13 +1,6 @@
 import { Request, Response } from 'express';
 import { Wallet, Transaction } from '../types';
-import wallets from '../data/wallets.json';
-import transactions from '../data/transactions.json';
-
-// In-memory stores
-const walletStore: Map<string, Wallet> = new Map(
-    wallets.map((w) => [w.userId, w as Wallet])
-);
-const transactionStore: Transaction[] = [...(transactions as Transaction[])];
+import { walletStore, transactionStore } from '../services/data.store';
 
 export class WalletController {
     // GET /wallet
@@ -19,7 +12,19 @@ export class WalletController {
             return;
         }
 
-        let wallet = walletStore.get(userId);
+        // Find key by value in map? No, map is userId -> Wallet?
+        // Wait, in data.store.ts, data.wallets.forEach(w => walletStore.set(w.id, w));
+        // So walletStore is Map<walletId, Wallet>.
+        // BUT in the previous WalletController implementation:
+        // const walletStore: Map<string, Wallet> = new Map(wallets.map((w) => [w.userId, w]));
+        // It was keyed by USER ID.
+
+        // I need to check how I populated it in admin.routes.ts...
+        // data.wallets.forEach(w => walletStore.set(w.id, w));
+        // So it's keyed by walletId.
+
+        // I need to find the wallet for the user.
+        let wallet = Array.from(walletStore.values()).find(w => w.userId === userId);
 
         // Create wallet if doesn't exist
         if (!wallet) {
@@ -30,7 +35,7 @@ export class WalletController {
                 currency: 'EUR',
                 updatedAt: new Date().toISOString(),
             };
-            walletStore.set(userId, wallet);
+            walletStore.set(wallet.id, wallet);
         }
 
         res.json(wallet);
@@ -46,7 +51,7 @@ export class WalletController {
             return;
         }
 
-        let userTransactions = transactionStore.filter((t) => t.userId === userId);
+        let userTransactions = Array.from(transactionStore.values()).filter((t) => t.userId === userId);
 
         // Filter by type if specified
         if (type) {
@@ -120,7 +125,7 @@ export class WalletController {
         }
 
         // Get or create wallet
-        let wallet = walletStore.get(userId);
+        let wallet = Array.from(walletStore.values()).find(w => w.userId === userId);
         if (!wallet) {
             wallet = {
                 id: `wallet_${Date.now()}`,
@@ -129,12 +134,13 @@ export class WalletController {
                 currency: 'EUR',
                 updatedAt: new Date().toISOString(),
             };
+            walletStore.set(wallet.id, wallet);
         }
 
         // Update balance
         wallet.balance = Math.round((wallet.balance + amount) * 100) / 100;
         wallet.updatedAt = new Date().toISOString();
-        walletStore.set(userId, wallet);
+        walletStore.set(wallet.id, wallet);
 
         // Create transaction record
         const transaction: Transaction = {
@@ -148,7 +154,7 @@ export class WalletController {
             status: 'completed',
             createdAt: new Date().toISOString(),
         };
-        transactionStore.unshift(transaction);
+        transactionStore.set(transaction.id, transaction);
 
         res.json({
             success: true,

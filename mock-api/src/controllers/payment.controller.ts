@@ -1,11 +1,6 @@
 import { Request, Response } from 'express';
 import { PaymentMethod } from '../types';
-import paymentMethods from '../data/payment-methods.json';
-
-// In-memory store
-const paymentMethodStore: Map<string, PaymentMethod> = new Map(
-    paymentMethods.map((pm) => [pm.id, pm as PaymentMethod])
-);
+import { paymentMethodStore } from '../services/data.store';
 
 export class PaymentController {
     // GET /payment-methods

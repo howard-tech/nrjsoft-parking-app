@@ -1,13 +1,29 @@
 import { Router, Request, Response } from 'express';
 import { seedDatabase, GeneratedData } from '../generators';
 import {
-    userStore, vehicleStore
+    userStore, vehicleStore, garageStore, sessionStore,
+    zoneStore, walletStore, transactionStore, notificationStore,
+    paymentMethodStore, clearAllData
 } from '../services/data.store';
 
 const router = Router();
 
 // Store for generated data
 let generatedData: GeneratedData | null = null;
+
+function populateStores(data: GeneratedData) {
+    clearAllData();
+
+    data.users.forEach(u => userStore.set(u.id, u));
+    data.vehicles.forEach(v => vehicleStore.set(v.id, v));
+    data.garages.forEach(g => garageStore.set(g.id, g));
+    data.sessions.forEach(s => sessionStore.set(s.id, s));
+    data.zones.forEach(z => zoneStore.set(z.id, z));
+    data.wallets.forEach(w => walletStore.set(w.id, w));
+    data.transactions.forEach(t => transactionStore.set(t.id, t));
+    data.notifications.forEach(n => notificationStore.set(n.id, n));
+    data.paymentMethods.forEach(p => paymentMethodStore.set(p.id, p));
+}
 
 // Initialize with generated data on module load
 export function initializeGeneratedData(): GeneratedData {
@@ -17,17 +33,8 @@ export function initializeGeneratedData(): GeneratedData {
             garageCount: 30,
             zoneCount: 30,
         });
-
-        // Populate data stores
-        generatedData.users.forEach((user) => {
-            userStore.set(user.id, user);
-        });
-
-        generatedData.vehicles.forEach((vehicle) => {
-            vehicleStore.set(vehicle.id, vehicle);
-        });
+        populateStores(generatedData);
     }
-
     return generatedData;
 }
 
@@ -40,10 +47,6 @@ export function getGeneratedData(): GeneratedData | null {
 router.post('/reset', (req: Request, res: Response) => {
     console.log('🔄 Resetting data...');
 
-    // Clear existing stores
-    userStore.clear();
-    vehicleStore.clear();
-
     // Regenerate data
     generatedData = seedDatabase({
         userCount: req.body.userCount || 20,
@@ -51,14 +54,8 @@ router.post('/reset', (req: Request, res: Response) => {
         zoneCount: req.body.zoneCount || 30,
     });
 
-    // Repopulate data stores
-    generatedData.users.forEach((user) => {
-        userStore.set(user.id, user);
-    });
-
-    generatedData.vehicles.forEach((vehicle) => {
-        vehicleStore.set(vehicle.id, vehicle);
-    });
+    // Repopulate data stores (clears old data first)
+    populateStores(generatedData);
 
     res.json({
         success: true,
@@ -84,15 +81,15 @@ router.get('/stats', (req: Request, res: Response) => {
     }
 
     res.json({
-        users: generatedData?.users.length || 0,
-        vehicles: generatedData?.vehicles.length || 0,
-        garages: generatedData?.garages.length || 0,
-        zones: generatedData?.zones.length || 0,
-        sessions: generatedData?.sessions.length || 0,
-        wallets: generatedData?.wallets.length || 0,
-        transactions: generatedData?.transactions.length || 0,
-        notifications: generatedData?.notifications.length || 0,
-        paymentMethods: generatedData?.paymentMethods.length || 0,
+        users: userStore.size,
+        vehicles: vehicleStore.size,
+        garages: garageStore.size,
+        zones: zoneStore.size,
+        sessions: sessionStore.size,
+        wallets: walletStore.size,
+        transactions: transactionStore.size,
+        notifications: notificationStore.size,
+        paymentMethods: paymentMethodStore.size,
     });
 });
 

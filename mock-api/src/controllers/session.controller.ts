@@ -1,11 +1,6 @@
 import { Request, Response } from 'express';
 import { ParkingSession } from '../types';
-import sessions from '../data/sessions.json';
-import garages from '../data/garages.json';
-
-// In-memory session store
-const activeSessionStore: Map<string, ParkingSession> = new Map();
-const sessionHistory: ParkingSession[] = [...(sessions as ParkingSession[])];
+import { sessionStore, garageStore } from '../services/data.store';
 
 // Socket.io instance will be set from app.ts
 let ioInstance: any = null;
@@ -24,7 +19,7 @@ export class SessionController {
             return;
         }
 
-        const activeSession = Array.from(activeSessionStore.values()).find(
+        const activeSession = Array.from(sessionStore.values()).find(
             (s) => s.userId === userId && s.status === 'active'
         );
 
@@ -66,7 +61,7 @@ export class SessionController {
         }
 
         // Check if user already has an active session
-        const existingSession = Array.from(activeSessionStore.values()).find(
+        const existingSession = Array.from(sessionStore.values()).find(
             (s) => s.userId === userId && s.status === 'active'
         );
 
@@ -75,8 +70,8 @@ export class SessionController {
             return;
         }
 
-        // Find garage
-        const garage = garages.find((g) => g.id === garageId);
+        // Find garage in store
+        const garage = garageStore.get(garageId);
         if (!garage) {
             res.status(404).json({ error: 'Garage not found' });
             return;
@@ -95,7 +90,7 @@ export class SessionController {
             currency: garage.currency,
         };
 
-        activeSessionStore.set(session.id, session);
+        sessionStore.set(session.id, session);
 
         // Emit via WebSocket
         if (ioInstance) {
@@ -115,13 +110,7 @@ export class SessionController {
             return;
         }
 
-        // Check active sessions first
-        let session = activeSessionStore.get(id);
-
-        // If not found, check history
-        if (!session) {
-            session = sessionHistory.find((s) => s.id === id);
-        }
+        const session = sessionStore.get(id);
 
         if (!session) {
             res.status(404).json({ error: 'Session not found' });
@@ -159,7 +148,7 @@ export class SessionController {
             return;
         }
 
-        const session = activeSessionStore.get(id);
+        const session = sessionStore.get(id);
 
         if (!session) {
             res.status(404).json({ error: 'Session not found' });
@@ -168,6 +157,11 @@ export class SessionController {
 
         if (session.userId !== userId) {
             res.status(403).json({ error: 'Forbidden' });
+            return;
+        }
+
+        if (session.status !== 'active') {
+            res.status(400).json({ error: 'Session is not active' });
             return;
         }
 
@@ -185,12 +179,10 @@ export class SessionController {
             status: 'completed',
             elapsedMinutes,
             totalFee,
-            paymentStatus: 'paid', // Assume auto-payment
+            paymentStatus: 'paid', // Assume auto-payment for mock
         };
 
-        // Remove from active, add to history
-        activeSessionStore.delete(id);
-        sessionHistory.unshift(completedSession);
+        sessionStore.set(id, completedSession);
 
         // Emit via WebSocket
         if (ioInstance) {
@@ -211,7 +203,7 @@ export class SessionController {
             return;
         }
 
-        const session = activeSessionStore.get(id);
+        const session = sessionStore.get(id);
 
         if (!session) {
             res.status(404).json({ error: 'Session not found' });
@@ -242,7 +234,11 @@ export class SessionController {
             return;
         }
 
-        const userSessions = sessionHistory.filter((s) => s.userId === userId);
+        // Get all sessions for user, sorted by date desc
+        const userSessions = Array.from(sessionStore.values())
+            .filter((s) => s.userId === userId)
+            .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+
         const pageNum = parseInt(page as string, 10);
         const limitNum = parseInt(limit as string, 10);
         const startIndex = (pageNum - 1) * limitNum;

@@ -74,9 +74,9 @@ npm run dev
 ### Payments
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/v1/payments/methods` | Get payment methods |
-| POST | `/api/v1/payments/methods` | Add payment method |
-| DELETE | `/api/v1/payments/methods/:id` | Delete payment method |
+| GET | `/api/v1/payment-methods` | Get payment methods |
+| POST | `/api/v1/payment-methods` | Add payment method |
+| DELETE | `/api/v1/payment-methods/:id` | Delete payment method |
 | POST | `/api/v1/payments/intents` | Create payment intent |
 | POST | `/api/v1/payments/confirm` | Confirm payment |
 
@@ -97,7 +97,12 @@ npm run dev
 | GET | `/api/v1/notifications` | Get notifications |
 | PUT | `/api/v1/notifications/:id/read` | Mark as read |
 | PUT | `/api/v1/notifications/read-all` | Mark all as read |
-| POST | `/api/v1/notifications/devices/register` | Register device |
+
+### Devices
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/devices/register` | Register device |
+| DELETE | `/api/v1/devices/unregister` | Unregister device |
 
 ## Authentication
 

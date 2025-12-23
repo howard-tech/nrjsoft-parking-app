@@ -1,0 +1,67 @@
+[
+    {
+        "id": "zone_001",
+        "name": "Zone A - City Center",
+        "type": "RED",
+        "location": {
+            "lat": 43.8367,
+            "lng": 25.9678
+        },
+        "hourlyRate": 3.00,
+        "maxDuration": 120,
+        "currency": "EUR",
+        "restrictions": "Mon-Sat 08:00-20:00"
+    },
+    {
+        "id": "zone_002",
+        "name": "Zone B - Old Town",
+        "type": "BLUE",
+        "location": {
+            "lat": 43.8401,
+            "lng": 25.9612
+        },
+        "hourlyRate": 2.00,
+        "maxDuration": 180,
+        "currency": "EUR",
+        "restrictions": "Mon-Fri 08:00-18:00"
+    },
+    {
+        "id": "zone_003",
+        "name": "Zone C - Residential",
+        "type": "GREEN",
+        "location": {
+            "lat": 43.8289,
+            "lng": 25.9534
+        },
+        "hourlyRate": 1.00,
+        "maxDuration": 480,
+        "currency": "EUR",
+        "restrictions": "Mon-Fri 08:00-18:00"
+    },
+    {
+        "id": "zone_004",
+        "name": "Zone D - Business District",
+        "type": "RED",
+        "location": {
+            "lat": 43.8445,
+            "lng": 25.9723
+        },
+        "hourlyRate": 3.50,
+        "maxDuration": 120,
+        "currency": "EUR",
+        "restrictions": "Mon-Sat 07:00-21:00"
+    },
+    {
+        "id": "zone_005",
+        "name": "Zone E - University Area",
+        "type": "BLUE",
+        "location": {
+            "lat": 43.8523,
+            "lng": 25.9456
+        },
+        "hourlyRate": 1.50,
+        "maxDuration": 240,
+        "currency": "EUR",
+        "restrictions": "Mon-Fri 07:00-19:00"
+    }
+]

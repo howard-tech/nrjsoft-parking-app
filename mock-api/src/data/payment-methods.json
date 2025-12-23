@@ -1,0 +1,38 @@
+[
+    {
+        "id": "pm_001",
+        "userId": "user_001",
+        "type": "card",
+        "last4": "4242",
+        "brand": "Visa",
+        "expiryMonth": 12,
+        "expiryYear": 2027,
+        "isDefault": true,
+        "createdAt": "2024-01-20T10:00:00.000Z"
+    },
+    {
+        "id": "pm_002",
+        "userId": "user_001",
+        "type": "apple_pay",
+        "isDefault": false,
+        "createdAt": "2024-02-15T14:00:00.000Z"
+    },
+    {
+        "id": "pm_003",
+        "userId": "user_002",
+        "type": "card",
+        "last4": "5678",
+        "brand": "Mastercard",
+        "expiryMonth": 6,
+        "expiryYear": 2026,
+        "isDefault": true,
+        "createdAt": "2024-03-01T11:00:00.000Z"
+    },
+    {
+        "id": "pm_004",
+        "userId": "user_002",
+        "type": "google_pay",
+        "isDefault": false,
+        "createdAt": "2024-03-05T09:00:00.000Z"
+    }
+]

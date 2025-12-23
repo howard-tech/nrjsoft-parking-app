@@ -1,0 +1,71 @@
+[
+    {
+        "id": "txn_001",
+        "walletId": "wallet_001",
+        "userId": "user_001",
+        "type": "topup",
+        "amount": 50.00,
+        "currency": "EUR",
+        "description": "Wallet top-up",
+        "status": "completed",
+        "createdAt": "2024-12-15T10:00:00.000Z"
+    },
+    {
+        "id": "txn_002",
+        "walletId": "wallet_001",
+        "userId": "user_001",
+        "type": "payment",
+        "amount": -15.93,
+        "currency": "EUR",
+        "description": "Parking at NRJ Downtown Hub",
+        "status": "completed",
+        "createdAt": "2024-12-20T12:45:00.000Z",
+        "sessionId": "session_001"
+    },
+    {
+        "id": "txn_003",
+        "walletId": "wallet_001",
+        "userId": "user_001",
+        "type": "payment",
+        "amount": -13.00,
+        "currency": "EUR",
+        "description": "Parking at Danube Plaza Garage",
+        "status": "completed",
+        "createdAt": "2024-12-18T16:30:00.000Z",
+        "sessionId": "session_002"
+    },
+    {
+        "id": "txn_004",
+        "walletId": "wallet_002",
+        "userId": "user_002",
+        "type": "topup",
+        "amount": 100.00,
+        "currency": "EUR",
+        "description": "Wallet top-up",
+        "status": "completed",
+        "createdAt": "2024-12-01T09:00:00.000Z"
+    },
+    {
+        "id": "txn_005",
+        "walletId": "wallet_002",
+        "userId": "user_002",
+        "type": "topup",
+        "amount": 55.00,
+        "currency": "EUR",
+        "description": "Wallet top-up",
+        "status": "completed",
+        "createdAt": "2024-12-20T14:00:00.000Z"
+    },
+    {
+        "id": "txn_006",
+        "walletId": "wallet_002",
+        "userId": "user_002",
+        "type": "payment",
+        "amount": -35.00,
+        "currency": "EUR",
+        "description": "Parking at Central Station",
+        "status": "completed",
+        "createdAt": "2024-12-22T18:00:00.000Z",
+        "sessionId": "session_003"
+    }
+]

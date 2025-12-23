@@ -1,0 +1,167 @@
+[
+    {
+        "id": "garage_001",
+        "name": "NRJ Downtown Hub",
+        "address": "23 Marina Blvd, Ruse",
+        "location": {
+            "lat": 43.8356,
+            "lng": 25.9657
+        },
+        "entryMethod": "ANPR",
+        "availableSlots": 45,
+        "totalSlots": 120,
+        "hourlyRate": 4.90,
+        "maxTime": 480,
+        "currency": "EUR",
+        "features": {
+            "evChargers": 4,
+            "security": "ANPR + patrols",
+            "coveredParking": true,
+            "disabledAccess": true
+        },
+        "policies": {
+            "prepayRequired": false,
+            "badgeAfterHour": null,
+            "overstayPenalty": 15
+        },
+        "operatingHours": {
+            "open": "00:00",
+            "close": "24:00"
+        },
+        "images": [
+            "https://images.unsplash.com/photo-1590674899484-13da0f721f44?w=800"
+        ]
+    },
+    {
+        "id": "garage_002",
+        "name": "Danube Plaza Garage",
+        "address": "6 Freedom Sq, Ruse",
+        "location": {
+            "lat": 43.8489,
+            "lng": 25.9534
+        },
+        "entryMethod": "QR",
+        "availableSlots": 12,
+        "totalSlots": 80,
+        "hourlyRate": 5.20,
+        "maxTime": 240,
+        "currency": "EUR",
+        "features": {
+            "evChargers": 2,
+            "security": "CCTV",
+            "coveredParking": true,
+            "disabledAccess": true
+        },
+        "policies": {
+            "prepayRequired": false,
+            "badgeAfterHour": 22,
+            "overstayPenalty": 12
+        },
+        "operatingHours": {
+            "open": "06:00",
+            "close": "23:00"
+        },
+        "images": [
+            "https://images.unsplash.com/photo-1573348722427-f1d6819fdf98?w=800"
+        ]
+    },
+    {
+        "id": "garage_003",
+        "name": "Central Station Parking",
+        "address": "1 Station Square, Ruse",
+        "location": {
+            "lat": 43.8512,
+            "lng": 25.9701
+        },
+        "entryMethod": "TICKET",
+        "availableSlots": 78,
+        "totalSlots": 200,
+        "hourlyRate": 3.50,
+        "maxTime": null,
+        "currency": "EUR",
+        "features": {
+            "evChargers": 6,
+            "security": "24/7 staff",
+            "coveredParking": false,
+            "disabledAccess": true
+        },
+        "policies": {
+            "prepayRequired": true,
+            "badgeAfterHour": null,
+            "overstayPenalty": 10
+        },
+        "operatingHours": {
+            "open": "00:00",
+            "close": "24:00"
+        },
+        "images": [
+            "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800"
+        ]
+    },
+    {
+        "id": "garage_004",
+        "name": "Mall Ruse Garage",
+        "address": "15 Lipnik Blvd, Ruse",
+        "location": {
+            "lat": 43.8623,
+            "lng": 25.9412
+        },
+        "entryMethod": "ANPR",
+        "availableSlots": 156,
+        "totalSlots": 500,
+        "hourlyRate": 2.00,
+        "maxTime": 600,
+        "currency": "EUR",
+        "features": {
+            "evChargers": 10,
+            "security": "ANPR + CCTV",
+            "coveredParking": true,
+            "disabledAccess": true
+        },
+        "policies": {
+            "prepayRequired": false,
+            "badgeAfterHour": null,
+            "overstayPenalty": 5
+        },
+        "operatingHours": {
+            "open": "08:00",
+            "close": "22:00"
+        },
+        "images": [
+            "https://images.unsplash.com/photo-1545179605-1296651e9d43?w=800"
+        ]
+    },
+    {
+        "id": "garage_005",
+        "name": "City Hospital Parking",
+        "address": "8 Health St, Ruse",
+        "location": {
+            "lat": 43.8278,
+            "lng": 25.9589
+        },
+        "entryMethod": "QR",
+        "availableSlots": 23,
+        "totalSlots": 60,
+        "hourlyRate": 1.50,
+        "maxTime": 720,
+        "currency": "EUR",
+        "features": {
+            "evChargers": 2,
+            "security": "CCTV",
+            "coveredParking": false,
+            "disabledAccess": true
+        },
+        "policies": {
+            "prepayRequired": false,
+            "badgeAfterHour": null,
+            "overstayPenalty": 8
+        },
+        "operatingHours": {
+            "open": "00:00",
+            "close": "24:00"
+        },
+        "images": [
+            "https://images.unsplash.com/photo-1611348586758-5c1e7ec62e5a?w=800"
+        ]
+    }
+]

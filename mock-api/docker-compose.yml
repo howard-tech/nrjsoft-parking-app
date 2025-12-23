@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  mock-api:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - JWT_SECRET=mock-jwt-secret-key-nrjsoft-parking
+      - RESPONSE_DELAY=200
+    volumes:
+      - ./src/data:/app/dist/data
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health" ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

@@ -1,0 +1,361 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "NRJSoft Parking Mock API",
+        "description": "Mock Backend API for NRJSoft Parking Mobile Application",
+        "version": "1.0.0",
+        "contact": {
+            "name": "EmeSoft JSC",
+            "url": "https://www.emesoft.net",
+            "email": "contact@emesoft.net"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3001/api/v1",
+            "description": "Development server"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Authentication endpoints"
+        },
+        {
+            "name": "User",
+            "description": "User profile and vehicles"
+        },
+        {
+            "name": "Parking",
+            "description": "Parking garages"
+        },
+        {
+            "name": "Sessions",
+            "description": "Parking sessions"
+        },
+        {
+            "name": "Wallet",
+            "description": "Wallet and transactions"
+        },
+        {
+            "name": "Payment Methods",
+            "description": "Payment methods management"
+        },
+        {
+            "name": "Payments",
+            "description": "Payment processing"
+        },
+        {
+            "name": "On-Street",
+            "description": "On-street parking"
+        },
+        {
+            "name": "Notifications",
+            "description": "Notifications"
+        },
+        {
+            "name": "Devices",
+            "description": "Device registration"
+        }
+    ],
+    "paths": {
+        "/auth/otp-request": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Request OTP",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+359888123456"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "user@example.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP sent successfully"
+                    }
+                }
+            }
+        },
+        "/auth/otp-verify": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Verify OTP (use 123456 for testing)",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "otp"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "otp": {
+                                        "type": "string",
+                                        "example": "123456"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Authentication successful"
+                    }
+                }
+            }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user profile",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User profile"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update user profile",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated profile"
+                    }
+                }
+            }
+        },
+        "/me/vehicles": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user vehicles",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of vehicles"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Add vehicle",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Vehicle created"
+                    }
+                }
+            }
+        },
+        "/parking/nearby": {
+            "get": {
+                "tags": [
+                    "Parking"
+                ],
+                "summary": "Get nearby garages",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "lng",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "radius",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 5000
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of nearby garages"
+                    }
+                }
+            }
+        },
+        "/sessions/active": {
+            "get": {
+                "tags": [
+                    "Sessions"
+                ],
+                "summary": "Get active session",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active session or none"
+                    }
+                }
+            }
+        },
+        "/wallet": {
+            "get": {
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Get wallet balance",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wallet info"
+                    }
+                }
+            }
+        },
+        "/payment-methods": {
+            "get": {
+                "tags": [
+                    "Payment Methods"
+                ],
+                "summary": "Get payment methods",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of payment methods"
+                    }
+                }
+            }
+        },
+        "/onstreet/zones": {
+            "get": {
+                "tags": [
+                    "On-Street"
+                ],
+                "summary": "Get parking zones",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of zones"
+                    }
+                }
+            }
+        },
+        "/notifications": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "summary": "Get notifications",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of notifications"
+                    }
+                }
+            }
+        },
+        "/devices/register": {
+            "post": {
+                "tags": [
+                    "Devices"
+                ],
+                "summary": "Register device for push notifications",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Device registered"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+[
+    {
+        "id": "wallet_001",
+        "userId": "user_001",
+        "balance": 45.50,
+        "currency": "EUR",
+        "updatedAt": "2024-12-20T12:45:00.000Z"
+    },
+    {
+        "id": "wallet_002",
+        "userId": "user_002",
+        "balance": 120.00,
+        "currency": "EUR",
+        "updatedAt": "2024-12-22T18:00:00.000Z"
+    },
+    {
+        "id": "wallet_003",
+        "userId": "user_003",
+        "balance": 0.00,
+        "currency": "EUR",
+        "updatedAt": "2024-03-10T09:00:00.000Z"
+    }
+]

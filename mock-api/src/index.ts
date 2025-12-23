@@ -8,8 +8,8 @@ httpServer.listen(PORT, () => {
     console.log('╔════════════════════════════════════════════════════════╗');
     console.log('║       NRJSoft Parking - Mock API Server                ║');
     console.log('╠════════════════════════════════════════════════════════╣');
-    console.log(`║  🚀 Server running at: http://localhost:${PORT}          ║`);
-    console.log(`║  📚 API Base URL:      http://localhost:${PORT}/api/v1   ║`);
+    console.log(`║  🚀 Server running at: http://localhost:${PORT}           ║`);
+    console.log(`║  📚 API Base URL:      http://localhost:${PORT}/api/v1    ║`);
     console.log('║  🔌 WebSocket:         Enabled                         ║');
     console.log('╠════════════════════════════════════════════════════════╣');
     console.log('║  📋 Available Endpoints:                               ║');

@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
 import { Zone, ParkingSession } from '../types';
-import zones from '../data/zones.json';
-
-// In-memory session store for on-street parking
-const onstreetSessionStore: Map<string, ParkingSession> = new Map();
+import { zoneStore, sessionStore } from '../services/data.store';
 
 // Socket.io instance
 let ioInstance: any = null;
@@ -16,6 +13,7 @@ export class OnstreetController {
     // GET /onstreet/zones
     getZones = async (req: Request, res: Response): Promise<void> => {
         const { lat, lng, radius = 2000 } = req.query;
+        const zones = Array.from(zoneStore.values());
 
         if (!lat || !lng) {
             // Return all zones if no coordinates
@@ -28,7 +26,7 @@ export class OnstreetController {
         const radiusMeters = parseInt(radius as string, 10);
 
         // Simple distance calculation
-        const nearbyZones = (zones as Zone[]).filter((zone) => {
+        const nearbyZones = zones.filter((zone) => {
             const dlat = zone.location.lat - latitude;
             const dlng = zone.location.lng - longitude;
             const distance = Math.sqrt(dlat * dlat + dlng * dlng) * 111000; // Rough meters
@@ -42,7 +40,7 @@ export class OnstreetController {
     getZone = async (req: Request, res: Response): Promise<void> => {
         const { id } = req.params;
 
-        const zone = (zones as Zone[]).find((z) => z.id === id);
+        const zone = zoneStore.get(id);
 
         if (!zone) {
             res.status(404).json({ error: 'Zone not found' });
@@ -61,7 +59,7 @@ export class OnstreetController {
             return;
         }
 
-        const zone = (zones as Zone[]).find((z) => z.id === zoneId);
+        const zone = zoneStore.get(zoneId);
 
         if (!zone) {
             res.status(404).json({ error: 'Zone not found' });
@@ -110,8 +108,8 @@ export class OnstreetController {
         }
 
         // Check for existing active session
-        const existingSession = Array.from(onstreetSessionStore.values()).find(
-            (s) => s.userId === userId && s.status === 'active'
+        const existingSession = Array.from(sessionStore.values()).find(
+            (s) => s.userId === userId && s.status === 'active' && s.zoneId !== undefined
         );
 
         if (existingSession) {
@@ -119,7 +117,7 @@ export class OnstreetController {
             return;
         }
 
-        const zone = (zones as Zone[]).find((z) => z.id === zoneId);
+        const zone = zoneStore.get(zoneId);
 
         if (!zone) {
             res.status(404).json({ error: 'Zone not found' });
@@ -147,7 +145,7 @@ export class OnstreetController {
             paymentStatus: 'paid',
         };
 
-        onstreetSessionStore.set(session.id, session);
+        sessionStore.set(session.id, session);
 
         // Emit via WebSocket
         if (ioInstance) {
@@ -166,8 +164,8 @@ export class OnstreetController {
             return;
         }
 
-        const activeSession = Array.from(onstreetSessionStore.values()).find(
-            (s) => s.userId === userId && s.status === 'active'
+        const activeSession = Array.from(sessionStore.values()).find(
+            (s) => s.userId === userId && s.status === 'active' && s.zoneId !== undefined
         );
 
         if (!activeSession) {
@@ -183,7 +181,7 @@ export class OnstreetController {
         // Check if expired
         if (remainingMinutes <= 0) {
             activeSession.status = 'completed';
-            onstreetSessionStore.set(activeSession.id, activeSession);
+            sessionStore.set(activeSession.id, activeSession);
 
             if (ioInstance) {
                 ioInstance.to(`user_${userId}`).emit('ONSTREET_SESSION_EXPIRED', activeSession);
@@ -218,7 +216,7 @@ export class OnstreetController {
             return;
         }
 
-        const session = onstreetSessionStore.get(id);
+        const session = sessionStore.get(id);
 
         if (!session || session.userId !== userId) {
             res.status(404).json({ error: 'Session not found' });
@@ -230,7 +228,7 @@ export class OnstreetController {
             return;
         }
 
-        const zone = (zones as Zone[]).find((z) => z.id === session.zoneId);
+        const zone = zoneStore.get(session.zoneId!);
         if (!zone) {
             res.status(404).json({ error: 'Zone not found' });
             return;
@@ -248,7 +246,7 @@ export class OnstreetController {
         session.elapsedMinutes = (session.elapsedMinutes || 0) + additionalMinutes;
         session.totalFee = (session.totalFee || 0) + additionalFee;
 
-        onstreetSessionStore.set(id, session);
+        sessionStore.set(id, session);
 
         // Emit via WebSocket
         if (ioInstance) {
@@ -272,7 +270,7 @@ export class OnstreetController {
             return;
         }
 
-        const session = onstreetSessionStore.get(id);
+        const session = sessionStore.get(id);
 
         if (!session || session.userId !== userId) {
             res.status(404).json({ error: 'Session not found' });
@@ -299,7 +297,7 @@ export class OnstreetController {
         session.elapsedMinutes = actualMinutes;
         session.totalFee = (session.totalFee || 0) - refundAmount;
 
-        onstreetSessionStore.set(id, session);
+        sessionStore.set(id, session);
 
         // Emit via WebSocket
         if (ioInstance) {

@@ -1,35 +1,226 @@
 [
-    {
-        "id": "vehicle_001",
-        "userId": "user_001",
-        "plate": "CB1234AB",
-        "nickname": "My BMW",
-        "make": "BMW",
-        "model": "320d",
-        "color": "Black",
-        "isDefault": true,
-        "createdAt": "2024-01-20T10:00:00.000Z"
-    },
-    {
-        "id": "vehicle_002",
-        "userId": "user_001",
-        "plate": "CB5678CD",
-        "nickname": "Wife's Car",
-        "make": "Audi",
-        "model": "A3",
-        "color": "White",
-        "isDefault": false,
-        "createdAt": "2024-02-15T14:30:00.000Z"
-    },
-    {
-        "id": "vehicle_003",
-        "userId": "user_002",
-        "plate": "PB9876EF",
-        "nickname": "City Car",
-        "make": "VW",
-        "model": "Golf",
-        "color": "Blue",
-        "isDefault": true,
-        "createdAt": "2024-03-01T11:00:00.000Z"
-    }
+  {
+    "id": "vehicle_SWWafI41",
+    "userId": "user_49dOCTl8",
+    "plate": "8R9 3559",
+    "nickname": "Work Car",
+    "make": "BMW",
+    "model": "320d",
+    "color": "White",
+    "isDefault": true,
+    "createdAt": "2025-12-12T16:21:55.574Z"
+  },
+  {
+    "id": "vehicle_YLJGdC8D",
+    "userId": "user_49dOCTl8",
+    "plate": "0D3 8606",
+    "nickname": "Second Car",
+    "make": "Skoda",
+    "model": "Karoq",
+    "color": "Yellow",
+    "isDefault": false,
+    "createdAt": "2025-09-16T13:45:52.079Z"
+  },
+  {
+    "id": "vehicle_JkAxzYHG",
+    "userId": "user_sEf5X4zi",
+    "plate": "EL 2948 OH",
+    "make": "Mercedes-Benz",
+    "model": "S350",
+    "color": "Red",
+    "isDefault": true,
+    "createdAt": "2024-11-21T13:14:33.889Z"
+  },
+  {
+    "id": "vehicle_DtGoiYDW",
+    "userId": "user_sEf5X4zi",
+    "plate": "WC 8190 IY",
+    "nickname": "Family Car",
+    "make": "Skoda",
+    "model": "Superb",
+    "color": "Blue",
+    "isDefault": false,
+    "createdAt": "2024-02-14T06:23:11.020Z"
+  },
+  {
+    "id": "vehicle_nrJjwa0l",
+    "userId": "user_yM4DDf7v",
+    "plate": "CD-38424T",
+    "nickname": "Family Car",
+    "make": "Toyota",
+    "model": "Yaris",
+    "color": "Yellow",
+    "isDefault": true,
+    "createdAt": "2024-07-01T01:14:30.897Z"
+  },
+  {
+    "id": "vehicle_D7mUOgDy",
+    "userId": "user_yM4DDf7v",
+    "plate": "WG-16136D",
+    "make": "Renault",
+    "model": "Captur",
+    "color": "Brown",
+    "isDefault": false,
+    "createdAt": "2024-05-07T08:40:52.552Z"
+  },
+  {
+    "id": "vehicle_aM8vGWUW",
+    "userId": "user_yM4DDf7v",
+    "plate": "HH-70709C",
+    "nickname": "Family Car",
+    "make": "Mercedes-Benz",
+    "model": "GLC",
+    "color": "Red",
+    "isDefault": false,
+    "createdAt": "2025-09-13T15:01:30.059Z"
+  },
+  {
+    "id": "vehicle_RXJwD6tE",
+    "userId": "user_8bnCjB6s",
+    "plate": "5F1 4817",
+    "nickname": "Family Car",
+    "make": "Renault",
+    "model": "Megane",
+    "color": "Orange",
+    "isDefault": true,
+    "createdAt": "2024-03-14T20:44:46.240Z"
+  },
+  {
+    "id": "vehicle_f8qTZUf0",
+    "userId": "user_vCt11loB",
+    "plate": "KG 9927 TK",
+    "nickname": "Work Car",
+    "make": "Renault",
+    "model": "Megane",
+    "color": "Red",
+    "isDefault": true,
+    "createdAt": "2023-12-31T15:41:58.754Z"
+  },
+  {
+    "id": "vehicle_eNaX98Zf",
+    "userId": "user_vCt11loB",
+    "plate": "DY 4821 MO",
+    "nickname": "Work Car",
+    "make": "Peugeot",
+    "model": "208",
+    "color": "Orange",
+    "isDefault": false,
+    "createdAt": "2025-01-03T10:47:55.721Z"
+  },
+  {
+    "id": "vehicle_t1xcypdL",
+    "userId": "user_3YBUnHcQ",
+    "plate": "HI 3893 ZN",
+    "make": "Peugeot",
+    "model": "508",
+    "color": "Green",
+    "isDefault": true,
+    "createdAt": "2024-10-21T11:21:11.005Z"
+  },
+  {
+    "id": "vehicle_YHx0jN2H",
+    "userId": "user_3YBUnHcQ",
+    "plate": "HU 6747 XA",
+    "nickname": "Second Car",
+    "make": "Mercedes-Benz",
+    "model": "GLC",
+    "color": "Green",
+    "isDefault": false,
+    "createdAt": "2025-11-05T23:37:35.749Z"
+  },
+  {
+    "id": "vehicle_oIBLAJs5",
+    "userId": "user_3YBUnHcQ",
+    "plate": "AR 6742 ML",
+    "nickname": "Work Car",
+    "make": "Peugeot",
+    "model": "508",
+    "color": "Silver",
+    "isDefault": false,
+    "createdAt": "2024-01-21T22:15:24.080Z"
+  },
+  {
+    "id": "vehicle_dzxGoIer",
+    "userId": "user_LXpdyEXJ",
+    "plate": "8U5 5265",
+    "nickname": "My Car",
+    "make": "Toyota",
+    "model": "C-HR",
+    "color": "Blue",
+    "isDefault": true,
+    "createdAt": "2025-07-27T23:59:19.674Z"
+  },
+  {
+    "id": "vehicle_0juSwG1F",
+    "userId": "user_LeNy9yKH",
+    "plate": "0V5 7895",
+    "make": "Skoda",
+    "model": "Octavia",
+    "color": "Black",
+    "isDefault": true,
+    "createdAt": "2025-07-13T17:12:48.864Z"
+  },
+  {
+    "id": "vehicle_CsAneVoT",
+    "userId": "user_LeNy9yKH",
+    "plate": "3L8 5768",
+    "nickname": "Work Car",
+    "make": "Skoda",
+    "model": "Fabia",
+    "color": "Blue",
+    "isDefault": false,
+    "createdAt": "2025-09-15T18:45:23.993Z"
+  },
+  {
+    "id": "vehicle_zqINHUZG",
+    "userId": "user_LeNy9yKH",
+    "plate": "1O9 4503",
+    "nickname": "Family Car",
+    "make": "Peugeot",
+    "model": "308",
+    "color": "Gray",
+    "isDefault": false,
+    "createdAt": "2024-02-17T04:17:57.579Z"
+  },
+  {
+    "id": "vehicle_wuyqUHVa",
+    "userId": "user_wpbyX3M6",
+    "plate": "XL-WC 3089",
+    "make": "BMW",
+    "model": "320d",
+    "color": "Gray",
+    "isDefault": true,
+    "createdAt": "2024-12-25T19:55:24.723Z"
+  },
+  {
+    "id": "vehicle_cxvT5zp0",
+    "userId": "user_Z9N3NwS2",
+    "plate": "NP-15249B",
+    "make": "Mercedes-Benz",
+    "model": "S350",
+    "color": "Yellow",
+    "isDefault": true,
+    "createdAt": "2025-01-15T08:03:21.886Z"
+  },
+  {
+    "id": "vehicle_paynTXip",
+    "userId": "user_Z9N3NwS2",
+    "plate": "UP-08670M",
+    "make": "Peugeot",
+    "model": "508",
+    "color": "Brown",
+    "isDefault": false,
+    "createdAt": "2025-10-13T09:45:35.217Z"
+  },
+  {
+    "id": "vehicle_Fwt72m9Y",
+    "userId": "user_Z9N3NwS2",
+    "plate": "KU-58947E",
+    "nickname": "Work Car",
+    "make": "Audi",
+    "model": "Q7",
+    "color": "Blue",
+    "isDefault": false,
+    "createdAt": "2025-02-24T11:23:22.399Z"
+  }
 ]

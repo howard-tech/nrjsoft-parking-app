@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Garage } from '../types';
-import garages from '../data/garages.json';
+import { garageStore } from '../services/data.store';
 
 // Calculate distance between two points (Haversine formula)
 function calculateDistance(
@@ -36,9 +36,10 @@ export class ParkingController {
         const latitude = parseFloat(lat as string);
         const longitude = parseFloat(lng as string);
         const radiusMeters = parseInt(radius as string, 10);
+        const garages = Array.from(garageStore.values());
 
         // Filter garages within radius and calculate distances
-        const nearbyGarages = (garages as Garage[])
+        const nearbyGarages = garages
             .map((garage) => {
                 const distance = calculateDistance(
                     latitude,
@@ -51,7 +52,8 @@ export class ParkingController {
             .filter((garage) => garage.distance <= radiusMeters)
             .sort((a, b) => a.distance - b.distance);
 
-        // Simulate random availability changes
+        // Simulated availability logic remains visual-only, we don't persist it to store 
+        // to avoid race conditions with generator in this simple mock
         const withUpdatedAvailability = nearbyGarages.map((garage) => ({
             ...garage,
             availableSlots: Math.max(
@@ -70,7 +72,7 @@ export class ParkingController {
     getGarage = async (req: Request, res: Response): Promise<void> => {
         const { garageId } = req.params;
 
-        const garage = (garages as Garage[]).find((g) => g.id === garageId);
+        const garage = garageStore.get(garageId);
 
         if (!garage) {
             res.status(404).json({ error: 'Garage not found' });
@@ -93,7 +95,7 @@ export class ParkingController {
     search = async (req: Request, res: Response): Promise<void> => {
         const { q, lat, lng, minSlots, maxRate, features } = req.query;
 
-        let results = garages as Garage[];
+        let results = Array.from(garageStore.values());
 
         // Search by name or address
         if (q) {
@@ -146,7 +148,7 @@ export class ParkingController {
                         garage.location.lng
                     ),
                 }))
-                .sort((a, b) => a.distance - b.distance);
+                .sort((a, b) => (a.distance || 0) - (b.distance || 0));
         }
 
         res.json({

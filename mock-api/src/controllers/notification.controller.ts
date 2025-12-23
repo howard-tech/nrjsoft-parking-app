@@ -1,13 +1,8 @@
 import { Request, Response } from 'express';
 import { Notification } from '../types';
-import notifications from '../data/notifications.json';
+import { notificationStore } from '../services/data.store';
 
-// In-memory store
-const notificationStore: Map<string, Notification> = new Map(
-    notifications.map((n) => [n.id, n as Notification])
-);
-
-// Device tokens store
+// Device tokens store (not persisted in generated data for now, runtime only)
 const deviceTokenStore: Map<string, string[]> = new Map();
 
 export class NotificationController {

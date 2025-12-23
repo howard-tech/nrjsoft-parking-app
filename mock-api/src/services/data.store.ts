@@ -1,18 +1,23 @@
-import { User, Vehicle } from '../types';
-import users from '../data/users.json';
-import vehicles from '../data/vehicles.json';
+import {
+    User, Vehicle, Garage, ParkingSession,
+    Zone, Wallet, Transaction, Notification, PaymentMethod
+} from '../types';
 
-// Centralized user store - shared across all controllers
-export const userStore: Map<string, User> = new Map(
-    users.map((u) => [u.id, u as User])
-);
+// Centralized stores - shared across all controllers
+// Initialized empty to avoid duplication - populated by initializeGeneratedData()
+export const userStore: Map<string, User> = new Map();
+export const vehicleStore: Map<string, Vehicle> = new Map();
+export const garageStore: Map<string, Garage> = new Map();
+export const sessionStore: Map<string, ParkingSession> = new Map();
+export const zoneStore: Map<string, Zone> = new Map();
+export const walletStore: Map<string, Wallet> = new Map();
+export const transactionStore: Map<string, Transaction> = new Map();
+export const notificationStore: Map<string, Notification> = new Map();
+export const paymentMethodStore: Map<string, PaymentMethod> = new Map();
 
-// Centralized vehicle store
-export const vehicleStore: Map<string, Vehicle> = new Map(
-    vehicles.map((v) => [v.id, v as Vehicle])
-);
+// --- Helper Functions ---
 
-// Helper functions for user management
+// User Management
 export function getUser(userId: string): User | undefined {
     return userStore.get(userId);
 }
@@ -39,7 +44,7 @@ export function updateUser(userId: string, updates: Partial<User>): User | undef
     return updatedUser;
 }
 
-// Helper functions for vehicle management
+// Vehicle Management
 export function getVehicle(vehicleId: string): Vehicle | undefined {
     return vehicleStore.get(vehicleId);
 }
@@ -72,4 +77,17 @@ export function setDefaultVehicle(userId: string, vehicleId: string): void {
         .forEach((v) => {
             vehicleStore.set(v.id, { ...v, isDefault: v.id === vehicleId });
         });
+}
+
+// Clear all data
+export function clearAllData(): void {
+    userStore.clear();
+    vehicleStore.clear();
+    garageStore.clear();
+    sessionStore.clear();
+    zoneStore.clear();
+    walletStore.clear();
+    transactionStore.clear();
+    notificationStore.clear();
+    paymentMethodStore.clear();
 }

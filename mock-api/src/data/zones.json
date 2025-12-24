@@ -1,67 +1,392 @@
 [
-    {
-        "id": "zone_001",
-        "name": "Zone A - City Center",
-        "type": "RED",
-        "location": {
-            "lat": 43.8367,
-            "lng": 25.9678
-        },
-        "hourlyRate": 3.00,
-        "maxDuration": 120,
-        "currency": "EUR",
-        "restrictions": "Mon-Sat 08:00-20:00"
+  {
+    "id": "zone_K5PyA3ic",
+    "name": "RED Zone - Beech Drive",
+    "type": "RED",
+    "location": {
+      "lat": 43.829346320297816,
+      "lng": 25.98263709426096
     },
-    {
-        "id": "zone_002",
-        "name": "Zone B - Old Town",
-        "type": "BLUE",
-        "location": {
-            "lat": 43.8401,
-            "lng": 25.9612
-        },
-        "hourlyRate": 2.00,
-        "maxDuration": 180,
-        "currency": "EUR",
-        "restrictions": "Mon-Fri 08:00-18:00"
+    "hourlyRate": 3.86,
+    "maxDuration": 120,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_FkZEZ7j7",
+    "name": "BLUE Zone - Tavares Prairie",
+    "type": "BLUE",
+    "location": {
+      "lat": 43.85032401305246,
+      "lng": 25.954157735283417
     },
-    {
-        "id": "zone_003",
-        "name": "Zone C - Residential",
-        "type": "GREEN",
-        "location": {
-            "lat": 43.8289,
-            "lng": 25.9534
-        },
-        "hourlyRate": 1.00,
-        "maxDuration": 480,
-        "currency": "EUR",
-        "restrictions": "Mon-Fri 08:00-18:00"
+    "hourlyRate": 2.02,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 07:00-19:00"
+  },
+  {
+    "id": "zone_OZMRNp80",
+    "name": "BLUE Zone - Moss Lane",
+    "type": "BLUE",
+    "location": {
+      "lat": 43.83686314782918,
+      "lng": 25.97616508329689
     },
-    {
-        "id": "zone_004",
-        "name": "Zone D - Business District",
-        "type": "RED",
-        "location": {
-            "lat": 43.8445,
-            "lng": 25.9723
-        },
-        "hourlyRate": 3.50,
-        "maxDuration": 120,
-        "currency": "EUR",
-        "restrictions": "Mon-Sat 07:00-21:00"
+    "hourlyRate": 1.75,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Daily 07:00-21:00"
+  },
+  {
+    "id": "zone_k0PrbpKD",
+    "name": "BLUE Zone - Schmeler Plains",
+    "type": "BLUE",
+    "location": {
+      "lat": 43.82826049752109,
+      "lng": 25.983109979764365
     },
-    {
-        "id": "zone_005",
-        "name": "Zone E - University Area",
-        "type": "BLUE",
-        "location": {
-            "lat": 43.8523,
-            "lng": 25.9456
-        },
-        "hourlyRate": 1.50,
-        "maxDuration": 240,
-        "currency": "EUR",
-        "restrictions": "Mon-Fri 07:00-19:00"
-    }
+    "hourlyRate": 1.8,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 07:00-19:00"
+  },
+  {
+    "id": "zone_kY05w4oZ",
+    "name": "BLUE Zone - Hailey Ridges",
+    "type": "BLUE",
+    "location": {
+      "lat": 43.84682757280134,
+      "lng": 25.954502836342108
+    },
+    "hourlyRate": 1.92,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 07:00-19:00"
+  },
+  {
+    "id": "zone_Uot2dFVJ",
+    "name": "RED Zone - Bruen Course",
+    "type": "RED",
+    "location": {
+      "lat": 42.6889869567768,
+      "lng": 23.333028020686935
+    },
+    "hourlyRate": 3.37,
+    "maxDuration": 120,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_IebKDk5P",
+    "name": "GREEN Zone - Hayley Pine",
+    "type": "GREEN",
+    "location": {
+      "lat": 42.68785431075775,
+      "lng": 23.321908782572546
+    },
+    "hourlyRate": 0.84,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_9bbuIrfJ",
+    "name": "GREEN Zone - Riverside",
+    "type": "GREEN",
+    "location": {
+      "lat": 42.712292190458065,
+      "lng": 23.303071764828065
+    },
+    "hourlyRate": 1.15,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_yyeFSlrU",
+    "name": "GREEN Zone - Chapel Road",
+    "type": "GREEN",
+    "location": {
+      "lat": 42.68863027579379,
+      "lng": 23.313317923491834
+    },
+    "hourlyRate": 0.54,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 07:00-19:00"
+  },
+  {
+    "id": "zone_2JDzBV8u",
+    "name": "GREEN Zone - Bechtelar Port",
+    "type": "GREEN",
+    "location": {
+      "lat": 42.716895363846334,
+      "lng": 23.30402279934854
+    },
+    "hourlyRate": 1,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Daily 07:00-21:00"
+  },
+  {
+    "id": "zone_pm8MNFiO",
+    "name": "GREEN Zone - N Elm Street",
+    "type": "GREEN",
+    "location": {
+      "lat": 48.150724369874915,
+      "lng": 11.578529873055613
+    },
+    "hourlyRate": 0.58,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Daily 07:00-21:00"
+  },
+  {
+    "id": "zone_eAr4CeD5",
+    "name": "GREEN Zone - Macejkovic Pike",
+    "type": "GREEN",
+    "location": {
+      "lat": 48.13605015181184,
+      "lng": 11.574692460150876
+    },
+    "hourlyRate": 1.25,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_7CsCIzlS",
+    "name": "BLUE Zone - W Monroe Street",
+    "type": "BLUE",
+    "location": {
+      "lat": 48.137918298560315,
+      "lng": 11.569267706553966
+    },
+    "hourlyRate": 1.78,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 07:00-19:00"
+  },
+  {
+    "id": "zone_Z8vDDqOa",
+    "name": "BLUE Zone - Gordon Radial",
+    "type": "BLUE",
+    "location": {
+      "lat": 48.15278282135055,
+      "lng": 11.598475098282428
+    },
+    "hourlyRate": 1.54,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_kKOIldQ2",
+    "name": "BLUE Zone - Kellie Burg",
+    "type": "BLUE",
+    "location": {
+      "lat": 48.11807567411485,
+      "lng": 11.56763059911262
+    },
+    "hourlyRate": 2.11,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_vVoKDSqJ",
+    "name": "GREEN Zone - Darrin Common",
+    "type": "GREEN",
+    "location": {
+      "lat": 52.53810051304328,
+      "lng": 13.392550418556912
+    },
+    "hourlyRate": 0.82,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_6sxYDPJl",
+    "name": "BLUE Zone - Lee Street",
+    "type": "BLUE",
+    "location": {
+      "lat": 52.52604388639676,
+      "lng": 13.385179136699291
+    },
+    "hourlyRate": 1.89,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_LsFi9RuJ",
+    "name": "RED Zone - Station Road",
+    "type": "RED",
+    "location": {
+      "lat": 52.52976182567569,
+      "lng": 13.42229987839649
+    },
+    "hourlyRate": 2.85,
+    "maxDuration": 120,
+    "currency": "EUR",
+    "restrictions": "Daily 07:00-21:00"
+  },
+  {
+    "id": "zone_IEDwKam0",
+    "name": "BLUE Zone - Destinee Shore",
+    "type": "BLUE",
+    "location": {
+      "lat": 52.519274792661264,
+      "lng": 13.387096871157802
+    },
+    "hourlyRate": 1.6,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Daily 07:00-21:00"
+  },
+  {
+    "id": "zone_CxTGfBx6",
+    "name": "RED Zone - Jeanne Divide",
+    "type": "RED",
+    "location": {
+      "lat": 52.5067435871805,
+      "lng": 13.41815491398909
+    },
+    "hourlyRate": 3.94,
+    "maxDuration": 120,
+    "currency": "EUR",
+    "restrictions": "Daily 07:00-21:00"
+  },
+  {
+    "id": "zone_jSh4pTfC",
+    "name": "BLUE Zone - University Avenue",
+    "type": "BLUE",
+    "location": {
+      "lat": 48.22036323463128,
+      "lng": 16.376720468002887
+    },
+    "hourlyRate": 1.53,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_bXjgeKQM",
+    "name": "RED Zone - Martine Falls",
+    "type": "RED",
+    "location": {
+      "lat": 48.21812483026931,
+      "lng": 16.37031989347158
+    },
+    "hourlyRate": 3.92,
+    "maxDuration": 120,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_YBb6jwCV",
+    "name": "GREEN Zone - Horace Point",
+    "type": "GREEN",
+    "location": {
+      "lat": 48.20789357581428,
+      "lng": 16.35709469137145
+    },
+    "hourlyRate": 0.7,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_jn1UGI8G",
+    "name": "BLUE Zone - S Elm Street",
+    "type": "BLUE",
+    "location": {
+      "lat": 48.21406445494493,
+      "lng": 16.368821485208667
+    },
+    "hourlyRate": 2.05,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_mxcyulD2",
+    "name": "BLUE Zone - W 5th Street",
+    "type": "BLUE",
+    "location": {
+      "lat": 48.226569717297956,
+      "lng": 16.355766369022586
+    },
+    "hourlyRate": 1.63,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_NZ6LuWFF",
+    "name": "BLUE Zone - Hillside Close",
+    "type": "BLUE",
+    "location": {
+      "lat": 50.08931502942034,
+      "lng": 14.449883896395507
+    },
+    "hourlyRate": 1.75,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 07:00-19:00"
+  },
+  {
+    "id": "zone_bmVi1xw4",
+    "name": "RED Zone - Kaia Estate",
+    "type": "RED",
+    "location": {
+      "lat": 50.087864763816505,
+      "lng": 14.422362951649683
+    },
+    "hourlyRate": 2.65,
+    "maxDuration": 120,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_k5uVApY1",
+    "name": "GREEN Zone - Aspen Close",
+    "type": "GREEN",
+    "location": {
+      "lat": 50.08383046090707,
+      "lng": 14.424189960573397
+    },
+    "hourlyRate": 0.89,
+    "maxDuration": 480,
+    "currency": "EUR",
+    "restrictions": "Mon-Fri 08:00-18:00"
+  },
+  {
+    "id": "zone_wsOdL4Uh",
+    "name": "BLUE Zone - Margarita Prairie",
+    "type": "BLUE",
+    "location": {
+      "lat": 50.070193960768506,
+      "lng": 14.44992007906844
+    },
+    "hourlyRate": 1.93,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  },
+  {
+    "id": "zone_bQjF17Fe",
+    "name": "BLUE Zone - Washington Boulevard",
+    "type": "BLUE",
+    "location": {
+      "lat": 50.070221807773144,
+      "lng": 14.427892341679154
+    },
+    "hourlyRate": 1.69,
+    "maxDuration": 180,
+    "currency": "EUR",
+    "restrictions": "Mon-Sat 08:00-20:00"
+  }
 ]

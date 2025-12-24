@@ -1,27 +1,82 @@
 [
-    {
-        "id": "user_001",
-        "phone": "+359888123456",
-        "email": "ivan@example.com",
-        "name": "Ivan Petrov",
-        "avatar": null,
-        "provider": "phone",
-        "createdAt": "2024-01-15T10:30:00.000Z"
-    },
-    {
-        "id": "user_002",
-        "phone": "+359899654321",
-        "email": "maria@example.com",
-        "name": "Maria Ivanova",
-        "avatar": null,
-        "provider": "email",
-        "createdAt": "2024-02-20T14:45:00.000Z"
-    },
-    {
-        "id": "user_003",
-        "email": "google.user@gmail.com",
-        "name": "Google User",
-        "provider": "google",
-        "createdAt": "2024-03-10T09:00:00.000Z"
-    }
+  {
+    "id": "user_49dOCTl8",
+    "phone": "+359888367475",
+    "email": "Emilia.Raynor26@gmail.com",
+    "name": "Katherine Lehner",
+    "provider": "email",
+    "createdAt": "2025-02-18T17:39:02.275Z"
+  },
+  {
+    "id": "user_sEf5X4zi",
+    "phone": "+359888018196",
+    "email": "Deonte_Bins@hotmail.com",
+    "name": "Ebony Bartoletti",
+    "provider": "email",
+    "createdAt": "2025-09-07T06:57:55.117Z"
+  },
+  {
+    "id": "user_yM4DDf7v",
+    "phone": "+49101999971",
+    "email": "Gabriella43@gmail.com",
+    "name": "Sharon Robel III",
+    "provider": "phone",
+    "createdAt": "2025-05-16T14:45:13.506Z"
+  },
+  {
+    "id": "user_8bnCjB6s",
+    "phone": "+43605053959",
+    "email": "Sebastian53@gmail.com",
+    "name": "Andrea Gleason",
+    "avatar": "https://i.pravatar.cc/150?u=vthlvfCk",
+    "provider": "phone",
+    "createdAt": "2025-10-25T06:04:00.878Z"
+  },
+  {
+    "id": "user_vCt11loB",
+    "phone": "+359888883646",
+    "name": "Carlton King PhD",
+    "provider": "phone",
+    "createdAt": "2025-08-02T19:26:38.873Z"
+  },
+  {
+    "id": "user_3YBUnHcQ",
+    "phone": "+43671083653",
+    "email": "Eleonore.Cronin@hotmail.com",
+    "name": "Katherine Dach",
+    "avatar": "https://i.pravatar.cc/150?u=LnuqBaWZ",
+    "provider": "google",
+    "createdAt": "2025-01-25T11:28:50.338Z"
+  },
+  {
+    "id": "user_LXpdyEXJ",
+    "phone": "+49108672513",
+    "email": "Dorian40@yahoo.com",
+    "name": "Dr. Carl Hills",
+    "provider": "google",
+    "createdAt": "2025-11-18T17:30:40.573Z"
+  },
+  {
+    "id": "user_LeNy9yKH",
+    "phone": "+49109298580",
+    "email": "Marcel71@yahoo.com",
+    "name": "Nora Lang",
+    "provider": "google",
+    "createdAt": "2025-09-11T03:59:40.536Z"
+  },
+  {
+    "id": "user_wpbyX3M6",
+    "phone": "+420162039228",
+    "email": "Emely28@gmail.com",
+    "name": "Anita Leannon",
+    "provider": "apple",
+    "createdAt": "2024-09-28T10:40:28.916Z"
+  },
+  {
+    "id": "user_Z9N3NwS2",
+    "email": "Itzel_Glover-Weimann49@gmail.com",
+    "name": "Erin Graham Sr.",
+    "provider": "phone",
+    "createdAt": "2025-04-22T18:48:43.128Z"
+  }
 ]

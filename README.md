@@ -117,6 +117,27 @@ npm run android
 
 ---
 
+## 🧰 Local Dev (Headless/CI)
+
+Nếu gặp lỗi `launchPackager.command`, hãy start Metro thủ công và chạy app với `--no-packager`:
+
+```bash
+# Start Metro (bind localhost to avoid GUI "open")
+npm start -- --host 127.0.0.1 --port 8081
+
+# iOS / Android (skip auto packager)
+RCT_NO_LAUNCH_PACKAGER=1 npm run ios -- --no-packager
+RCT_NO_LAUNCH_PACKAGER=1 npm run android -- --no-packager
+```
+
+Lưu ý:
+- iOS: cần cài simulator trong Xcode (Settings > Platforms) hoặc kết nối thiết bị thật.
+  - Check nhanh: `xcrun simctl list devices available` (nếu trống, cài thêm runtime trong Xcode).
+- Android: cần `adb` trong PATH và có AVD (`emulator -list-avds`) hoặc thiết bị thật.
+  - Check nhanh: `adb devices` và `emulator -list-avds` (nếu command không tồn tại, cài Android Studio + SDK).
+
+---
+
 ## 🎯 Thứ Tự Tasks (57 tasks)
 
 ### Phase 1: Foundation (Week 1-2)

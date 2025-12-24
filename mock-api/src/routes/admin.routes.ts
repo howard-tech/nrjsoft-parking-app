@@ -5,6 +5,11 @@ import {
     zoneStore, walletStore, transactionStore, notificationStore,
     paymentMethodStore, clearAllData
 } from '../services/data.store';
+import { anprSimulator } from '../services/anpr.service';
+import { getSimulationConfig, updateSimulationConfig, startSessionCostTicker, stopSessionCostTicker } from '../services/simulation.service';
+import { paymentSimulator } from '../services/payment-simulator.service';
+import { emitToUser } from '../services/websocket.service';
+import { io } from '../app';
 
 const router = Router();
 
@@ -91,6 +96,104 @@ router.get('/stats', (req: Request, res: Response) => {
         notifications: notificationStore.size,
         paymentMethods: paymentMethodStore.size,
     });
+});
+
+// --- Simulation controls ---
+
+router.get('/simulate/config', (_req: Request, res: Response) => {
+    res.json({
+        success: true,
+        config: getSimulationConfig(),
+        activeAnpr: anprSimulator.getActiveVehicles(),
+    });
+});
+
+router.post('/simulate/config', (req: Request, res: Response) => {
+    const updated = updateSimulationConfig(req.body || {});
+    res.json({ success: true, config: updated });
+});
+
+router.post('/simulate/anpr/entry', (req: Request, res: Response) => {
+    try {
+        const { garageId, vehiclePlate } = req.body;
+        if (!garageId || !vehiclePlate) {
+            res.status(400).json({ error: 'garageId and vehiclePlate are required' });
+            return;
+        }
+        const event = anprSimulator.simulateEntry(garageId, vehiclePlate);
+        res.json({ success: true, event });
+    } catch (error: any) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+router.post('/simulate/anpr/exit', (req: Request, res: Response) => {
+    try {
+        const { vehiclePlate } = req.body;
+        if (!vehiclePlate) {
+            res.status(400).json({ error: 'vehiclePlate is required' });
+            return;
+        }
+        const event = anprSimulator.simulateExit(vehiclePlate);
+        res.json({ success: true, event });
+    } catch (error: any) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+router.post('/simulate/payment', async (req: Request, res: Response) => {
+    try {
+        const { amount, currency = 'EUR', paymentMethod } = req.body;
+        if (!amount || amount <= 0) {
+            res.status(400).json({ error: 'Valid amount required' });
+            return;
+        }
+        const intent = paymentSimulator.createIntent(amount, currency);
+        const confirmed = await paymentSimulator.confirmIntent(intent.id, paymentMethod);
+        res.json({ success: true, intent: confirmed });
+    } catch (error: any) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+router.post('/simulate/webhook', (req: Request, res: Response) => {
+    const { event = 'payment.succeeded', payload = {} } = req.body || {};
+    console.log(`🔔 Webhook simulated: ${event}`, payload);
+    res.json({
+        success: true,
+        delivered: true,
+        event,
+        payload,
+        deliveredAt: new Date().toISOString(),
+    });
+});
+
+router.post('/simulate/session/tick', (req: Request, res: Response) => {
+    const { sessionId, userId } = req.body || {};
+    const session = sessionStore.get(sessionId);
+    if (!session || !userId) {
+        res.status(400).json({ success: false, error: 'sessionId and userId required' });
+        return;
+    }
+    startSessionCostTicker(session);
+    if (io) {
+        emitToUser(io, userId, 'SESSION_UPDATE', {
+            sessionId,
+            timestamp: new Date().toISOString(),
+            status: session.status,
+        });
+    }
+    res.json({ success: true });
+});
+
+router.post('/simulate/session/stop', (req: Request, res: Response) => {
+    const { sessionId } = req.body || {};
+    if (!sessionId) {
+        res.status(400).json({ success: false, error: 'sessionId required' });
+        return;
+    }
+    stopSessionCostTicker(sessionId);
+    res.json({ success: true });
 });
 
 export default router;

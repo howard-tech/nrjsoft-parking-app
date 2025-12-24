@@ -30,6 +30,10 @@ export function findUserByEmail(email: string): User | undefined {
     return Array.from(userStore.values()).find((u) => u.email === email);
 }
 
+export function getAnyUser(): User | undefined {
+    return Array.from(userStore.values())[0];
+}
+
 export function createUser(user: User): User {
     userStore.set(user.id, user);
     return user;
@@ -47,6 +51,13 @@ export function updateUser(userId: string, updates: Partial<User>): User | undef
 // Vehicle Management
 export function getVehicle(vehicleId: string): Vehicle | undefined {
     return vehicleStore.get(vehicleId);
+}
+
+export function findVehicleByPlate(plate: string): Vehicle | undefined {
+    const normalized = plate.trim().toUpperCase();
+    return Array.from(vehicleStore.values()).find(
+        (v) => v.plate.trim().toUpperCase() === normalized
+    );
 }
 
 export function getUserVehicles(userId: string): Vehicle[] {

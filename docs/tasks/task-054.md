@@ -9,7 +9,7 @@
 | Priority | High |
 | Effort | 6h |
 | Dependencies | TASK-052, TASK-053 |
-| Status | 🔴 Not Started |
+| Status | 🟢 Completed |
 
 ## Description
 
@@ -17,13 +17,13 @@ Add advanced simulation features to the Mock API including ANPR detection simula
 
 ## Acceptance Criteria
 
-- [ ] ANPR entry/exit detection simulation
-- [ ] Payment processing with success/failure scenarios
-- [ ] Real-time session cost updates via WebSocket
-- [ ] Configurable error rates for testing
-- [ ] Network latency simulation
-- [ ] Admin dashboard for controlling simulations
-- [ ] Webhook simulation for backend events
+- [x] ANPR entry/exit detection simulation
+- [x] Payment processing with success/failure scenarios
+- [x] Real-time session cost updates via WebSocket
+- [x] Configurable error rates for testing
+- [x] Network latency simulation
+- [x] Admin dashboard for controlling simulations
+- [x] Webhook simulation for backend events
 
 ## Technical Implementation
 

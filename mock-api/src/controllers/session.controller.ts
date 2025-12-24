@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ParkingSession } from '../types';
 import { sessionStore, garageStore } from '../services/data.store';
+import { startSessionCostTicker, stopSessionCostTicker } from '../services/simulation.service';
 
 // Socket.io instance will be set from app.ts
 let ioInstance: any = null;
@@ -92,6 +93,7 @@ export class SessionController {
         };
 
         sessionStore.set(session.id, session);
+        startSessionCostTicker(session);
 
         // Emit via WebSocket
         if (ioInstance) {
@@ -196,6 +198,7 @@ export class SessionController {
         };
 
         sessionStore.set(id, completedSession);
+        stopSessionCostTicker(id);
 
         // Emit via WebSocket
         if (ioInstance) {

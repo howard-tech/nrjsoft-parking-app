@@ -1,0 +1,10 @@
+diff --git a/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt b/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt
+index 1111111..2222222 100644
+--- a/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt
++++ b/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt
+@@
+-import com.facebook.react.BaseReactPackage
++import com.facebook.react.TurboReactPackage
+@@
+-class RNScreensPackage : BaseReactPackage() {
++class RNScreensPackage : TurboReactPackage() {

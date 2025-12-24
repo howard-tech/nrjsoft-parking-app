@@ -80,6 +80,17 @@ npm run dev
 | POST | `/api/v1/payments/intents` | Create payment intent |
 | POST | `/api/v1/payments/confirm` | Confirm payment |
 
+### Admin Simulation
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/admin/simulate/anpr/entry` | Simulate ANPR entry (garageId, vehiclePlate) |
+| POST | `/api/v1/admin/simulate/anpr/exit` | Simulate ANPR exit (vehiclePlate) |
+| POST | `/api/v1/admin/simulate/payment` | Simulate payment with success/fail modes |
+| GET | `/api/v1/admin/simulate/config` | View simulation config and active plates |
+| POST | `/api/v1/admin/simulate/config` | Update latency, errorRate, paymentSuccessRate |
+| POST | `/api/v1/admin/simulate/webhook` | Emit a fake webhook payload for debugging |
+| POST | `/api/v1/admin/reset` | Reset and reseed mock data |
+
 ### On-Street Parking
 | Method | Endpoint | Description |
 |--------|----------|-------------|

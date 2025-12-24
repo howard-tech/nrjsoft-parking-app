@@ -2,14 +2,15 @@ import { httpServer } from './app';
 import { config } from './config';
 
 const PORT = config.port;
+const HOST = process.env.HOST || '127.0.0.1';
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, HOST, () => {
     console.log('');
     console.log('╔════════════════════════════════════════════════════════╗');
     console.log('║       NRJSoft Parking - Mock API Server                ║');
     console.log('╠════════════════════════════════════════════════════════╣');
-    console.log(`║  🚀 Server running at: http://localhost:${PORT}           ║`);
-    console.log(`║  📚 API Base URL:      http://localhost:${PORT}/api/v1    ║`);
+    console.log(`║  🚀 Server running at: http://${HOST}:${PORT}           ║`);
+    console.log(`║  📚 API Base URL:      http://${HOST}:${PORT}/api/v1    ║`);
     console.log('║  🔌 WebSocket:         Enabled                         ║');
     console.log('╠════════════════════════════════════════════════════════╣');
     console.log('║  📋 Available Endpoints:                               ║');

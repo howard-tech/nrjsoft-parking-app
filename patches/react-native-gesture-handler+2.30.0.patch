@@ -1,0 +1,27 @@
+diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
+index 1111111..2222222 100644
+--- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
++++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
+@@
+-import com.facebook.react.BaseReactPackage
++import com.facebook.react.TurboReactPackage
+@@
+-class RNGestureHandlerPackage :
+-  BaseReactPackage(),
++class RNGestureHandlerPackage :
++  TurboReactPackage(),
+diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java b/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java
+new file mode 100644
+index 0000000..3333333
+--- /dev/null
++++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java
+@@
++package com.facebook.react.uimanager;
++
++import android.view.View;
++
++/**
++ * Stubbed copy for compatibility with React Native 0.73 where this interface is not shipped.
++ */
++public interface ViewManagerWithGeneratedInterface<T extends View> {
++}

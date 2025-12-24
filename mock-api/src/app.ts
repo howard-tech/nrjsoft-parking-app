@@ -24,7 +24,9 @@ import { errorHandler } from './middleware/errorHandler';
 import { setupWebSocket } from './services/websocket.service';
 import { setSocketIO } from './controllers/session.controller';
 import { setOnstreetSocketIO } from './controllers/onstreet.controller';
+import { setSimulationSocket } from './services/simulation.service';
 import swaggerDocument from './swagger.json';
+import { simulationErrorMiddleware } from './middleware/simulation';
 
 const app = express();
 const httpServer = createServer(app);
@@ -35,6 +37,7 @@ const io = new SocketIOServer(httpServer, {
 // Pass io to controllers that need it
 setSocketIO(io);
 setOnstreetSocketIO(io);
+setSimulationSocket(io);
 
 // Middleware
 app.use(helmet({ contentSecurityPolicy: false })); // Disable CSP for Swagger UI
@@ -42,6 +45,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(delayMiddleware);
+app.use(simulationErrorMiddleware);
 
 // Swagger API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, {

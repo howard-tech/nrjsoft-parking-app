@@ -101,18 +101,23 @@ git commit -m "feat(task-XXX): description"
 ## 📱 Chạy App
 
 ```bash
-# Start Mock API + Metro + iOS
-make dev
+# Khuyến nghị Node 20 (đã có .nvmrc)
+nvm use 20
 
-# Hoặc Android
-make dev-android
+# Cài dependencies (root + mock API + pods)
+make setup
+
+# iOS: Mock API (127.0.0.1:3005) + Metro (127.0.0.1:8081) + app với env/.env.local.ios
+./scripts/dev.sh ios
+
+# Android: Mock API + Metro + app với env/.env.local.android (API 10.0.2.2:3005)
+./scripts/dev.sh android
 
 # Chỉ Mock API
-cd mock-api && npm run dev
+./scripts/dev.sh api
 
-# Chỉ Mobile
-npm run ios
-npm run android
+# Chỉ Metro (tùy chọn host/port qua METRO_HOST, METRO_PORT)
+npm run start:metro
 ```
 
 ---
@@ -135,6 +140,10 @@ Lưu ý:
   - Check nhanh: `xcrun simctl list devices available` (nếu trống, cài thêm runtime trong Xcode).
 - Android: cần `adb` trong PATH và có AVD (`emulator -list-avds`) hoặc thiết bị thật.
   - Check nhanh: `adb devices` và `emulator -list-avds` (nếu command không tồn tại, cài Android Studio + SDK).
+
+### Mobile runtime notes (đã thử trên máy agent)
+- iOS: chạy thành công với Xcode 15 / iOS 17 simulator sau khi `pod install` (Podfile đã disable Flipper và đặt minimum target 13). Crashlytics run script đã được stub để build không cần credentials; dùng placeholder `ios/GoogleService-Info.plist`.
+- Android: Gradle 8.3 + AGP 8.1.1 đã set compile/targetSdk 34. Build hiện bị kẹt ở bước AAPT2 daemon (timeout trong sandbox). Nếu chạy trên máy dev thật, hãy thử: `rm -rf ~/.gradle/caches/transforms-3 && cd android && ./gradlew clean assembleDebug` và đảm bảo network loopback không bị chặn (AAPT2 daemon dùng socket nội bộ).
 
 ---
 

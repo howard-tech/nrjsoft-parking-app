@@ -132,7 +132,9 @@ RCT_NO_LAUNCH_PACKAGER=1 npm run android -- --no-packager
 
 Lưu ý:
 - iOS: cần cài simulator trong Xcode (Settings > Platforms) hoặc kết nối thiết bị thật.
+  - Check nhanh: `xcrun simctl list devices available` (nếu trống, cài thêm runtime trong Xcode).
 - Android: cần `adb` trong PATH và có AVD (`emulator -list-avds`) hoặc thiết bị thật.
+  - Check nhanh: `adb devices` và `emulator -list-avds` (nếu command không tồn tại, cài Android Studio + SDK).
 
 ---
 

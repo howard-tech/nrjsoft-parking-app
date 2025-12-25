@@ -1,70 +1,98 @@
-.PHONY: all setup dev dev-android ios android api test lint clean reset help
+.PHONY: all setup dev dev-android ios android api test test-coverage lint lint-fix typecheck clean reset build-ios build-android deploy-ios-beta deploy-android-internal help
 
-# Default
+# Project variables
+DEV_SCRIPT = ./scripts/dev.sh
+
+# Default target
 all: help
 
 # Setup development environment
 setup:
-	@./scripts/dev.sh setup
+	@chmod +x $(DEV_SCRIPT)
+	@$(DEV_SCRIPT) setup
 
-# Start full dev (iOS)
+# Start development (iOS)
 dev:
-	@./scripts/dev.sh ios
+	@$(DEV_SCRIPT) ios
 
-# Start full dev (Android)
+# Start development (Android)
 dev-android:
-	@./scripts/dev.sh android
+	@$(DEV_SCRIPT) android
 
-# Run platforms
+# Run platforms directly
 ios:
 	@npm run ios
 
 android:
 	@npm run android
 
-# Start Mock API only
+# Start only Mock API
 api:
-	@cd mock-api && npm run dev
+	@$(DEV_SCRIPT) api
 
-# Testing
+# Start only Metro
+metro:
+	@$(DEV_SCRIPT) metro
+
+# Quality & Testing
 test:
 	@npm test
+
+test-coverage:
+	@npm test -- --coverage
 
 lint:
 	@npm run lint
 
+lint-fix:
+	@npm run lint:fix
+
 typecheck:
 	@npm run typecheck
 
-# Clean
+# Cleaning
 clean:
-	@rm -rf node_modules ios/Pods android/build mock-api/node_modules
-	@watchman watch-del-all 2>/dev/null || true
+	@$(DEV_SCRIPT) clean
 
-reset: clean setup
+reset:
+	@$(DEV_SCRIPT) clean
+	@$(DEV_SCRIPT) setup
 
-# Build
+# Building
 build-ios:
 	@cd ios && bundle exec fastlane build_local
 
 build-android:
-	@cd android && ./gradlew bundleRelease
+	@cd android && ./gradlew assembleRelease
 
-# Deploy
-deploy-ios:
+# Deployment
+deploy-ios-beta:
 	@cd ios && bundle exec fastlane beta
 
-deploy-android:
+deploy-android-internal:
 	@cd android && bundle exec fastlane internal
 
 # Help
 help:
-	@echo "NRJSoft Parking App Commands"
+	@echo "NRJSoft Parking App - Development Commands"
 	@echo ""
-	@echo "  make setup        Install dependencies"
-	@echo "  make dev          Start dev (iOS)"
-	@echo "  make dev-android  Start dev (Android)"
-	@echo "  make api          Start Mock API"
-	@echo "  make test         Run tests"
-	@echo "  make clean        Clean builds"
-	@echo "  make reset        Full reset"
+	@echo "Setup:"
+	@echo "  make setup          - Install all dependencies (root, mock-api, pods)"
+	@echo "  make reset          - Clean and reinstall everything"
+	@echo ""
+	@echo "Development:"
+	@echo "  make dev            - Start full dev environment (Mock API + Metro + iOS)"
+	@echo "  make dev-android    - Start full dev environment (Mock API + Metro + Android)"
+	@echo "  make api            - Start Mock API only"
+	@echo "  make metro          - Start Metro bundler only"
+	@echo ""
+	@echo "Quality:"
+	@echo "  make test           - Run unit tests"
+	@echo "  make lint           - Run ESLint"
+	@echo "  make lint-fix       - Run ESLint and fix issues"
+	@echo "  make typecheck      - Run TypeScript compiler checks"
+	@echo ""
+	@echo "Build & Deploy:"
+	@echo "  make build-ios      - Build local iOS release"
+	@echo "  make build-android  - Build local Android release"
+	@echo ""

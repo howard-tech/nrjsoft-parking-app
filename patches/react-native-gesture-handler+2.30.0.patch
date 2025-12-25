@@ -1,21 +1,30 @@
 diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
-index 1111111..2222222 100644
+index e271a3e..ef167c5 100644
 --- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
 +++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
-@@
+@@ -1,6 +1,6 @@
+ package com.swmansion.gesturehandler
+ 
 -import com.facebook.react.BaseReactPackage
 +import com.facebook.react.TurboReactPackage
-@@
--class RNGestureHandlerPackage :
+ import com.facebook.react.ViewManagerOnDemandReactPackage
+ import com.facebook.react.bridge.ModuleSpec
+ import com.facebook.react.bridge.NativeModule
+@@ -20,7 +20,7 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerRootViewManager
+   ],
+ )
+ class RNGestureHandlerPackage :
 -  BaseReactPackage(),
-+class RNGestureHandlerPackage :
 +  TurboReactPackage(),
+   ViewManagerOnDemandReactPackage {
+   private val viewManagers: Map<String, ModuleSpec> by lazy {
+     mapOf(
 diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java b/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java
 new file mode 100644
-index 0000000..3333333
+index 0000000..74db98c
 --- /dev/null
 +++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java
-@@
+@@ -0,0 +1,9 @@
 +package com.facebook.react.uimanager;
 +
 +import android.view.View;

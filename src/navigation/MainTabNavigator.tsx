@@ -15,6 +15,10 @@ import { TabBarIcon } from '@components/common/TabBarIcon';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+const TabIcon = (name: string) => ({ color, size }: { color: string; size: number }) => (
+    <TabBarIcon name={name} color={color} size={size} />
+);
+
 export const MainTabNavigator: React.FC = () => {
     const theme = useTheme();
 
@@ -42,9 +46,7 @@ export const MainTabNavigator: React.FC = () => {
                 component={HomeStack}
                 options={{
                     tabBarLabel: 'Home',
-                    tabBarIcon: ({ color, size }) => (
-                        <TabBarIcon name="map" color={color} size={size} />
-                    ),
+                    tabBarIcon: TabIcon('map'),
                 }}
             />
             <Tab.Screen
@@ -52,9 +54,7 @@ export const MainTabNavigator: React.FC = () => {
                 component={SessionStack}
                 options={{
                     tabBarLabel: 'Session',
-                    tabBarIcon: ({ color, size }) => (
-                        <TabBarIcon name="clock" color={color} size={size} />
-                    ),
+                    tabBarIcon: TabIcon('clock'),
                 }}
             />
             <Tab.Screen
@@ -62,9 +62,7 @@ export const MainTabNavigator: React.FC = () => {
                 component={WalletStack}
                 options={{
                     tabBarLabel: 'Wallet',
-                    tabBarIcon: ({ color, size }) => (
-                        <TabBarIcon name="credit-card" color={color} size={size} />
-                    ),
+                    tabBarIcon: TabIcon('credit-card'),
                 }}
             />
             <Tab.Screen
@@ -72,9 +70,7 @@ export const MainTabNavigator: React.FC = () => {
                 component={HistoryStack}
                 options={{
                     tabBarLabel: 'History',
-                    tabBarIcon: ({ color, size }) => (
-                        <TabBarIcon name="list" color={color} size={size} />
-                    ),
+                    tabBarIcon: TabIcon('list'),
                 }}
             />
             <Tab.Screen
@@ -82,9 +78,7 @@ export const MainTabNavigator: React.FC = () => {
                 component={AccountStack}
                 options={{
                     tabBarLabel: 'Account',
-                    tabBarIcon: ({ color, size }) => (
-                        <TabBarIcon name="user" color={color} size={size} />
-                    ),
+                    tabBarIcon: TabIcon('user'),
                 }}
             />
         </Tab.Navigator>

@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '@theme';
 import { useNotifications } from '@hooks/useNotifications';
 import Icon from 'react-native-vector-icons/Feather';
+import { RootStackParamList } from '../../navigation/types';
 
 interface AppHeaderProps {
     title?: string;
@@ -16,7 +18,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     showLogo = true,
     showNotificationBadge = true,
 }) => {
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const theme = useTheme();
     const { unreadCount } = useNotifications();
 

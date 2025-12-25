@@ -45,10 +45,17 @@ const styles = StyleSheet.create({
     },
 });
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { RootNavigator } from './navigation';
+
 const App = (): JSX.Element => (
-    <ThemeProvider>
-        <HomeSplash />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+            <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+            <RootNavigator />
+        </ThemeProvider>
+    </GestureHandlerRootView>
 );
+
 
 export default App;

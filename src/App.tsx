@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { ThemeProvider } from '@theme';
+import './i18n';
 
 const styles = StyleSheet.create({
     root: {

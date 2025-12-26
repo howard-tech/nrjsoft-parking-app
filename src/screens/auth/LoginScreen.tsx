@@ -31,7 +31,9 @@ export const LoginScreen: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleLogin = () => {
-        if (!identifier || !gdprConsent) return;
+        if (!identifier || !gdprConsent) {
+            return;
+        }
 
         setIsLoading(true);
         // Simulate API call

@@ -1,10 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export const SocialLoginButtons: React.FC = () => {
-    const { t } = useTranslation();
 
     return (
         <View style={styles.container}>

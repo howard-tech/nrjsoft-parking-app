@@ -1,7 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../types';
-import { PlaceholderScreen } from '@screens/common/PlaceholderScreen';
 
 import { TutorialScreen } from '@screens/auth/tutorial/TutorialScreen';
 import { LoginScreen } from '@screens/auth/LoginScreen';

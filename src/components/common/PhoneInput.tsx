@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Text, Image } from 'react-native';
-import { useTheme } from '@theme';
+import { View, TextInput, StyleSheet, Text } from 'react-native';
 
 interface PhoneInputProps {
     value: string;
@@ -13,8 +12,6 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     onChangeText,
     placeholder = 'Mobile number',
 }) => {
-    const theme = useTheme();
-
     return (
         <View style={styles.container}>
             <View style={styles.countryCodeContainer}>
@@ -24,7 +21,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             </View>
             <View style={styles.inputContainer}>
                 <TextInput
-                    style={[styles.input, { color: '#FFFFFF' }]}
+                    style={styles.input}
                     placeholder={placeholder}
                     placeholderTextColor="rgba(255, 255, 255, 0.4)"
                     keyboardType="phone-pad"
@@ -72,5 +69,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         padding: 0, // Reset default padding on Android
+        color: '#FFFFFF',
     },
 });

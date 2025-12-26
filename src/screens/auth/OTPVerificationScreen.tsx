@@ -8,11 +8,11 @@ import {
     Platform,
     ScrollView,
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp, NavigatorScreenParams } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@theme';
-import { AuthStackParamList } from '../../navigation/types';
+import { AuthStackParamList, RootStackParamList, MainTabParamList } from '../../navigation/types';
 import { OTPInput } from '../../components/common/OTPInput';
 import { Button } from '../../components/common/Button';
 import { CountdownTimer } from './components/CountdownTimer';
@@ -20,7 +20,7 @@ import { CountdownTimer } from './components/CountdownTimer';
 type OTPRouteProp = RouteProp<AuthStackParamList, 'OTPVerification'>;
 
 export const OTPVerificationScreen: React.FC = () => {
-    const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList, 'OTPVerification'>>();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const route = useRoute<OTPRouteProp>();
     const { t } = useTranslation();
     const theme = useTheme();
@@ -34,20 +34,26 @@ export const OTPVerificationScreen: React.FC = () => {
     const identifier = phone || email || '';
 
     const handleVerify = () => {
-        if (otp.length < 4) return;
+        if (otp.length < 4) {
+            return;
+        }
 
         setIsLoading(true);
         setError(null);
 
         // Simulate OTP verification
         setTimeout(() => {
+            setIsLoading(true);
             setIsLoading(false);
             if (otp === '1234') { // Mock success code
                 // In a real app, this would update auth state or navigate to Main
                 // For now, we simulate navigation to Main app stack
-                // We'll use navigation.replace if the navigator structure allows, 
+                // We'll use navigation.replace if the navigator structure allows,
                 // but since we are in AuthStack, we'll navigate to the Root Navigator's 'Main'
-                (navigation as any).navigate('Main');
+                navigation.navigate('Main', {
+                    screen: 'HomeTab',
+                    params: { screen: 'SmartMap' },
+                } as NavigatorScreenParams<MainTabParamList>);
             } else {
                 setError(t('auth.invalidOtp'));
             }
@@ -107,7 +113,9 @@ export const OTPVerificationScreen: React.FC = () => {
 
                 <TouchableOpacity
                     style={styles.backButton}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        navigation.goBack();
+                    }}
                 >
                     <Text style={styles.backButtonText}>{t('auth.changeNumber')}</Text>
                 </TouchableOpacity>

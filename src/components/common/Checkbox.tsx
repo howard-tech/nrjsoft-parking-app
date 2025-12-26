@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet, Text } from 'react-native';
+import { TouchableOpacity, View, StyleSheet, Text, ViewStyle } from 'react-native';
 import { useTheme } from '@theme';
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -7,11 +7,16 @@ interface CheckboxProps {
     checked: boolean;
     onChange: (checked: boolean) => void;
     label?: string | React.ReactNode;
-    style?: any;
+    style?: ViewStyle;
 }
 
 export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, style }) => {
     const theme = useTheme();
+
+    const checkboxDynamicStyle = {
+        borderColor: checked ? theme.colors.secondary.main : 'rgba(255, 255, 255, 0.5)',
+        backgroundColor: checked ? theme.colors.secondary.main : 'transparent',
+    };
 
     return (
         <TouchableOpacity
@@ -19,15 +24,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, st
             onPress={() => onChange(!checked)}
             activeOpacity={0.7}
         >
-            <View
-                style={[
-                    styles.checkbox,
-                    {
-                        borderColor: checked ? theme.colors.secondary.main : 'rgba(255, 255, 255, 0.5)',
-                        backgroundColor: checked ? theme.colors.secondary.main : 'transparent',
-                    },
-                ]}
-            >
+            <View style={[styles.checkbox, checkboxDynamicStyle]}>
                 {checked && <Icon name="check" size={14} color="#FFFFFF" />}
             </View>
             {label && (

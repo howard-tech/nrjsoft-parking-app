@@ -12,18 +12,18 @@ export const tutorialSlides: TutorialSlide[] = [
         id: 'payment',
         titleKey: 'tutorial.slide1.title',
         descriptionKey: 'tutorial.slide1.desc',
-        image: require('@assets/images/tutorial-payment.png'),
+        image: require('../../../assets/images/tutorial-payment.png'),
     },
     {
         id: 'map',
         titleKey: 'tutorial.slide2.title',
         descriptionKey: 'tutorial.slide2.desc',
-        image: require('@assets/images/tutorial-map.png'),
+        image: require('../../../assets/images/tutorial-map.png'),
     },
     {
         id: 'realtime',
         titleKey: 'tutorial.slide3.title',
         descriptionKey: 'tutorial.slide3.desc',
-        image: require('@assets/images/tutorial-occupancy.png'),
+        image: require('../../../assets/images/tutorial-occupancy.png'),
     },
 ];

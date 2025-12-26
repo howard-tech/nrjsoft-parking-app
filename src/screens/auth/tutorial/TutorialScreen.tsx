@@ -95,22 +95,24 @@ export const TutorialScreen: React.FC = () => {
             </View>
 
             {/* Slide Carousel */}
-            <FlatList
-                ref={flatListRef}
-                data={tutorialSlides}
-                renderItem={renderSlide}
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                onScroll={handleScroll}
-                scrollEventThrottle={16}
-                keyExtractor={(item) => item.id}
-                getItemLayout={(_, index) => ({
-                    length: width,
-                    offset: width * index,
-                    index,
-                })}
-            />
+            <View style={styles.carouselContainer}>
+                <FlatList
+                    ref={flatListRef}
+                    data={tutorialSlides}
+                    renderItem={renderSlide}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                    keyExtractor={(item) => item.id}
+                    getItemLayout={(_, index) => ({
+                        length: width,
+                        offset: width * index,
+                        index,
+                    })}
+                />
+            </View>
 
             {/* Pagination Indicators */}
             <View style={styles.indicatorContainer}>
@@ -211,42 +213,47 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         letterSpacing: 1,
     },
+    carouselContainer: {
+        height: width * 1.0,
+    },
     slide: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         paddingHorizontal: 40,
+        paddingTop: 0,
     },
     slideImage: {
-        width: width * 0.8,
-        height: width * 0.8,
-        marginBottom: 40,
+        width: width * 0.7,
+        height: width * 0.7,
+        marginBottom: 24,
     },
     slideContent: {
         alignItems: 'center',
     },
     slideTitle: {
         textAlign: 'center',
-        marginBottom: 16,
+        marginBottom: 12,
         color: '#FFFFFF',
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: '700',
     },
     slideDesc: {
         textAlign: 'center',
-        lineHeight: 24,
+        lineHeight: 20,
         color: 'rgba(255, 255, 255, 0.8)',
-        fontSize: 16,
+        fontSize: 14,
     },
     indicatorContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        marginBottom: 32,
+        marginBottom: 16,
+        marginTop: -10,
     },
     indicator: {
-        height: 8,
-        borderRadius: 4,
-        marginHorizontal: 4,
+        height: 6,
+        borderRadius: 3,
+        marginHorizontal: 3,
     },
     activeIndicator: {
         backgroundColor: '#FFFFFF',
@@ -255,21 +262,21 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255, 255, 255, 0.3)',
     },
     activeIndicatorWidth: {
-        width: 24,
+        width: 18,
     },
     inactiveIndicatorWidth: {
-        width: 8,
+        width: 6,
     },
     navButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingHorizontal: 40,
-        marginBottom: 40,
+        marginBottom: 24,
     },
     navButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 20,
-        borderRadius: 20,
+        paddingVertical: 6,
+        paddingHorizontal: 16,
+        borderRadius: 16,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.3)',
     },
@@ -278,18 +285,18 @@ const styles = StyleSheet.create({
     },
     navButtonText: {
         color: '#FFFFFF',
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '600',
     },
     bottomSection: {
         paddingHorizontal: 24,
-        paddingBottom: 40,
+        paddingBottom: 20,
     },
     footerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 24,
+        marginBottom: 16,
     },
     helpButton: {
         flexDirection: 'row',

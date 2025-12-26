@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { ThemeProvider } from '@theme';
+import RNBootSplash from 'react-native-bootsplash';
 import './i18n';
 
 const styles = StyleSheet.create({
@@ -11,7 +12,6 @@ const styles = StyleSheet.create({
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import RNBootSplash from 'react-native-bootsplash';
 import { store } from './store';
 import { RootNavigator } from './navigation/RootNavigator';
 import { useAuth } from './hooks/useAuth';

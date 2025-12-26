@@ -14,6 +14,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		97DDA04793E697F7EA2E559B /* libPods-NRJSoftParking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB6D9F7232E8C3332EA8944E /* libPods-NRJSoftParking.a */; };
 		EFF22E2581E890D84E40332F /* libPods-NRJSoftParking-NRJSoftParkingTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E7A728054C105F647E7676F /* libPods-NRJSoftParking-NRJSoftParkingTests.a */; };
+		F21DB36723904E82B3ECC16B /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB680A0C3063412D82F2AFF6 /* BootSplash.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		EB6D9F7232E8C3332EA8944E /* libPods-NRJSoftParking.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NRJSoftParking.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FBB42FC4BEE8F78C3E96A251 /* Pods-NRJSoftParking.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NRJSoftParking.debug.xcconfig"; path = "Target Support Files/Pods-NRJSoftParking/Pods-NRJSoftParking.debug.xcconfig"; sourceTree = "<group>"; };
+		BB680A0C3063412D82F2AFF6 /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "NRJSoftParking/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				BB680A0C3063412D82F2AFF6 /* BootSplash.storyboard */,
 			);
 			name = NRJSoftParking;
 			sourceTree = "<group>";
@@ -244,6 +247,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				F21DB36723904E82B3ECC16B /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

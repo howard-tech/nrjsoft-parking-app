@@ -13,6 +13,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@theme';
 import { AuthStackParamList } from '../../navigation/types';
 import { PhoneInput } from '../../components/common/PhoneInput';
@@ -24,23 +25,27 @@ export const LoginScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList, 'Login'>>();
     const { t } = useTranslation();
     const theme = useTheme();
+    const { requestOTP, isLoading } = useAuth();
 
     const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
     const [identifier, setIdentifier] = useState('');
     const [gdprConsent, setGdprConsent] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!identifier || !gdprConsent) {
             return;
         }
 
-        setIsLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            setIsLoading(false);
-            navigation.navigate('OTPVerification', { phone: identifier });
-        }, 1500);
+        try {
+            await requestOTP(authMethod === 'phone' ? 'mobile' : 'email', identifier);
+            navigation.navigate('OTPVerification', {
+                phone: authMethod === 'phone' ? identifier : undefined,
+                email: authMethod === 'email' ? identifier : undefined,
+            });
+        } catch (error) {
+            // Error is handled in useAuth hook (stored in state)
+            console.error('Login request failed:', error);
+        }
     };
 
     return (

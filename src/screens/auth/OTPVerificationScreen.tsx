@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
     View,
     Text,
@@ -8,63 +9,68 @@ import {
     Platform,
     ScrollView,
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp, NavigatorScreenParams } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@theme';
-import { AuthStackParamList, RootStackParamList, MainTabParamList } from '../../navigation/types';
+import { AuthStackParamList, RootStackParamList } from '../../navigation/types';
 import { OTPInput } from '../../components/common/OTPInput';
 import { Button } from '../../components/common/Button';
 import { CountdownTimer } from './components/CountdownTimer';
 
 type OTPRouteProp = RouteProp<AuthStackParamList, 'OTPVerification'>;
 
+import { useAuth } from '@hooks/useAuth';
+
 export const OTPVerificationScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const route = useRoute<OTPRouteProp>();
     const { t } = useTranslation();
     const theme = useTheme();
+    const { login, requestOTP, isLoading, error: authError } = useAuth();
 
     const [otp, setOtp] = useState('');
     const [isTimerActive, setIsTimerActive] = useState(true);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [localError, setLocalError] = useState<string | null>(null);
 
     const { phone, email } = route.params;
     const identifier = phone || email || '';
+    const type = phone ? 'mobile' : 'email';
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         if (otp.length < 4) {
             return;
         }
 
-        setIsLoading(true);
-        setError(null);
+        setLocalError(null);
 
-        // Simulate OTP verification
-        setTimeout(() => {
-            setIsLoading(true);
-            setIsLoading(false);
-            if (otp === '1234') { // Mock success code
-                // In a real app, this would update auth state or navigate to Main
-                // For now, we simulate navigation to Main app stack
-                // We'll use navigation.replace if the navigator structure allows,
-                // but since we are in AuthStack, we'll navigate to the Root Navigator's 'Main'
-                navigation.navigate('Main', {
-                    screen: 'HomeTab',
-                    params: { screen: 'SmartMap' },
-                } as NavigatorScreenParams<MainTabParamList>);
-            } else {
-                setError(t('auth.invalidOtp'));
+        try {
+            await login(type, identifier, otp);
+            // On success, RootNavigator will automatically switch to Main stack
+            // because isAuthenticated becomes true.
+        } catch (err) {
+            // Error is handled in useAuth but we might want to show it locally too
+            let message = t('auth.invalidOtp');
+            if (axios.isAxiosError(err)) {
+                message = err.response?.data?.message || message;
             }
-        }, 1500);
+            setLocalError(message);
+        }
     };
 
-    const handleResend = () => {
+    const handleResend = async () => {
         setIsTimerActive(true);
         setOtp('');
-        setError(null);
-        // Simulate resend API call
+        setLocalError(null);
+        try {
+            await requestOTP(type, identifier);
+        } catch (err) {
+            let message = 'Resend failed';
+            if (axios.isAxiosError(err)) {
+                message = err.response?.data?.message || message;
+            }
+            setLocalError(message);
+        }
     };
 
     return (
@@ -84,7 +90,9 @@ export const OTPVerificationScreen: React.FC = () => {
                 <View style={styles.otpContainer}>
                     <OTPInput value={otp} onChangeText={setOtp} />
 
-                    {error && <Text style={styles.errorText}>{error}</Text>}
+                    {otp.length === 4 && (authError || localError) && (
+                        <Text style={styles.errorText}>{authError || localError}</Text>
+                    )}
 
                     <View style={styles.timerSection}>
                         {isTimerActive ? (

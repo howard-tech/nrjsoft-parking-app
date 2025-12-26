@@ -4,7 +4,7 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 export type AuthStackParamList = {
     Tutorial: undefined;
     Login: undefined;
-    OTPVerification: { phone: string; email?: string };
+    OTPVerification: { phone?: string; email?: string };
 };
 
 // Home Stack (Smart Map)

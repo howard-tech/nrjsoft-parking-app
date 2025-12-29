@@ -1,8 +1,8 @@
 name: PR Check
 
 on:
-  pull_request:
-    branches: [main, develop]
+  # Temporarily disable automatic CI runs (billing hold); manual dispatch only
+  workflow_dispatch:
 
 jobs:
   lint-and-test:

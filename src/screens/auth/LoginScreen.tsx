@@ -9,6 +9,7 @@ import {
     Platform,
     ScrollView,
     TextInput,
+    Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -20,12 +21,13 @@ import { PhoneInput } from '../../components/common/PhoneInput';
 import { Checkbox } from '../../components/common/Checkbox';
 import { Button } from '../../components/common/Button';
 import { SocialLoginButtons } from './components/SocialLoginButtons';
+import axios from 'axios';
 
 export const LoginScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList, 'Login'>>();
     const { t } = useTranslation();
     const theme = useTheme();
-    const { requestOTP, isLoading, error: authError } = useAuth();
+    const { requestOTP, requestOtpLoading, error: authError } = useAuth();
 
     const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
     const [identifier, setIdentifier] = useState('');
@@ -43,8 +45,11 @@ export const LoginScreen: React.FC = () => {
                 email: authMethod === 'email' ? identifier : undefined,
             });
         } catch (error) {
-            // Error is handled in useAuth hook (stored in state)
             console.error('Login request failed:', error);
+            // Handle transient errors like network issues with an Alert
+            if (axios.isAxiosError(error) && !error.response) {
+                Alert.alert(t('common.error'), t('auth.networkError'));
+            }
         }
     };
 
@@ -125,7 +130,7 @@ export const LoginScreen: React.FC = () => {
                         onPress={handleLogin}
                         variant="secondary"
                         disabled={!identifier || !gdprConsent}
-                        loading={isLoading}
+                        loading={requestOtpLoading}
                         style={styles.loginButton}
                     />
 

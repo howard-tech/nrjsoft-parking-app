@@ -8,6 +8,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     ScrollView,
+    Alert,
 } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -17,17 +18,16 @@ import { AuthStackParamList, RootStackParamList } from '../../navigation/types';
 import { OTPInput } from '../../components/common/OTPInput';
 import { Button } from '../../components/common/Button';
 import { CountdownTimer } from './components/CountdownTimer';
+import { useAuth } from '@hooks/useAuth';
 
 type OTPRouteProp = RouteProp<AuthStackParamList, 'OTPVerification'>;
-
-import { useAuth } from '@hooks/useAuth';
 
 export const OTPVerificationScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const route = useRoute<OTPRouteProp>();
     const { t } = useTranslation();
     const theme = useTheme();
-    const { login, requestOTP, isLoading, error: authError } = useAuth();
+    const { login, requestOTP, verifyOtpLoading, requestOtpLoading, error: authError } = useAuth();
 
     const [otp, setOtp] = useState('');
     const [isTimerActive, setIsTimerActive] = useState(true);
@@ -52,6 +52,10 @@ export const OTPVerificationScreen: React.FC = () => {
             // Error is handled in useAuth but we might want to show it locally too
             let message = t('auth.invalidOtp');
             if (axios.isAxiosError(err)) {
+                if (!err.response) {
+                    Alert.alert(t('common.error'), t('auth.networkError'));
+                    return;
+                }
                 message = err.response?.data?.message || message;
             }
             setLocalError(message);
@@ -67,6 +71,10 @@ export const OTPVerificationScreen: React.FC = () => {
         } catch (err) {
             let message = 'Resend failed';
             if (axios.isAxiosError(err)) {
+                if (!err.response) {
+                    Alert.alert(t('common.error'), t('auth.networkError'));
+                    return;
+                }
                 message = err.response?.data?.message || message;
             }
             setLocalError(message);
@@ -104,8 +112,10 @@ export const OTPVerificationScreen: React.FC = () => {
                                 />
                             </View>
                         ) : (
-                            <TouchableOpacity onPress={handleResend}>
-                                <Text style={styles.resendText}>{t('auth.resendCodeNow')}</Text>
+                            <TouchableOpacity onPress={handleResend} disabled={requestOtpLoading}>
+                                <Text style={[styles.resendText, requestOtpLoading && styles.disabledText]}>
+                                    {requestOtpLoading ? t('common.loading') : t('auth.resendCodeNow')}
+                                </Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -115,7 +125,7 @@ export const OTPVerificationScreen: React.FC = () => {
                     title={t('auth.verifyAndLogin')}
                     onPress={handleVerify}
                     disabled={otp.length < 6}
-                    loading={isLoading}
+                    loading={verifyOtpLoading}
                     style={styles.verifyButton}
                 />
 
@@ -181,6 +191,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '700',
         textDecorationLine: 'underline',
+    },
+    disabledText: {
+        opacity: 0.5,
     },
     errorText: {
         color: '#E74C3C',

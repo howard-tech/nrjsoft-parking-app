@@ -1,25 +1,36 @@
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
 import {
-    setLoading,
+    setRequestOtpLoading,
+    setVerifyOtpLoading,
+    setCheckSessionLoading,
+    setLogoutLoading,
     setCredentials,
     setError,
     logout as logoutAction,
 } from '../store/slices/authSlice';
 import { authService } from '../services/auth/authService';
 import { tokenStorage } from '../services/auth/tokenStorage';
-import axios from 'axios';
+import { parseAxiosError } from '../utils/errorParser';
 
 export const useAuth = () => {
     const dispatch = useAppDispatch();
-    const { user, isAuthenticated, isLoading, error } = useAppSelector((state) => state.auth);
+    const {
+        user,
+        isAuthenticated,
+        requestOtpLoading,
+        verifyOtpLoading,
+        checkSessionLoading,
+        logoutLoading,
+        error,
+    } = useAppSelector((state) => state.auth);
 
     /**
      * Verify OTP and log in
      */
     const login = useCallback(
         async (type: 'mobile' | 'email', identifier: string, otp: string) => {
-            dispatch(setLoading(true));
+            dispatch(setVerifyOtpLoading(true));
             try {
                 const response = await authService.verifyOTP(type, identifier, otp);
                 dispatch(
@@ -29,14 +40,10 @@ export const useAuth = () => {
                     })
                 );
             } catch (err) {
-                let message = 'Login failed';
-                if (axios.isAxiosError(err)) {
-                    message = err.response?.data?.message || message;
-                }
-                dispatch(setError(message));
+                dispatch(setError(parseAxiosError(err, 'auth.loginFailed')));
                 throw err;
             } finally {
-                dispatch(setLoading(false));
+                dispatch(setVerifyOtpLoading(false));
             }
         },
         [dispatch]
@@ -46,7 +53,7 @@ export const useAuth = () => {
      * Check for existing session on app start
      */
     const checkSession = useCallback(async () => {
-        dispatch(setLoading(true));
+        dispatch(setCheckSessionLoading(true));
         try {
             const tokens = await tokenStorage.getTokens();
             if (tokens) {
@@ -63,7 +70,7 @@ export const useAuth = () => {
             // If fetching profile fails (and refresh also fails), we log out
             dispatch(logoutAction());
         } finally {
-            dispatch(setLoading(false));
+            dispatch(setCheckSessionLoading(false));
         }
     }, [dispatch]);
 
@@ -71,14 +78,14 @@ export const useAuth = () => {
      * Log out and clear state
      */
     const logout = useCallback(async () => {
-        dispatch(setLoading(true));
+        dispatch(setLogoutLoading(true));
         try {
             await authService.logout();
         } catch (err) {
             console.error('Logout error:', err);
         } finally {
             dispatch(logoutAction());
-            dispatch(setLoading(false));
+            dispatch(setLogoutLoading(false));
         }
     }, [dispatch]);
 
@@ -87,18 +94,14 @@ export const useAuth = () => {
      */
     const requestOTP = useCallback(
         async (type: 'mobile' | 'email', identifier: string) => {
-            dispatch(setLoading(true));
+            dispatch(setRequestOtpLoading(true));
             try {
                 await authService.requestOTP(type, identifier);
             } catch (err) {
-                let message = 'Failed to request OTP';
-                if (axios.isAxiosError(err)) {
-                    message = err.response?.data?.message || message;
-                }
-                dispatch(setError(message));
+                dispatch(setError(parseAxiosError(err, 'auth.otpRequestFailed')));
                 throw err;
             } finally {
-                dispatch(setLoading(false));
+                dispatch(setRequestOtpLoading(false));
             }
         },
         [dispatch]
@@ -107,7 +110,11 @@ export const useAuth = () => {
     return {
         user,
         isAuthenticated,
-        isLoading,
+        isLoading: requestOtpLoading || verifyOtpLoading || checkSessionLoading || logoutLoading,
+        requestOtpLoading,
+        verifyOtpLoading,
+        checkSessionLoading,
+        logoutLoading,
         error,
         login,
         logout,

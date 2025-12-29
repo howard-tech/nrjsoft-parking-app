@@ -77,15 +77,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     inputWrapper: {
-        marginHorizontal: 8,
+        marginHorizontal: 4,
     },
     input: {
-        width: 60,
-        height: 70,
+        width: 45,
+        height: 55,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         borderRadius: 12,
         borderWidth: 1.5,
-        fontSize: 28,
+        fontSize: 20,
         fontWeight: '700',
     },
 });

@@ -16,6 +16,7 @@ export const tokenStorage = {
             const tokens: Tokens = { accessToken, refreshToken };
             await Keychain.setGenericPassword('auth_tokens', JSON.stringify(tokens), {
                 service: 'com.nrjsoftparking.auth',
+                accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
             });
             return true;
         } catch (error) {

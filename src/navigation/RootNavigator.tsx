@@ -18,7 +18,6 @@ export const RootNavigator: React.FC = () => {
     const theme = useTheme();
 
     if (isLoading) {
-        // Return null or a splash screen while loading
         return null;
     }
 

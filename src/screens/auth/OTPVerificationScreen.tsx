@@ -38,7 +38,7 @@ export const OTPVerificationScreen: React.FC = () => {
     const type = phone ? 'mobile' : 'email';
 
     const handleVerify = async () => {
-        if (otp.length < 4) {
+        if (otp.length < 6) {
             return;
         }
 
@@ -88,9 +88,9 @@ export const OTPVerificationScreen: React.FC = () => {
                 </View>
 
                 <View style={styles.otpContainer}>
-                    <OTPInput value={otp} onChangeText={setOtp} />
+                    <OTPInput length={6} value={otp} onChangeText={setOtp} />
 
-                    {otp.length === 4 && (authError || localError) && (
+                    {otp.length === 6 && (authError || localError) && (
                         <Text style={styles.errorText}>{authError || localError}</Text>
                     )}
 
@@ -114,7 +114,7 @@ export const OTPVerificationScreen: React.FC = () => {
                 <Button
                     title={t('auth.verifyAndLogin')}
                     onPress={handleVerify}
-                    disabled={otp.length < 4}
+                    disabled={otp.length < 6}
                     loading={isLoading}
                     style={styles.verifyButton}
                 />

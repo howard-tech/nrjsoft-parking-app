@@ -25,7 +25,7 @@ export const LoginScreen: React.FC = () => {
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList, 'Login'>>();
     const { t } = useTranslation();
     const theme = useTheme();
-    const { requestOTP, isLoading } = useAuth();
+    const { requestOTP, isLoading, error: authError } = useAuth();
 
     const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
     const [identifier, setIdentifier] = useState('');
@@ -128,6 +128,10 @@ export const LoginScreen: React.FC = () => {
                         loading={isLoading}
                         style={styles.loginButton}
                     />
+
+                    {authError && (
+                        <Text style={styles.errorText}>{authError}</Text>
+                    )}
                 </View>
 
                 {/* Divider */}
@@ -244,5 +248,11 @@ const styles = StyleSheet.create({
         color: 'rgba(255, 255, 255, 0.4)',
         paddingHorizontal: 16,
         fontSize: 12,
+    },
+    errorText: {
+        color: '#FF4D4D',
+        fontSize: 14,
+        textAlign: 'center',
+        marginTop: 16,
     },
 });

@@ -50,17 +50,17 @@ export const useAuth = () => {
         try {
             const tokens = await tokenStorage.getTokens();
             if (tokens) {
-                // In a real app, we might fetch the user profile here
-                // For now, we simulate success if tokens exist
+                // Validate session by fetching the current user profile
+                const userProfile = await authService.getCurrentUser();
                 dispatch(
                     setCredentials({
-                        user: { id: '1', name: 'John Doe', email: 'john@example.com' }, // Mock user
+                        user: userProfile,
                         isAuthenticated: true,
                     })
                 );
             }
         } catch (err) {
-            console.error('Session check failed:', err);
+            // If fetching profile fails (and refresh also fails), we log out
             dispatch(logoutAction());
         } finally {
             dispatch(setLoading(false));

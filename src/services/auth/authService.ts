@@ -1,4 +1,4 @@
-import { apiClient } from '../api';
+import { apiClient, authApiClient } from '../api';
 import { tokenStorage } from './tokenStorage';
 
 export interface AuthResponse {
@@ -17,18 +17,27 @@ export const authService = {
      * Request an OTP for login
      */
     async requestOTP(type: 'mobile' | 'email', identifier: string): Promise<void> {
-        await apiClient.post('/auth/otp-request', { type, identifier });
+        const payload = type === 'mobile' ? { phone: identifier } : { email: identifier };
+        await apiClient.post('/auth/otp-request', payload);
+    },
+
+    /**
+     * Get the current user profile
+     */
+    async getCurrentUser(): Promise<AuthResponse['user']> {
+        const response = await apiClient.get<AuthResponse['user']>('/me');
+        return response.data;
     },
 
     /**
      * Verify the OTP and get tokens
      */
     async verifyOTP(type: 'mobile' | 'email', identifier: string, otp: string): Promise<AuthResponse> {
-        const response = await apiClient.post<AuthResponse>('/auth/otp-verify', {
-            type,
-            identifier,
+        const payload = {
+            ...(type === 'mobile' ? { phone: identifier } : { email: identifier }),
             otp,
-        });
+        };
+        const response = await apiClient.post<AuthResponse>('/auth/otp-verify', payload);
 
         const { accessToken, refreshToken } = response.data;
         await tokenStorage.setTokens(accessToken, refreshToken);
@@ -46,8 +55,8 @@ export const authService = {
                 return null;
             }
 
-            const response = await apiClient.post<{ accessToken: string; refreshToken: string }>(
-                '/auth/token-refresh',
+            const response = await authApiClient.post<{ accessToken: string; refreshToken: string }>(
+                '/auth/refresh',
                 { refreshToken: storedRefreshToken }
             );
 

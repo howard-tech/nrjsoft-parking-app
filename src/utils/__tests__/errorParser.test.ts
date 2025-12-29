@@ -1,6 +1,4 @@
 import { parseAxiosError } from '../errorParser';
-import axios from 'axios';
-import i18next from 'i18next';
 
 jest.mock('i18next', () => ({
     t: (key: string) => key,

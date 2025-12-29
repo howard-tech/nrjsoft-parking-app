@@ -1,3 +1,32 @@
+diff --git a/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerButtonManagerInterface.java b/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerButtonManagerInterface.java
+index 975704f..d4dac45 100644
+--- a/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerButtonManagerInterface.java
++++ b/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerButtonManagerInterface.java
+@@ -11,9 +11,7 @@ package com.facebook.react.viewmanagers;
+ 
+ import android.view.View;
+ import androidx.annotation.Nullable;
+-import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
+-
+-public interface RNGestureHandlerButtonManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
++public interface RNGestureHandlerButtonManagerInterface<T extends View> {
+   void setExclusive(T view, boolean value);
+   void setForeground(T view, boolean value);
+   void setBorderless(T view, boolean value);
+diff --git a/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerRootViewManagerInterface.java b/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerRootViewManagerInterface.java
+index 9864e0f..083dd0f 100644
+--- a/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerRootViewManagerInterface.java
++++ b/node_modules/react-native-gesture-handler/android/paper/src/main/java/com/facebook/react/viewmanagers/RNGestureHandlerRootViewManagerInterface.java
+@@ -10,8 +10,6 @@
+ package com.facebook.react.viewmanagers;
+ 
+ import android.view.View;
+-import com.facebook.react.uimanager.ViewManagerWithGeneratedInterface;
+-
+-public interface RNGestureHandlerRootViewManagerInterface<T extends View> extends ViewManagerWithGeneratedInterface {
++public interface RNGestureHandlerRootViewManagerInterface<T extends View> {
+   void setUnstable_forceActive(T view, boolean value);
+ }
 diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt b/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
 index e271a3e..ef167c5 100644
 --- a/node_modules/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/RNGestureHandlerPackage.kt
@@ -19,18 +48,3 @@ index e271a3e..ef167c5 100644
    ViewManagerOnDemandReactPackage {
    private val viewManagers: Map<String, ModuleSpec> by lazy {
      mapOf(
-diff --git a/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java b/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java
-new file mode 100644
-index 0000000..74db98c
---- /dev/null
-+++ b/node_modules/react-native-gesture-handler/android/src/main/java/com/facebook/react/uimanager/ViewManagerWithGeneratedInterface.java
-@@ -0,0 +1,9 @@
-+package com.facebook.react.uimanager;
-+
-+import android.view.View;
-+
-+/**
-+ * Stubbed copy for compatibility with React Native 0.73 where this interface is not shipped.
-+ */
-+public interface ViewManagerWithGeneratedInterface<T extends View> {
-+}

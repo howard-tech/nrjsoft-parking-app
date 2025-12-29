@@ -1,10 +1,8 @@
 name: Build & Deploy
 
 on:
-  push:
-    branches: [main]
-  release:
-    types: [published]
+  # Temporarily paused due to billing/CI hold; enable via manual dispatch when ready
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '18'

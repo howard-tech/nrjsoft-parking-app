@@ -15,19 +15,43 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import { RootNavigator } from './navigation/RootNavigator';
 import { useAuth } from './hooks/useAuth';
+import { useLocalization } from './hooks/useLocalization';
+import { useNotifications } from './hooks/useNotifications';
 
 const AppContent = () => {
     const { checkSession } = useAuth();
+    const { bootstrapLanguage } = useLocalization();
+    const { checkPermission, registerToken, subscribeToForeground, isAuthorized } = useNotifications();
 
     useEffect(() => {
+        let unsubscribeForeground: (() => void) | undefined;
+
         const init = async () => {
-            await checkSession();
+            try {
+                await bootstrapLanguage();
+                await checkSession();
+
+                const permissionStatus = await checkPermission();
+
+                if (isAuthorized(permissionStatus)) {
+                    await registerToken();
+                    unsubscribeForeground = subscribeToForeground();
+                }
+            } catch (error) {
+                console.error('App bootstrap error', error);
+            } finally {
+                await RNBootSplash.hide({ fade: true });
+            }
         };
 
-        init().finally(async () => {
-            await RNBootSplash.hide({ fade: true });
-        });
-    }, [checkSession]);
+        init();
+
+        return () => {
+            if (unsubscribeForeground) {
+                unsubscribeForeground();
+            }
+        };
+    }, [bootstrapLanguage, checkSession, checkPermission, isAuthorized, registerToken, subscribeToForeground]);
 
     return (
         <GestureHandlerRootView style={styles.root}>

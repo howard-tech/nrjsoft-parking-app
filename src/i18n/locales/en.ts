@@ -1,0 +1,52 @@
+export const en = {
+    tutorial: {
+        slide1: {
+            title: 'Choose how you pay.',
+            desc: 'Use NRJ Wallet or pay directly with Card, Apple Pay, or Google Pay.',
+        },
+        slide2: {
+            title: 'Smart City Parking',
+            desc: 'Seamlessly transition between garage and on-street parking.',
+        },
+        slide3: {
+            title: 'Real-time Occupancy',
+            desc: 'Find the best spots before you arrive.',
+        },
+        next: 'Next',
+        prev: 'Prev',
+        continueToSignIn: 'Continue to Sign In',
+        helpHotline: 'Help Hotline',
+        supportDesc: 'Need immediate assistance?',
+    },
+    common: {
+        loading: 'Loading...',
+        error: 'Error',
+    },
+    auth: {
+        secureSignIn: 'Secure Sign In',
+        gdprNotice: 'OTP enforced and GDPR consent required',
+        mobileNumber: 'Mobile number',
+        corporateEmail: 'Corporate email',
+        emailPlaceholder: 'Enter your email',
+        iAccept: 'I accept the',
+        termsAndConditions: 'Terms and Conditions',
+        secureLogin: 'Secure login',
+        orContinueWith: 'Or continue with',
+        verifyAccount: 'Verify Account',
+        otpSentTo: 'A verification code has been sent to',
+        invalidOtp: 'Invalid code. Please try again.',
+        resendCodeIn: 'Resend code in',
+        resendCodeNow: 'Resend code now',
+        verifyAndLogin: 'Verify and Login',
+        changeNumber: 'Change number or email',
+        networkError: 'Network error. Please check your connection.',
+        sessionExpired: 'Your session expired. Please sign in again.',
+        accessDenied: 'You do not have access to this action.',
+        loginFailed: 'Login failed. Please try again.',
+        otpRequestFailed: 'Could not send code. Please try again.',
+    },
+    notifications: {
+        permissionDenied: 'Notifications are disabled. You can enable them in settings.',
+        permissionPrompt: 'Allow notifications to receive updates about your parking sessions.',
+    },
+};

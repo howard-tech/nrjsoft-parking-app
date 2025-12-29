@@ -12,6 +12,17 @@ export interface AuthResponse {
     refreshToken: string;
 }
 
+export interface SocialLoginPayload {
+    provider: 'google' | 'apple';
+    idToken: string | null;
+    email: string | null;
+    name?: string | null;
+    authorizationCode?: string | null;
+    fullName?: unknown;
+    user?: string;
+    photo?: string | null;
+}
+
 export const authService = {
     /**
      * Request an OTP for login
@@ -19,6 +30,18 @@ export const authService = {
     async requestOTP(type: 'mobile' | 'email', identifier: string): Promise<void> {
         const payload = type === 'mobile' ? { phone: identifier } : { email: identifier };
         await apiClient.post('/auth/otp-request', payload);
+    },
+
+    /**
+     * Social login (Google / Apple)
+     */
+    async socialLogin(data: SocialLoginPayload): Promise<AuthResponse> {
+        const response = await apiClient.post<AuthResponse>('/auth/social', data);
+
+        const { accessToken, refreshToken } = response.data;
+        await tokenStorage.setTokens(accessToken, refreshToken);
+
+        return response.data;
     },
 
     /**

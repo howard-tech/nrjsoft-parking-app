@@ -20,7 +20,7 @@ import { AuthStackParamList } from '../../navigation/types';
 import { PhoneInput } from '../../components/common/PhoneInput';
 import { Checkbox } from '../../components/common/Checkbox';
 import { Button } from '../../components/common/Button';
-import { SocialLoginButtons } from './components/SocialLoginButtons';
+import { SocialLoginButtons } from '@components/auth/SocialLoginButtons';
 import axios from 'axios';
 
 export const LoginScreen: React.FC = () => {
@@ -51,6 +51,10 @@ export const LoginScreen: React.FC = () => {
                 Alert.alert(t('common.error'), t('auth.networkError'));
             }
         }
+    };
+
+    const handleSocialError = (message: string) => {
+        Alert.alert(t('common.error'), message);
     };
 
     return (
@@ -147,7 +151,7 @@ export const LoginScreen: React.FC = () => {
                 </View>
 
                 {/* Social Login */}
-                <SocialLoginButtons />
+                <SocialLoginButtons onError={handleSocialError} />
             </ScrollView>
         </KeyboardAvoidingView>
     );

@@ -35,17 +35,22 @@ Implement the Smart Map home screen - the main landing screen that provides user
 
 ## Acceptance Criteria
 
-- [ ] Full-screen Google Map displays
-- [ ] User location shown with GPS dot
-- [ ] Nearby garages fetched and displayed as pins
-- [ ] Pins show availability status (green/orange/red)
-- [ ] Parking cards carousel at bottom
+- [x] Full-screen Google Map displays
+- [x] User location shown with GPS dot
+- [x] Nearby garages fetched and displayed as pins
+- [x] Pins show availability status (green/orange/red)
+- [x] Parking cards carousel at bottom
 - [ ] Tapping pin/card shows garage detail bottom sheet
 - [ ] Navigate button opens external maps app
 - [ ] Start Session / Scan QR buttons functional
 - [ ] Search bar with autocomplete
 - [ ] Pull-to-refresh for garage data
-- [ ] Loading and error states
+- [x] Loading and error states
+
+## Progress Notes
+
+- Map view shows user location, nearby garage pins (colored by status), and a horizontal carousel with cards linked to marker selection plus manual refresh/recenter controls.
+- Bottom sheet actions, external navigation, and search/filter flows remain open for follow-up tasks (TASK-012/013/014).
 
 ## Technical Implementation
 

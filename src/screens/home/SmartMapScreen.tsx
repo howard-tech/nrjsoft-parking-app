@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Platform, Text } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Platform, Text, FlatList, TouchableOpacity } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { useTheme } from '@theme';
 import { mapStyle } from '@theme/mapStyle';
 import { useLocation } from '@hooks/useLocation';
 import { Button } from '@components/common/Button';
+import { parkingService, ParkingGarage } from '@services/parking/parkingService';
+import { GarageCard } from './components/GarageCard';
 
 const DEFAULT_REGION: Region = {
     latitude: 52.52,
@@ -15,26 +17,70 @@ const DEFAULT_REGION: Region = {
 
 export const SmartMapScreen: React.FC = () => {
     const theme = useTheme();
-    const { coords, getCurrentPosition, permission, requestPermission, openPermissionSettings } = useLocation();
-    const [region, setRegion] = useState<Region>(DEFAULT_REGION);
+    const {
+        coords,
+        getCurrentPosition,
+        permission,
+        requestPermission,
+        openPermissionSettings,
+        error: locationError,
+    } = useLocation();
     const mapRef = useRef<MapView | null>(null);
+    const listRef = useRef<FlatList<ParkingGarage> | null>(null);
+    const [garages, setGarages] = useState<ParkingGarage[]>([]);
+    const [loadingGarages, setLoadingGarages] = useState(false);
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [fetchError, setFetchError] = useState<string | null>(null);
+    const [recenterLoading, setRecenterLoading] = useState(false);
+
+    const fetchGarages = useCallback(async (lat: number, lng: number) => {
+        setLoadingGarages(true);
+        setFetchError(null);
+        try {
+            const data = await parkingService.fetchNearby(lat, lng);
+            setGarages(data);
+            setSelectedId((previousSelected) => {
+                if (!data.length) {
+                    return null;
+                }
+
+                const stillSelected = data.find((garage) => garage.id === previousSelected);
+                return stillSelected ? stillSelected.id : data[0].id;
+            });
+        } catch (err) {
+            console.warn('Failed to load garages', err);
+            setFetchError('Unable to load nearby garages. Try again in a moment.');
+            setGarages([]);
+            setSelectedId(null);
+        } finally {
+            setLoadingGarages(false);
+        }
+    }, []);
 
     useEffect(() => {
         getCurrentPosition();
     }, [getCurrentPosition]);
 
     useEffect(() => {
-        if (coords) {
-            const nextRegion = {
-                latitude: coords.latitude,
-                longitude: coords.longitude,
-                latitudeDelta: 0.03,
-                longitudeDelta: 0.03,
-            };
-            setRegion(nextRegion);
-            mapRef.current?.animateToRegion(nextRegion);
+        if ((permission === 'granted' || permission === 'limited') && !coords) {
+            getCurrentPosition();
         }
-    }, [coords]);
+    }, [coords, getCurrentPosition, permission]);
+
+    useEffect(() => {
+        if (!coords) {
+            return;
+        }
+
+        const nextRegion = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            latitudeDelta: 0.03,
+            longitudeDelta: 0.03,
+        };
+        mapRef.current?.animateToRegion(nextRegion, 500);
+        fetchGarages(nextRegion.latitude, nextRegion.longitude);
+    }, [coords, fetchGarages]);
 
     const mapProps = useMemo(
         () => ({
@@ -44,18 +90,101 @@ export const SmartMapScreen: React.FC = () => {
         []
     );
 
+    const initialRegion = coords
+        ? {
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              latitudeDelta: 0.03,
+              longitudeDelta: 0.03,
+          }
+        : DEFAULT_REGION;
+
+    const shouldShowLocationOverlay =
+        !coords && permission !== 'blocked' && permission !== 'denied';
+
+    const controlSurfaceStyle = useMemo(
+        () => ({
+            backgroundColor: 'rgba(255,255,255,0.95)',
+            borderColor: theme.colors.neutral.border,
+        }),
+        [theme.colors.neutral.border]
+    );
+
+    const handleSelect = useCallback(
+        (garage: ParkingGarage) => {
+            setSelectedId(garage.id);
+            mapRef.current?.animateToRegion(
+                {
+                    latitude: garage.latitude,
+                    longitude: garage.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                },
+                350
+            );
+
+            const targetIndex = garages.findIndex((item) => item.id === garage.id);
+            if (targetIndex >= 0) {
+                listRef.current?.scrollToIndex({ index: targetIndex, animated: true });
+            }
+        },
+        [garages]
+    );
+
+    const renderGarageCard = ({ item }: { item: ParkingGarage }) => (
+        <TouchableOpacity activeOpacity={0.9} onPress={() => handleSelect(item)}>
+            <GarageCard garage={item} isSelected={item.id === selectedId} />
+        </TouchableOpacity>
+    );
+
+    const handleRefreshGarages = useCallback(() => {
+        if (coords) {
+            fetchGarages(coords.latitude, coords.longitude);
+            return;
+        }
+
+        getCurrentPosition();
+    }, [coords, fetchGarages, getCurrentPosition]);
+
+    const handleRecenter = useCallback(async () => {
+        setRecenterLoading(true);
+        const current = await getCurrentPosition();
+        if (current) {
+            mapRef.current?.animateToRegion(
+                {
+                    latitude: current.latitude,
+                    longitude: current.longitude,
+                    latitudeDelta: 0.02,
+                    longitudeDelta: 0.02,
+                },
+                350
+            );
+        }
+        setRecenterLoading(false);
+    }, [getCurrentPosition]);
+
     return (
         <View style={styles.container}>
-            {!coords && permission !== 'blocked' && permission !== 'denied' && (
+            {shouldShowLocationOverlay && (
                 <Overlay>
-                    <ActivityIndicator color={theme.colors.primary.main} size="large" />
-                    <Text style={styles.statusText}>Getting your location...</Text>
+                    {locationError ? (
+                        <>
+                            <Text style={styles.statusTitle}>Unable to get location</Text>
+                            <Text style={styles.statusText}>{locationError}</Text>
+                            <Button title="Try again" onPress={getCurrentPosition} />
+                        </>
+                    ) : (
+                        <>
+                            <ActivityIndicator color={theme.colors.primary.main} size="large" />
+                            <Text style={styles.statusText}>Getting your location...</Text>
+                        </>
+                    )}
                 </Overlay>
             )}
             {(permission === 'denied' || permission === 'blocked') && (
                 <Overlay>
                     <Text style={styles.statusTitle}>Location access needed</Text>
-                    <Text style={styles.statusText}>\nAllow location to show nearby parking.</Text>
+                    <Text style={styles.statusText}>Allow location to show nearby parking.</Text>
                     {permission === 'denied' ? (
                         <Button title="Allow location" onPress={requestPermission} />
                     ) : (
@@ -67,17 +196,80 @@ export const SmartMapScreen: React.FC = () => {
                 style={styles.map}
                 {...mapProps}
                 ref={mapRef}
-                initialRegion={DEFAULT_REGION}
+                initialRegion={initialRegion}
                 showsUserLocation
                 showsMyLocationButton={Platform.OS === 'android'}
-                onRegionChangeComplete={(next) => setRegion(next)}
             >
-                <Marker
-                    coordinate={{ latitude: region.latitude, longitude: region.longitude }}
-                    title="You"
-                    pinColor={theme.colors.primary.main}
-                />
+                {garages.map((garage) => (
+                    <Marker
+                        key={garage.id}
+                        coordinate={{ latitude: garage.latitude, longitude: garage.longitude }}
+                        title={garage.name}
+                        pinColor={garage.status === 'full'
+                            ? theme.colors.error.main
+                            : garage.status === 'limited'
+                                ? theme.colors.warning.main
+                                : theme.colors.success.main}
+                        onPress={() => handleSelect(garage)}
+                    />
+                ))}
             </MapView>
+            <View style={styles.controls}>
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={handleRecenter}
+                    style={[styles.controlButton, controlSurfaceStyle]}
+                    disabled={recenterLoading}
+                >
+                    {recenterLoading ? (
+                        <ActivityIndicator size="small" color={theme.colors.primary.main} />
+                    ) : (
+                        <Text style={[styles.controlText, { color: theme.colors.primary.main }]}>
+                            My location
+                        </Text>
+                    )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={handleRefreshGarages}
+                    style={[styles.controlButton, controlSurfaceStyle, styles.controlSpacing]}
+                    disabled={loadingGarages}
+                >
+                    {loadingGarages ? (
+                        <ActivityIndicator size="small" color={theme.colors.primary.main} />
+                    ) : (
+                        <Text style={[styles.controlText, { color: theme.colors.primary.main }]}>
+                            Refresh
+                        </Text>
+                    )}
+                </TouchableOpacity>
+            </View>
+            <View style={styles.carouselContainer}>
+                {loadingGarages && (
+                    <ActivityIndicator color={theme.colors.primary.main} />
+                )}
+                {fetchError && !loadingGarages && (
+                    <Text style={[styles.errorText, { color: theme.colors.error.main }]}>{fetchError}</Text>
+                )}
+                <FlatList
+                    ref={listRef}
+                    data={garages}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderGarageCard}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.listContent}
+                    ListEmptyComponent={
+                        !loadingGarages ? (
+                            <Text style={styles.emptyText}>
+                                {coords
+                                    ? 'No nearby garages found yet.'
+                                    : 'Enable location to load nearby garages.'}
+                            </Text>
+                        ) : null
+                    }
+                />
+            </View>
         </View>
     );
 };
@@ -103,7 +295,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center',
-        zIndex: 2,
+        zIndex: 4,
         backgroundColor: 'rgba(255,255,255,0.85)',
         paddingHorizontal: 24,
         paddingVertical: 24,
@@ -120,6 +312,57 @@ const styles = StyleSheet.create({
         color: '#2C3E50',
         textAlign: 'center',
         marginBottom: 12,
+    },
+    controls: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        flexDirection: 'row',
+        zIndex: 3,
+    },
+    controlButton: {
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        borderRadius: 12,
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000000',
+        shadowOpacity: 0.08,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 2 },
+        elevation: 3,
+        minWidth: 96,
+    },
+    controlText: {
+        fontSize: 12,
+        fontWeight: '700',
+    },
+    controlSpacing: {
+        marginLeft: 8,
+    },
+    carouselContainer: {
+        position: 'absolute',
+        bottom: 24,
+        left: 0,
+        right: 0,
+        paddingLeft: 16,
+        paddingVertical: 8,
+        zIndex: 2,
+    },
+    listContent: {
+        paddingRight: 16,
+        paddingVertical: 4,
+    },
+    errorText: {
+        marginBottom: 8,
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    emptyText: {
+        fontSize: 12,
+        color: '#2C3E50',
+        paddingVertical: 4,
     },
 });
 

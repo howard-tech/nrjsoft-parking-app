@@ -33,6 +33,9 @@ target 'NRJSoftParking' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'GoogleMaps'
+  pod 'Google-Maps-iOS-Utils'
+
   target 'NRJSoftParkingTests' do
     inherit! :complete
     # Pods for testing

@@ -1,1 +1,1 @@
-export { };
+export { SmartMapScreen } from './SmartMapScreen';

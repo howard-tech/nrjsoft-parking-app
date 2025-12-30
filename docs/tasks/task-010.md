@@ -9,7 +9,7 @@
 | **Priority** | Critical |
 | **Estimated Effort** | 6 hours |
 | **Dependencies** | TASK-001 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -73,6 +73,13 @@ export const useLocation = () => {
 | `src/hooks/useLocation.ts` | Location permission & tracking |
 | `src/theme/mapStyle.ts` | Custom map styling |
 | Android/iOS config files | API key setup |
+
+## Runbook / Config Notes
+
+- Android/iOS keys: set `GOOGLE_MAPS_API_KEY` in your shell/CI before `npm run android`/`npm run ios` (Gradle manifest placeholder + AppDelegate reads env). For iOS you can also supply `GMSServicesApiKey` in Info.plist via xcconfig/CI secret (do **not** commit real keys).
+- Permissions: `NSLocationWhenInUseUsageDescription` (and Always) added; Android manifest includes fine/coarse location. Uses `react-native-permissions`, so ensure `cd ios && pod install` after install.
+- Networking: cleartext enabled only for debug (emulator/localhost) via `network_security_config`; release builds remain HTTPS-only.
+- CI: pass `GOOGLE_MAPS_API_KEY` env into Gradle/Xcode steps; build will fail if placeholder is missing.
 
 ## Related Tasks
 

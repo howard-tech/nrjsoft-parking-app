@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import { Platform } from 'react-native';
+import { apiClient } from '../api';
 
 const FCM_TOKEN_KEY = '@nrjsoft.fcm_token';
 
@@ -19,10 +21,25 @@ const checkPermission = async (): Promise<FirebaseMessagingTypes.AuthorizationSt
 const requestPermission = async (): Promise<FirebaseMessagingTypes.AuthorizationStatus> =>
     messaging().requestPermission();
 
+const registerDeviceToken = async (token: string | null): Promise<void> => {
+    if (!token) {
+        return;
+    }
+
+    try {
+        await apiClient.post('/notifications/register', {
+            token,
+            platform: Platform.OS,
+        });
+    } catch (error) {
+        console.warn('Failed to register device token', error);
+    }
+};
+
 const getFcmToken = async (): Promise<string | null> => {
     await messaging().registerDeviceForRemoteMessages();
     const token = await messaging().getToken();
-    await storeToken(token);
+    await Promise.all([storeToken(token), registerDeviceToken(token)]);
     return token;
 };
 

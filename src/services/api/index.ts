@@ -1,16 +1,21 @@
-import axios from 'axios';
-import { Config } from 'react-native-config';
+import axios, { AxiosRequestConfig } from 'axios';
+import Config from 'react-native-config';
 import { tokenStorage } from '../auth/tokenStorage';
 import { store } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 
+const BASE_URL = Config.API_BASE_URL || Config.API_URL || 'http://localhost:3001/api/v1';
+const REQUEST_TIMEOUT = Number(Config.API_TIMEOUT) || 10000;
+
+type RetriableRequestConfig = AxiosRequestConfig & { _retry?: boolean; _networkRetry?: boolean };
+
 // Basic client for regular API calls
 export const apiClient = axios.create({
-    baseURL: Config.API_URL || 'http://localhost:3001/api/v1',
+    baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000,
+    timeout: REQUEST_TIMEOUT,
 });
 
 /**
@@ -18,11 +23,11 @@ export const apiClient = axios.create({
  * Used for token refresh to avoid recursive 401 loops in the main apiClient interceptor.
  */
 export const authApiClient = axios.create({
-    baseURL: Config.API_URL || 'http://localhost:3001/api/v1',
+    baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000,
+    timeout: REQUEST_TIMEOUT,
 });
 
 // Queue mechanism for handling concurrent refresh attempts
@@ -46,10 +51,18 @@ const processQueue = (error: unknown, token: string | null = null) => {
 // Request Interceptor: Attach the current access token to every outgoing request
 apiClient.interceptors.request.use(
     async (config) => {
+        const headers = config.headers ?? {};
         const accessToken = await tokenStorage.getAccessToken();
         if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
+            headers.Authorization = `Bearer ${accessToken}`;
         }
+        config.headers = headers;
+
+        if (__DEV__) {
+            const method = config.method?.toUpperCase();
+            console.log(`[API] ${method} ${config.url}`, config.data ?? config.params ?? '');
+        }
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -57,9 +70,23 @@ apiClient.interceptors.request.use(
 
 // Response Interceptor: Catch 401 errors and attempt to refresh the token
 apiClient.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        if (__DEV__) {
+            console.log(`[API] Response ${response.status} ${response.config.url}`, response.data);
+        }
+        return response;
+    },
     async (error) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as RetriableRequestConfig | undefined;
+
+        if (!originalRequest) {
+            return Promise.reject(error);
+        }
+
+        if (!error.response && !originalRequest._networkRetry) {
+            originalRequest._networkRetry = true;
+            return apiClient(originalRequest);
+        }
 
         // If error is 401 (Unauthorized) and we haven't already tried to refresh this specific request
         if (error.response?.status === 401 && !originalRequest._retry) {
@@ -70,6 +97,7 @@ apiClient.interceptors.response.use(
                     refreshQueue.push({ resolve, reject });
                 })
                     .then((token) => {
+                        originalRequest.headers = originalRequest.headers ?? {};
                         originalRequest.headers.Authorization = `Bearer ${token}`;
                         return apiClient(originalRequest);
                     })
@@ -99,6 +127,7 @@ apiClient.interceptors.response.use(
                 await tokenStorage.setTokens(accessToken, newRefreshToken || oldRefreshToken);
 
                 // Update the Authorization header of the original request
+                originalRequest.headers = originalRequest.headers ?? {};
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
                 // Process the queue with the new token

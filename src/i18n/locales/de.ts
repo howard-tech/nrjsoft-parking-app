@@ -1,0 +1,53 @@
+export const de = {
+    tutorial: {
+        slide1: {
+            title: 'Wähle deine Zahlungsart.',
+            desc: 'Nutze die NRJ Wallet oder zahle direkt mit Karte, Apple Pay oder Google Pay.',
+        },
+        slide2: {
+            title: 'Smartes Stadtparken',
+            desc: 'Wechsle nahtlos zwischen Parkhaus und Straßenparken.',
+        },
+        slide3: {
+            title: 'Auslastung in Echtzeit',
+            desc: 'Finde die besten Plätze, bevor du ankommst.',
+        },
+        next: 'Weiter',
+        prev: 'Zurück',
+        skip: 'Überspringen',
+        continueToSignIn: 'Weiter zum Login',
+        helpHotline: 'Support-Hotline',
+        supportDesc: 'Sofortige Hilfe benötigt?',
+    },
+    common: {
+        loading: 'Lädt...',
+        error: 'Fehler',
+    },
+    auth: {
+        secureSignIn: 'Sicher anmelden',
+        gdprNotice: 'OTP erforderlich und DSGVO-Zustimmung nötig',
+        mobileNumber: 'Handynummer',
+        corporateEmail: 'Geschäfts-E-Mail',
+        emailPlaceholder: 'E-Mail eingeben',
+        iAccept: 'Ich akzeptiere die',
+        termsAndConditions: 'Allgemeinen Geschäftsbedingungen',
+        secureLogin: 'Sicher anmelden',
+        orContinueWith: 'Oder fortfahren mit',
+        verifyAccount: 'Konto verifizieren',
+        otpSentTo: 'Ein Code wurde gesendet an',
+        invalidOtp: 'Ungültiger Code. Bitte erneut versuchen.',
+        resendCodeIn: 'Code erneut senden in',
+        resendCodeNow: 'Code jetzt erneut senden',
+        verifyAndLogin: 'Verifizieren und anmelden',
+        changeNumber: 'Nummer oder E-Mail ändern',
+        networkError: 'Netzwerkfehler. Bitte Verbindung prüfen.',
+        sessionExpired: 'Sitzung abgelaufen. Bitte erneut anmelden.',
+        accessDenied: 'Keine Berechtigung für diese Aktion.',
+        loginFailed: 'Anmeldung fehlgeschlagen. Bitte erneut versuchen.',
+        otpRequestFailed: 'Code konnte nicht gesendet werden. Bitte erneut versuchen.',
+    },
+    notifications: {
+        permissionDenied: 'Benachrichtigungen sind deaktiviert. Bitte in den Einstellungen aktivieren.',
+        permissionPrompt: 'Benachrichtigungen erlauben, um Updates zu deinen Parkvorgängen zu erhalten.',
+    },
+};

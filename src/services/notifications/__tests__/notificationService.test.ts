@@ -1,6 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import { Platform } from 'react-native';
+import { apiClient } from '../../api';
 import { notificationService } from '../notificationService';
+
+jest.mock('../../api', () => ({
+    apiClient: {
+        post: jest.fn().mockResolvedValue({}),
+    },
+}));
 
 jest.mock('@react-native-async-storage/async-storage', () =>
     require('@react-native-async-storage/async-storage/jest/async-storage-mock')
@@ -77,6 +85,10 @@ describe('notificationService', () => {
         expect(mockModule.getToken).toHaveBeenCalled();
         expect(token).toBe('test-token');
         expect(await AsyncStorage.getItem('@nrjsoft.fcm_token')).toBe('test-token');
+        expect(apiClient.post).toHaveBeenCalledWith('/notifications/register', {
+            token: 'test-token',
+            platform: Platform.OS,
+        });
     });
 
     it('registers foreground listener', () => {

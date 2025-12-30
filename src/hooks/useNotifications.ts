@@ -47,14 +47,33 @@ export const useNotifications = () => {
     );
 
     const onNotificationOpenedApp = useCallback(
-        (handler: (message: FirebaseMessagingTypes.RemoteMessage) => void) =>
-            notificationService.onNotificationOpenedApp(handler),
-        []
+        (handler?: (message: FirebaseMessagingTypes.RemoteMessage) => void) =>
+            notificationService.onNotificationOpenedApp((message) => {
+                dispatch(setLastNotification(message));
+                handler?.(message);
+            }),
+        [dispatch]
     );
 
-    const getInitialNotification = useCallback(
-        () => notificationService.getInitialNotification(),
-        []
+    const handleInitialNotification = useCallback(
+        async (handler?: (message: FirebaseMessagingTypes.RemoteMessage) => void) => {
+            const initial = await notificationService.getInitialNotification();
+            if (initial) {
+                dispatch(setLastNotification(initial));
+                handler?.(initial);
+            }
+            return initial;
+        },
+        [dispatch]
+    );
+
+    const registerBackgroundHandler = useCallback(
+        (handler?: (message: FirebaseMessagingTypes.RemoteMessage) => Promise<void> | void) =>
+            notificationService.setBackgroundHandler(async (message) => {
+                dispatch(setLastNotification(message));
+                await handler?.(message);
+            }),
+        [dispatch]
     );
 
     const isAuthorized = useCallback(
@@ -70,7 +89,8 @@ export const useNotifications = () => {
         registerToken,
         subscribeToForeground,
         onNotificationOpenedApp,
-        getInitialNotification,
+        handleInitialNotification,
+        registerBackgroundHandler,
         isAuthorized,
     };
 };

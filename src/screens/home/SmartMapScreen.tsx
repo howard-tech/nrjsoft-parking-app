@@ -1,12 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Platform, Text, FlatList, TouchableOpacity } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { useTheme } from '@theme';
 import { mapStyle } from '@theme/mapStyle';
 import { useLocation } from '@hooks/useLocation';
 import { Button } from '@components/common/Button';
 import { parkingService, ParkingGarage } from '@services/parking/parkingService';
+import { clusterItems, distanceInMeters, formatDistance } from '@utils/mapUtils';
+import { OnStreetZone } from '@types';
 import { GarageCard } from './components/GarageCard';
+import { GarageMarker } from './components/GarageMarker';
+import { ClusterMarker } from './components/ClusterMarker';
+import { OnStreetMarker } from './components/OnStreetMarker';
 
 const DEFAULT_REGION: Region = {
     latitude: 52.52,
@@ -27,11 +32,13 @@ export const SmartMapScreen: React.FC = () => {
     } = useLocation();
     const mapRef = useRef<MapView | null>(null);
     const listRef = useRef<FlatList<ParkingGarage> | null>(null);
+    const [mapRegion, setMapRegion] = useState<Region>(DEFAULT_REGION);
     const [garages, setGarages] = useState<ParkingGarage[]>([]);
     const [loadingGarages, setLoadingGarages] = useState(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [recenterLoading, setRecenterLoading] = useState(false);
+    const [onStreetZones] = useState<OnStreetZone[]>([]);
 
     const fetchGarages = useCallback(async (lat: number, lng: number) => {
         setLoadingGarages(true);
@@ -78,6 +85,7 @@ export const SmartMapScreen: React.FC = () => {
             latitudeDelta: 0.03,
             longitudeDelta: 0.03,
         };
+        setMapRegion(nextRegion);
         mapRef.current?.animateToRegion(nextRegion, 500);
         fetchGarages(nextRegion.latitude, nextRegion.longitude);
     }, [coords, fetchGarages]);
@@ -90,14 +98,22 @@ export const SmartMapScreen: React.FC = () => {
         []
     );
 
-    const initialRegion = coords
-        ? {
-              latitude: coords.latitude,
-              longitude: coords.longitude,
-              latitudeDelta: 0.03,
-              longitudeDelta: 0.03,
-          }
-        : DEFAULT_REGION;
+    const computeDistanceLabel = useCallback(
+        (garage: ParkingGarage) => {
+            const meters =
+                garage.distanceMeters ??
+                (coords
+                    ? distanceInMeters(coords.latitude, coords.longitude, garage.latitude, garage.longitude)
+                    : undefined);
+            return formatDistance(meters);
+        },
+        [coords]
+    );
+
+    const clusteredGarages = useMemo(
+        () => clusterItems(garages, mapRegion),
+        [garages, mapRegion]
+    );
 
     const shouldShowLocationOverlay =
         !coords && permission !== 'blocked' && permission !== 'denied';
@@ -129,6 +145,25 @@ export const SmartMapScreen: React.FC = () => {
             }
         },
         [garages]
+    );
+
+    const handleClusterPress = useCallback(
+        (latitude: number, longitude: number) => {
+            const nextDelta = {
+                latitudeDelta: Math.max(mapRegion.latitudeDelta * 0.5, 0.005),
+                longitudeDelta: Math.max(mapRegion.longitudeDelta * 0.5, 0.005),
+            };
+
+            mapRef.current?.animateToRegion(
+                {
+                    latitude,
+                    longitude,
+                    ...nextDelta,
+                },
+                250
+            );
+        },
+        [mapRegion.latitudeDelta, mapRegion.longitudeDelta]
     );
 
     const renderGarageCard = ({ item }: { item: ParkingGarage }) => (
@@ -163,6 +198,21 @@ export const SmartMapScreen: React.FC = () => {
         setRecenterLoading(false);
     }, [getCurrentPosition]);
 
+    const handleZonePress = useCallback(
+        (zone: OnStreetZone) => {
+            mapRef.current?.animateToRegion(
+                {
+                    latitude: zone.latitude,
+                    longitude: zone.longitude,
+                    latitudeDelta: Math.max(mapRegion.latitudeDelta * 0.8, 0.01),
+                    longitudeDelta: Math.max(mapRegion.longitudeDelta * 0.8, 0.01),
+                },
+                250
+            );
+        },
+        [mapRegion.latitudeDelta, mapRegion.longitudeDelta]
+    );
+
     return (
         <View style={styles.container}>
             {shouldShowLocationOverlay && (
@@ -196,22 +246,43 @@ export const SmartMapScreen: React.FC = () => {
                 style={styles.map}
                 {...mapProps}
                 ref={mapRef}
-                initialRegion={initialRegion}
+                region={mapRegion}
                 showsUserLocation
                 showsMyLocationButton={Platform.OS === 'android'}
+                onRegionChangeComplete={setMapRegion}
             >
-                {garages.map((garage) => (
-                    <Marker
-                        key={garage.id}
-                        coordinate={{ latitude: garage.latitude, longitude: garage.longitude }}
-                        title={garage.name}
-                        pinColor={garage.status === 'full'
-                            ? theme.colors.error.main
-                            : garage.status === 'limited'
-                                ? theme.colors.warning.main
-                                : theme.colors.success.main}
-                        onPress={() => handleSelect(garage)}
-                    />
+                {clusteredGarages.map((item) => {
+                    if (item.type === 'cluster') {
+                        return (
+                            <ClusterMarker
+                                key={item.cluster.id}
+                                id={item.cluster.id}
+                                latitude={item.cluster.coordinate.latitude}
+                                longitude={item.cluster.coordinate.longitude}
+                                count={item.cluster.count}
+                                onPress={() =>
+                                    handleClusterPress(
+                                        item.cluster.coordinate.latitude,
+                                        item.cluster.coordinate.longitude
+                                    )
+                                }
+                            />
+                        );
+                    }
+
+                    const garage = item.item;
+                    return (
+                        <GarageMarker
+                            key={garage.id}
+                            garage={garage}
+                            isSelected={garage.id === selectedId}
+                            distanceLabel={computeDistanceLabel(garage)}
+                            onPress={() => handleSelect(garage)}
+                        />
+                    );
+                })}
+                {onStreetZones.map((zone) => (
+                    <OnStreetMarker key={zone.id} zone={zone} onPress={() => handleZonePress(zone)} />
                 ))}
             </MapView>
             <View style={styles.controls}>

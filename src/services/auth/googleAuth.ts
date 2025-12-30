@@ -1,5 +1,5 @@
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
-import { Config } from 'react-native-config';
+import Config from 'react-native-config';
 import { authService } from './authService';
 
 let isConfigured = false;

@@ -1,0 +1,53 @@
+export const bg = {
+    tutorial: {
+        slide1: {
+            title: 'Изберете как да плащате.',
+            desc: 'Използвайте NRJ Wallet или плащайте директно с карта, Apple Pay или Google Pay.',
+        },
+        slide2: {
+            title: 'Умно градско паркиране',
+            desc: 'Безпроблемно преминаване между паркинги и улично паркиране.',
+        },
+        slide3: {
+            title: 'Заетост в реално време',
+            desc: 'Намерете най-добрите места преди да пристигнете.',
+        },
+        next: 'Следващ',
+        prev: 'Предишен',
+        skip: 'Пропусни',
+        continueToSignIn: 'Продължи към вход',
+        helpHotline: 'Линия за помощ',
+        supportDesc: 'Нуждаете се от незабавна помощ?',
+    },
+    common: {
+        loading: 'Зареждане...',
+        error: 'Грешка',
+    },
+    auth: {
+        secureSignIn: 'Сигурно влизане',
+        gdprNotice: 'Изисква се OTP и съгласие по GDPR',
+        mobileNumber: 'Мобилен номер',
+        corporateEmail: 'Служебен имейл',
+        emailPlaceholder: 'Въведете имейл',
+        iAccept: 'Приемам',
+        termsAndConditions: 'Условията',
+        secureLogin: 'Сигурно влизане',
+        orContinueWith: 'Или продължете с',
+        verifyAccount: 'Потвърждение на акаунт',
+        otpSentTo: 'Кодът беше изпратен до',
+        invalidOtp: 'Невалиден код. Опитайте отново.',
+        resendCodeIn: 'Изпрати отново след',
+        resendCodeNow: 'Изпрати кода сега',
+        verifyAndLogin: 'Потвърди и влез',
+        changeNumber: 'Промяна на номер или имейл',
+        networkError: 'Мрежова грешка. Проверете връзката.',
+        sessionExpired: 'Сесията е изтекла. Влезте отново.',
+        accessDenied: 'Нямате права за това действие.',
+        loginFailed: 'Влизането се провали. Опитайте отново.',
+        otpRequestFailed: 'Кодът не може да бъде изпратен. Опитайте пак.',
+    },
+    notifications: {
+        permissionDenied: 'Известията са изключени. Разрешете ги в настройките.',
+        permissionPrompt: 'Разрешете известия за актуализации за паркирането.',
+    },
+};

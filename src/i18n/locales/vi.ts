@@ -1,0 +1,53 @@
+export const vi = {
+    tutorial: {
+        slide1: {
+            title: 'Chọn cách thanh toán.',
+            desc: 'Dùng ví NRJ hoặc thanh toán trực tiếp bằng thẻ, Apple Pay, hoặc Google Pay.',
+        },
+        slide2: {
+            title: 'Đỗ xe thông minh',
+            desc: 'Chuyển đổi mượt mà giữa bãi xe và đỗ xe đường phố.',
+        },
+        slide3: {
+            title: 'Hiển thị chỗ trống theo thời gian thực',
+        desc: 'Tìm chỗ tốt nhất trước khi bạn đến.',
+    },
+    next: 'Tiếp',
+    prev: 'Trước',
+    skip: 'Bỏ qua',
+    continueToSignIn: 'Tiếp tục đăng nhập',
+    helpHotline: 'Đường dây hỗ trợ',
+    supportDesc: 'Cần hỗ trợ ngay?',
+},
+    common: {
+        loading: 'Đang tải...',
+        error: 'Lỗi',
+    },
+    auth: {
+        secureSignIn: 'Đăng nhập an toàn',
+        gdprNotice: 'Yêu cầu OTP và chấp thuận điều khoản',
+        mobileNumber: 'Số điện thoại',
+        corporateEmail: 'Email công ty',
+        emailPlaceholder: 'Nhập email',
+        iAccept: 'Tôi đồng ý với',
+        termsAndConditions: 'Điều khoản và điều kiện',
+        secureLogin: 'Đăng nhập bảo mật',
+        orContinueWith: 'Hoặc tiếp tục với',
+        verifyAccount: 'Xác minh tài khoản',
+        otpSentTo: 'Mã xác minh đã được gửi đến',
+        invalidOtp: 'Mã không hợp lệ. Vui lòng thử lại.',
+        resendCodeIn: 'Gửi lại mã sau',
+        resendCodeNow: 'Gửi lại mã ngay',
+        verifyAndLogin: 'Xác minh và đăng nhập',
+        changeNumber: 'Đổi số hoặc email',
+        networkError: 'Lỗi mạng. Vui lòng kiểm tra kết nối.',
+        sessionExpired: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+        accessDenied: 'Bạn không có quyền thực hiện thao tác này.',
+        loginFailed: 'Đăng nhập thất bại. Vui lòng thử lại.',
+        otpRequestFailed: 'Không thể gửi mã. Vui lòng thử lại.',
+    },
+    notifications: {
+        permissionDenied: 'Thông báo đã bị tắt. Bật lại trong cài đặt.',
+        permissionPrompt: 'Cho phép thông báo để nhận cập nhật phiên đỗ xe.',
+    },
+};

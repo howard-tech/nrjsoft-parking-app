@@ -59,7 +59,12 @@ export const TutorialScreen: React.FC = () => {
 
     const handleContinue = async () => {
         await setOnboardingComplete(true);
-        navigation.navigate('Login');
+        navigation.replace('Login');
+    };
+
+    const handleSkip = async () => {
+        await setOnboardingComplete(true);
+        navigation.replace('Login');
     };
 
     const handleCallSupport = () => {
@@ -82,6 +87,9 @@ export const TutorialScreen: React.FC = () => {
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.primary.main }]}>
+            <TouchableOpacity style={styles.skipButton} onPress={handleSkip} accessibilityRole="button">
+                <Text style={styles.skipText}>{t('tutorial.skip')}</Text>
+            </TouchableOpacity>
             {/* Header with Logo */}
             <View style={styles.header}>
                 <Image
@@ -183,6 +191,19 @@ export const TutorialScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    skipButton: {
+        position: 'absolute',
+        top: 40,
+        right: 24,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        zIndex: 1,
+    },
+    skipText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: '700',
     },
     header: {
         alignItems: 'center',

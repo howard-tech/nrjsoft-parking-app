@@ -1,0 +1,53 @@
+export const fr = {
+    tutorial: {
+        slide1: {
+            title: 'Choisissez votre mode de paiement.',
+            desc: 'Utilisez le portefeuille NRJ ou payez directement par carte, Apple Pay ou Google Pay.',
+        },
+        slide2: {
+            title: 'Stationnement intelligent en ville',
+            desc: 'Passez sans effort du parking en garage au stationnement de rue.',
+        },
+        slide3: {
+            title: 'Occupation en temps réel',
+            desc: 'Trouvez les meilleures places avant d’arriver.',
+        },
+        next: 'Suivant',
+        prev: 'Précédent',
+        skip: 'Ignorer',
+        continueToSignIn: 'Continuer vers la connexion',
+        helpHotline: 'Ligne d’assistance',
+        supportDesc: 'Besoin d’aide immédiate ?',
+    },
+    common: {
+        loading: 'Chargement...',
+        error: 'Erreur',
+    },
+    auth: {
+        secureSignIn: 'Connexion sécurisée',
+        gdprNotice: 'OTP obligatoire et consentement RGPD requis',
+        mobileNumber: 'Numéro de mobile',
+        corporateEmail: 'E-mail professionnel',
+        emailPlaceholder: 'Saisissez l’e-mail',
+        iAccept: 'J’accepte les',
+        termsAndConditions: 'Conditions générales',
+        secureLogin: 'Connexion sécurisée',
+        orContinueWith: 'Ou continuer avec',
+        verifyAccount: 'Vérifier le compte',
+        otpSentTo: 'Un code a été envoyé à',
+        invalidOtp: 'Code invalide. Réessayez.',
+        resendCodeIn: 'Renvoyer le code dans',
+        resendCodeNow: 'Renvoyer le code maintenant',
+        verifyAndLogin: 'Vérifier et se connecter',
+        changeNumber: 'Modifier le numéro ou l’e-mail',
+        networkError: 'Erreur réseau. Vérifiez votre connexion.',
+        sessionExpired: 'Session expirée. Connectez-vous à nouveau.',
+        accessDenied: 'Action non autorisée.',
+        loginFailed: 'Échec de la connexion. Réessayez.',
+        otpRequestFailed: 'Impossible d’envoyer le code. Réessayez.',
+    },
+    notifications: {
+        permissionDenied: 'Notifications désactivées. Activez-les dans les réglages.',
+        permissionPrompt: 'Autorisez les notifications pour recevoir les mises à jour de stationnement.',
+    },
+};

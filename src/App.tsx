@@ -12,22 +12,72 @@ const styles = StyleSheet.create({
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import { store } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor, store } from './store';
 import { RootNavigator } from './navigation/RootNavigator';
 import { useAuth } from './hooks/useAuth';
+import { useLocalization } from './hooks/useLocalization';
+import { useNotifications } from './hooks/useNotifications';
 
 const AppContent = () => {
     const { checkSession } = useAuth();
+    const { bootstrapLanguage } = useLocalization();
+    const {
+        checkPermission,
+        registerToken,
+        subscribeToForeground,
+        isAuthorized,
+        handleInitialNotification,
+        registerBackgroundHandler,
+        onNotificationOpenedApp,
+    } = useNotifications();
 
     useEffect(() => {
+        let unsubscribeForeground: (() => void) | undefined;
+        let unsubscribeOpened: (() => void) | undefined;
+
         const init = async () => {
-            await checkSession();
+            try {
+                await bootstrapLanguage();
+                await checkSession();
+
+                const permissionStatus = await checkPermission();
+
+                if (isAuthorized(permissionStatus)) {
+                    await registerToken();
+                    registerBackgroundHandler();
+                    unsubscribeForeground = subscribeToForeground();
+                    unsubscribeOpened = onNotificationOpenedApp();
+                    await handleInitialNotification();
+                }
+            } catch (error) {
+                console.error('App bootstrap error', error);
+            } finally {
+                await RNBootSplash.hide({ fade: true });
+            }
         };
 
-        init().finally(async () => {
-            await RNBootSplash.hide({ fade: true });
-        });
-    }, [checkSession]);
+        init();
+
+        return () => {
+            if (unsubscribeForeground) {
+                unsubscribeForeground();
+            }
+            if (unsubscribeOpened) {
+                unsubscribeOpened();
+            }
+        };
+    }, [
+        bootstrapLanguage,
+        checkSession,
+        checkPermission,
+        handleInitialNotification,
+        isAuthorized,
+        onNotificationOpenedApp,
+        registerBackgroundHandler,
+        registerToken,
+        subscribeToForeground,
+    ]);
 
     return (
         <GestureHandlerRootView style={styles.root}>
@@ -41,7 +91,9 @@ const AppContent = () => {
 
 const App = (): JSX.Element => (
     <Provider store={store}>
-        <AppContent />
+        <PersistGate loading={null} persistor={persistor}>
+            <AppContent />
+        </PersistGate>
     </Provider>
 );
 

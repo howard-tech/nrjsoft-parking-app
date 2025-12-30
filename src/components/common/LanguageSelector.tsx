@@ -1,25 +1,35 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useTranslation } from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
+import { useLocalization } from '@hooks/useLocalization';
+import { SupportedLanguage } from '../../i18n/types';
+
+const LANGUAGES: Array<{ code: SupportedLanguage; label: string }> = [
+    { code: 'en', label: 'English' },
+    { code: 'de', label: 'Deutsch' },
+    { code: 'fr', label: 'Français' },
+    { code: 'bg', label: 'Български' },
+    { code: 'vi', label: 'Tiếng Việt' },
+];
 
 export const LanguageSelector: React.FC = () => {
-    const { i18n } = useTranslation();
+    const { language, updateLanguage } = useLocalization();
 
-    const currentLanguage = i18n.language || 'en';
+    const currentIndex = Math.max(LANGUAGES.findIndex((item) => item.code === language), 0);
+    const currentLanguage = LANGUAGES[currentIndex];
 
-    const toggleLanguage = () => {
-        const nextLang = currentLanguage === 'en' ? 'de' : 'en';
-        i18n.changeLanguage(nextLang);
+    const handleNextLanguage = async () => {
+        const nextIndex = (currentIndex + 1) % LANGUAGES.length;
+        await updateLanguage(LANGUAGES[nextIndex].code);
     };
 
     return (
-        <TouchableOpacity style={styles.container} onPress={toggleLanguage}>
+        <TouchableOpacity style={styles.container} onPress={handleNextLanguage} accessibilityRole="button">
             <Icon name="globe" size={16} color="#FFFFFF" />
             <Text style={styles.text}>
-                {currentLanguage.toUpperCase()}
+                {currentLanguage.label}
             </Text>
-            <Icon name="chevron-down" size={16} color="#FFFFFF" />
+            <Icon name="chevron-right" size={16} color="#FFFFFF" />
         </TouchableOpacity>
     );
 };

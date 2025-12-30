@@ -106,18 +106,20 @@ const styles = StyleSheet.create({
         zIndex: 2,
         backgroundColor: 'rgba(255,255,255,0.85)',
         paddingHorizontal: 24,
-        gap: 12,
+        paddingVertical: 24,
     },
     statusTitle: {
         fontSize: 16,
         fontWeight: '700',
         color: '#1E3A5F',
         textAlign: 'center',
+        marginBottom: 4,
     },
     statusText: {
         fontSize: 14,
         color: '#2C3E50',
         textAlign: 'center',
+        marginBottom: 12,
     },
 });
 

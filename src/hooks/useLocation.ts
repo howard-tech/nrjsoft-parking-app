@@ -20,7 +20,7 @@ const PLATFORM_PERMISSION: Permission = Platform.select({
 
 export const useLocation = () => {
     const [coords, setCoords] = useState<GeoCoordinates | null>(null);
-    const [permission, setPermission] = useState<PermissionStatus>('denied');
+    const [permission, setPermission] = useState<PermissionStatus>('unavailable');
     const [error, setError] = useState<string | null>(null);
 
     const requestPermission = useCallback(async (): Promise<PermissionStatus> => {
@@ -33,6 +33,8 @@ export const useLocation = () => {
         setPermission(status);
         if (status === RESULTS.BLOCKED) {
             setError('Location permission blocked. Please enable in settings.');
+        } else {
+            setError(null);
         }
         return status;
     }, []);
@@ -50,17 +52,18 @@ export const useLocation = () => {
 
     const ensurePermission = useCallback(async (): Promise<boolean> => {
         const current = await checkPermission();
-        if (current === RESULTS.GRANTED) {
+        if (current === RESULTS.GRANTED || current === RESULTS.LIMITED) {
             return true;
         }
 
         const next = await requestPermission();
-        return next === RESULTS.GRANTED;
+        return next === RESULTS.GRANTED || next === RESULTS.LIMITED;
     }, [checkPermission, requestPermission]);
 
     const getCurrentPosition = useCallback(async (): Promise<GeoCoordinates | null> => {
         const allowed = await ensurePermission();
         if (!allowed) {
+            setError('Location permission is required to show nearby parking.');
             return null;
         }
 
@@ -79,7 +82,6 @@ export const useLocation = () => {
                     enableHighAccuracy: true,
                     timeout: 15000,
                     maximumAge: 10000,
-                    forceRequestLocation: true,
                 }
             );
         });
@@ -102,4 +104,3 @@ export const useLocation = () => {
         openPermissionSettings,
     };
 };
-

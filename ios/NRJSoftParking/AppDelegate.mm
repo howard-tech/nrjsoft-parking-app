@@ -8,6 +8,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSString *mapsApiKey = [[NSProcessInfo processInfo] environment][@"GOOGLE_MAPS_API_KEY"];
+  if (!mapsApiKey) {
+    mapsApiKey = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"GMSServicesApiKey"];
+  }
   if (mapsApiKey) {
     [GMSServices provideAPIKey:mapsApiKey];
   }

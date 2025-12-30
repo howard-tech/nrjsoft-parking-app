@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Platform, Text } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { useTheme } from '@theme';
 import { mapStyle } from '@theme/mapStyle';
 import { useLocation } from '@hooks/useLocation';
+import { Button } from '@components/common/Button';
 
 const DEFAULT_REGION: Region = {
     latitude: 52.52,
@@ -14,8 +15,9 @@ const DEFAULT_REGION: Region = {
 
 export const SmartMapScreen: React.FC = () => {
     const theme = useTheme();
-    const { coords, getCurrentPosition, permission } = useLocation();
+    const { coords, getCurrentPosition, permission, requestPermission, openPermissionSettings } = useLocation();
     const [region, setRegion] = useState<Region>(DEFAULT_REGION);
+    const mapRef = useRef<MapView | null>(null);
 
     useEffect(() => {
         getCurrentPosition();
@@ -23,12 +25,14 @@ export const SmartMapScreen: React.FC = () => {
 
     useEffect(() => {
         if (coords) {
-            setRegion({
+            const nextRegion = {
                 latitude: coords.latitude,
                 longitude: coords.longitude,
                 latitudeDelta: 0.03,
                 longitudeDelta: 0.03,
-            });
+            };
+            setRegion(nextRegion);
+            mapRef.current?.animateToRegion(nextRegion);
         }
     }, [coords]);
 
@@ -42,15 +46,28 @@ export const SmartMapScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            {!coords && permission !== 'blocked' && (
-                <View style={styles.loadingOverlay}>
+            {!coords && permission !== 'blocked' && permission !== 'denied' && (
+                <Overlay>
                     <ActivityIndicator color={theme.colors.primary.main} size="large" />
-                </View>
+                    <Text style={styles.statusText}>Getting your location...</Text>
+                </Overlay>
+            )}
+            {(permission === 'denied' || permission === 'blocked') && (
+                <Overlay>
+                    <Text style={styles.statusTitle}>Location access needed</Text>
+                    <Text style={styles.statusText}>\nAllow location to show nearby parking.</Text>
+                    {permission === 'denied' ? (
+                        <Button title="Allow location" onPress={requestPermission} />
+                    ) : (
+                        <Button title="Open settings" onPress={openPermissionSettings} />
+                    )}
+                </Overlay>
             )}
             <MapView
                 style={styles.map}
                 {...mapProps}
-                region={region}
+                ref={mapRef}
+                initialRegion={DEFAULT_REGION}
                 showsUserLocation
                 showsMyLocationButton={Platform.OS === 'android'}
                 onRegionChangeComplete={(next) => setRegion(next)}
@@ -65,6 +82,12 @@ export const SmartMapScreen: React.FC = () => {
     );
 };
 
+const Overlay: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <View style={styles.overlay}>
+        {children}
+    </View>
+);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -72,7 +95,7 @@ const styles = StyleSheet.create({
     map: {
         flex: 1,
     },
-    loadingOverlay: {
+    overlay: {
         position: 'absolute',
         top: 0,
         left: 0,
@@ -81,6 +104,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 2,
+        backgroundColor: 'rgba(255,255,255,0.85)',
+        paddingHorizontal: 24,
+        gap: 12,
+    },
+    statusTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1E3A5F',
+        textAlign: 'center',
+    },
+    statusText: {
+        fontSize: 14,
+        color: '#2C3E50',
+        textAlign: 'center',
     },
 });
 

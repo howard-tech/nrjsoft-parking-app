@@ -74,6 +74,12 @@ export const useLocation = () => {
 | `src/theme/mapStyle.ts` | Custom map styling |
 | Android/iOS config files | API key setup |
 
+## Runbook / Config Notes
+
+- Set `GOOGLE_MAPS_API_KEY` in your environment before `npm run android`/`npm run ios` (manifest placeholder + AppDelegate read from env). Do not commit keys.
+- Android local cleartext only in debug via `network_security_config`; release builds stay HTTPS-only.
+- iOS requires `NSLocationWhenInUseUsageDescription` (added) and `pod install` after adding Google Maps pods.
+
 ## Related Tasks
 
 - **Next**: [TASK-011](task-011.md) - Smart Map Home Screen

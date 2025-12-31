@@ -11,9 +11,10 @@
 - Task-014: search bar with autocomplete/history, filter chips (nearest/cheapest/EV-ready/max-time), and map/list updates based on search/filter selections.
 - Task-048: external navigation chooser (Google/Apple/Waze/Web) wired to garage detail navigate button.
 - Task-049: offline/error handling with global offline banner, cached nearby results for Smart Map, queued refresh actions, shared empty/loading states, and app-level error boundary.
+- Task-050: Firebase analytics/perf/crashlytics services with navigation screen tracking, user ID sync, and error boundary reporting.
 
 ## In Progress
-- Upcoming: analytics & crash reporting (TASK-050) and security/data encryption hardening (TASK-051).
+- Upcoming: security/data encryption hardening (TASK-051).
 
 ## Testing
 - Lint: `npm run lint`

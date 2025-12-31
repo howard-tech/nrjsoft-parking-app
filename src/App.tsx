@@ -20,9 +20,10 @@ import { useLocalization } from './hooks/useLocalization';
 import { useNotifications } from './hooks/useNotifications';
 import { OfflineBanner } from '@components/common/OfflineBanner';
 import { ErrorBoundary } from '@components/common/ErrorBoundary';
+import { analyticsService, crashReportingService, performanceService } from '@services/analytics';
 
 const AppContent = () => {
-    const { checkSession } = useAuth();
+    const { checkSession, user } = useAuth();
     const { bootstrapLanguage } = useLocalization();
     const {
         checkPermission,
@@ -40,6 +41,11 @@ const AppContent = () => {
 
         const init = async () => {
             try {
+                await Promise.all([
+                    analyticsService.initialize(),
+                    crashReportingService.initialize(),
+                    performanceService.initialize(),
+                ]);
                 await bootstrapLanguage();
                 await checkSession();
 
@@ -80,6 +86,22 @@ const AppContent = () => {
         registerToken,
         subscribeToForeground,
     ]);
+
+    useEffect(() => {
+        const syncUserContext = async () => {
+            try {
+                await analyticsService.setUserId(user?.id ?? null);
+                await crashReportingService.setUserId(user?.id ?? null);
+                if (user?.email) {
+                    await crashReportingService.setAttributes({ email: user.email });
+                }
+            } catch (error) {
+                console.warn('Failed to sync analytics user', error);
+            }
+        };
+
+        syncUserContext();
+    }, [user]);
 
     return (
         <GestureHandlerRootView style={styles.root}>

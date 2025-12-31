@@ -13,6 +13,7 @@ import AuthStack from './stacks/AuthStack';
 import { MainTabNavigator } from './MainTabNavigator';
 import OnStreetStack from './stacks/OnStreetStack';
 import { PlaceholderScreen } from '@screens/common/PlaceholderScreen';
+import { SessionReceiptScreen } from '@screens/parking/SessionReceiptScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -77,6 +78,11 @@ export const RootNavigator: React.FC = () => {
                                 name="QRScannerModal"
                                 component={QRScannerModal}
                                 options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="ReceiptModal"
+                                component={SessionReceiptScreen}
+                                options={{ headerShown: true, headerTitle: 'Receipt' }}
                             />
                         </Stack.Group>
                     </>

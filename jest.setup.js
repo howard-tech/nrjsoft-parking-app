@@ -43,3 +43,39 @@ jest.mock('@react-native-firebase/perf', () => {
     };
     return () => mock;
 });
+
+jest.mock('react-native-device-info', () => ({
+    __esModule: true,
+    default: {
+        getUniqueId: jest.fn(() => Promise.resolve('device-id')),
+    },
+}));
+
+jest.mock('react-native-biometrics', () => {
+    return function () {
+        return {
+            isSensorAvailable: jest.fn(() => Promise.resolve({ available: true, biometryType: 'TouchID' })),
+            simplePrompt: jest.fn(() => Promise.resolve({ success: true })),
+        };
+    };
+});
+
+jest.mock('jail-monkey', () => ({
+    isJailBroken: jest.fn(() => false),
+    canMockLocation: jest.fn(() => false),
+    isDebuggedMode: jest.fn(() => false),
+    hookDetected: jest.fn(() => false),
+    isOnExternalStorage: jest.fn(() => false),
+    AdbEnabled: jest.fn(() => false),
+}));
+
+jest.mock('react-native-ssl-pinning', () => ({
+    fetch: jest.fn(() =>
+        Promise.resolve({
+            status: 200,
+            bodyString: '',
+            headers: {},
+            json: () => Promise.resolve({}),
+        })
+    ),
+}));

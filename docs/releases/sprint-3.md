@@ -12,9 +12,10 @@
 - Task-048: external navigation chooser (Google/Apple/Waze/Web) wired to garage detail navigate button.
 - Task-049: offline/error handling with global offline banner, cached nearby results for Smart Map, queued refresh actions, shared empty/loading states, and app-level error boundary.
 - Task-050: Firebase analytics/perf/crashlytics services with navigation screen tracking, user ID sync, and error boundary reporting.
+- Task-051: security layer (Keychain/encrypted storage helpers, biometrics, device integrity checks, screen secure mode, SSL-pinned client).
 
 ## In Progress
-- Upcoming: security/data encryption hardening (TASK-051).
+- Next: begin Sprint 4 parking session features (TASK-015+).
 
 ## Testing
 - Lint: `npm run lint`

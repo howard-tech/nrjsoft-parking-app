@@ -22,7 +22,7 @@ import walletReducer from './slices/walletSlice';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['auth', 'localization', 'user', 'wallet'],
+    whitelist: ['auth', 'localization', 'user', 'wallet', 'session'],
 };
 
 const rootReducer = combineReducers({

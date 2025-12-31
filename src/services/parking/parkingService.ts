@@ -1,4 +1,5 @@
 import { apiClient } from '@services/api';
+import { sessionService } from '@services/session/sessionService';
 
 export interface ParkingGarage {
     id: string;
@@ -69,18 +70,6 @@ export const parkingService = {
     },
 
     async startSessionWithQR(garageId: string, qrData: string): Promise<ParkingSession> {
-        const response = await apiClient.post<{ data?: ParkingSession; session?: ParkingSession }>(
-            '/parking/session/start',
-            { garageId, qrData }
-        );
-        const payload = response.data?.data ?? response.data?.session ?? response.data;
-        return (
-            payload ?? {
-                id: `session-${Date.now()}`,
-                garageId,
-                startedAt: new Date().toISOString(),
-                status: 'pending',
-            }
-        );
+        return sessionService.startSessionWithQR(garageId, qrData);
     },
 };

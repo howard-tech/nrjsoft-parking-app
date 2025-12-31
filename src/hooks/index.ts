@@ -7,3 +7,4 @@ export * from './useFilters';
 export * from './useNetworkState';
 export * from './useOfflineQueue';
 export * from './useAnalyticsScreen';
+export * from './useActiveSession';

@@ -31,7 +31,7 @@ export const LoginScreen: React.FC = () => {
     const { requestOTP, requestOtpLoading, error: authError } = useAuth();
 
     const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
-    const [identifier, setIdentifier] = useState('');
+    const [identifier, setIdentifier] = useState('888123456');
     const [countryCode, setCountryCode] = useState('+359');
     const [gdprConsent, setGdprConsent] = useState(false);
 
@@ -51,7 +51,10 @@ export const LoginScreen: React.FC = () => {
 
             Keyboard.dismiss();
             await requestOTP(authMethod === 'phone' ? 'mobile' : 'email', finalIdentifier);
-            navigation.navigate('OTPVerification', {
+            if (__DEV__) {
+                Alert.alert('OTP sent', 'Use mock OTP: 123456');
+            }
+            navigation.push('OTPVerification', {
                 phone: authMethod === 'phone' ? finalIdentifier : undefined,
                 email: authMethod === 'email' ? finalIdentifier : undefined,
             });

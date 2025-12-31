@@ -18,6 +18,8 @@ import { RootNavigator } from './navigation/RootNavigator';
 import { useAuth } from './hooks/useAuth';
 import { useLocalization } from './hooks/useLocalization';
 import { useNotifications } from './hooks/useNotifications';
+import { OfflineBanner } from '@components/common/OfflineBanner';
+import { ErrorBoundary } from '@components/common/ErrorBoundary';
 
 const AppContent = () => {
     const { checkSession } = useAuth();
@@ -82,8 +84,11 @@ const AppContent = () => {
     return (
         <GestureHandlerRootView style={styles.root}>
             <ThemeProvider>
-                <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-                <RootNavigator />
+                <ErrorBoundary>
+                    <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+                    <OfflineBanner />
+                    <RootNavigator />
+                </ErrorBoundary>
             </ThemeProvider>
         </GestureHandlerRootView>
     );

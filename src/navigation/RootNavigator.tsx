@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { RootStackParamList } from './types';
 import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@theme';
+import { LoadingState } from '@components/common/LoadingState';
 
 // Import navigators
 import AuthStack from './stacks/AuthStack';
@@ -18,7 +19,7 @@ export const RootNavigator: React.FC = () => {
     const theme = useTheme();
 
     if (isLoading) {
-        return null;
+        return <LoadingState fullScreen message="Loading your session..." />;
     }
 
     return (

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { RootStackParamList } from './types';
 import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@theme';
 import { LoadingState } from '@components/common/LoadingState';
+import { analyticsService } from '@services/analytics';
 
 // Import navigators
 import AuthStack from './stacks/AuthStack';
@@ -17,13 +18,32 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
     const { isAuthenticated, isLoading } = useAuth();
     const theme = useTheme();
+    const navigationRef = useRef<NavigationContainerRef<RootStackParamList> | null>(null);
+    const routeNameRef = useRef<string | undefined>(undefined);
 
     if (isLoading) {
         return <LoadingState fullScreen message="Loading your session..." />;
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer
+            ref={navigationRef}
+            onReady={() => {
+                const currentRoute = navigationRef.current?.getCurrentRoute();
+                routeNameRef.current = currentRoute?.name;
+                if (currentRoute?.name) {
+                    analyticsService.logScreenView(currentRoute.name);
+                }
+            }}
+            onStateChange={() => {
+                const previousRouteName = routeNameRef.current;
+                const currentRouteName = navigationRef.current?.getCurrentRoute()?.name;
+                if (currentRouteName && previousRouteName !== currentRouteName) {
+                    routeNameRef.current = currentRouteName;
+                    analyticsService.logScreenView(currentRouteName);
+                }
+            }}
+        >
             <Stack.Navigator
                 screenOptions={{
                     headerShown: false,

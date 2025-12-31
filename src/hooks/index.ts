@@ -6,3 +6,4 @@ export * from './useSearch';
 export * from './useFilters';
 export * from './useNetworkState';
 export * from './useOfflineQueue';
+export * from './useAnalyticsScreen';

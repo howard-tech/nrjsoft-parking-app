@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { colors, typography } from '@theme';
+import { crashReportingService } from '@services/analytics';
 
 interface Props {
     children: ReactNode;
@@ -25,6 +26,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         console.warn('Captured error', error, errorInfo);
+        crashReportingService.recordError(error, {
+            componentStack: errorInfo.componentStack,
+        });
     }
 
     handleRetry = () => {

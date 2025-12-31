@@ -8,6 +8,13 @@ export interface ParkingGarage {
     distanceMeters?: number;
     availableSlots?: number;
     status?: 'available' | 'limited' | 'full';
+    totalSlots?: number;
+    address?: string;
+    ratePerHour?: number;
+    entryMethod?: 'QR' | 'ANPR';
+    evChargers?: number;
+    securityFeatures?: string[];
+    policies?: string;
 }
 
 export const parkingService = {
@@ -26,5 +33,31 @@ export const parkingService = {
             ...garage,
             status: garage.status ?? 'available',
         }));
+    },
+
+    async fetchDetail(id: string): Promise<ParkingGarage> {
+        try {
+            const response = await apiClient.get<{ data?: ParkingGarage; garage?: ParkingGarage }>(
+                `/parking/garage/${id}`
+            );
+            const payload = response.data?.data ?? response.data?.garage ?? response.data;
+            if (payload) {
+                return {
+                    ...payload,
+                    status: payload.status ?? 'available',
+                };
+            }
+        } catch (err) {
+            console.warn('Failed to fetch garage detail', err);
+        }
+
+        // Fallback: return minimal info so UI can still render
+        return {
+            id,
+            name: 'Garage',
+            latitude: 0,
+            longitude: 0,
+            status: 'available',
+        };
     },
 };

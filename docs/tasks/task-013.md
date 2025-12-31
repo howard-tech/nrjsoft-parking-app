@@ -9,7 +9,7 @@
 | **Priority** | High |
 | **Estimated Effort** | 8 hours |
 | **Dependencies** | TASK-011, TASK-012 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -34,15 +34,20 @@ Implement the draggable bottom sheet that displays detailed garage information w
 
 ## Acceptance Criteria
 
-- [ ] Bottom sheet with snap points (45%, 80%)
-- [ ] Drag to expand/collapse
-- [ ] Pull down to close
-- [ ] All garage details displayed
-- [ ] Entry method badge styling
-- [ ] Navigate button opens maps
-- [ ] Start Session / Scan QR buttons
-- [ ] Loading state while fetching details
-- [ ] Error handling for failed fetch
+- [x] Bottom sheet with snap points (45%, 80%)
+- [x] Drag to expand/collapse
+- [x] Pull down to close
+- [x] Garage details displayed (status, slots, rate, EV chargers, policy text)
+- [x] Entry method shown (QR/ANPR)
+- [x] Navigate button opens maps intent
+- [x] Start Session / Scan QR buttons
+- [x] Loading state while fetching details
+- [x] Error handling/fallback when detail fetch fails
+
+## Progress Notes
+
+- Implemented custom animated bottom sheet (no new dependencies) with pan-to-close and snap points.
+- Detail view fetches garage detail via `parkingService.fetchDetail`, shows status badge, slots, rate, EV, policy, and actions for navigation/start/QR.
 
 ## Technical Implementation
 

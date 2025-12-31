@@ -12,6 +12,7 @@ import { GarageCard } from './components/GarageCard';
 import { GarageMarker } from './components/GarageMarker';
 import { ClusterMarker } from './components/ClusterMarker';
 import { OnStreetMarker } from './components/OnStreetMarker';
+import { GarageBottomSheet } from './components/GarageBottomSheet';
 
 const DEFAULT_REGION: Region = {
     latitude: 52.52,
@@ -36,6 +37,7 @@ export const SmartMapScreen: React.FC = () => {
     const [garages, setGarages] = useState<ParkingGarage[]>([]);
     const [loadingGarages, setLoadingGarages] = useState(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [activeGarage, setActiveGarage] = useState<ParkingGarage | null>(null);
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [recenterLoading, setRecenterLoading] = useState(false);
     const [onStreetZones] = useState<OnStreetZone[]>([]);
@@ -48,17 +50,24 @@ export const SmartMapScreen: React.FC = () => {
             setGarages(data);
             setSelectedId((previousSelected) => {
                 if (!data.length) {
+                    setActiveGarage(null);
                     return null;
                 }
 
                 const stillSelected = data.find((garage) => garage.id === previousSelected);
-                return stillSelected ? stillSelected.id : data[0].id;
+                if (stillSelected) {
+                    setActiveGarage(stillSelected);
+                    return stillSelected.id;
+                }
+                setActiveGarage(null);
+                return data[0].id;
             });
         } catch (err) {
             console.warn('Failed to load garages', err);
             setFetchError('Unable to load nearby garages. Try again in a moment.');
             setGarages([]);
             setSelectedId(null);
+            setActiveGarage(null);
         } finally {
             setLoadingGarages(false);
         }
@@ -129,6 +138,7 @@ export const SmartMapScreen: React.FC = () => {
     const handleSelect = useCallback(
         (garage: ParkingGarage) => {
             setSelectedId(garage.id);
+            setActiveGarage(garage);
             mapRef.current?.animateToRegion(
                 {
                     latitude: garage.latitude,
@@ -212,6 +222,10 @@ export const SmartMapScreen: React.FC = () => {
         },
         [mapRegion.latitudeDelta, mapRegion.longitudeDelta]
     );
+
+    const handleCloseSheet = useCallback(() => {
+        setActiveGarage(null);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -341,6 +355,11 @@ export const SmartMapScreen: React.FC = () => {
                     }
                 />
             </View>
+            <GarageBottomSheet
+                garage={activeGarage}
+                distanceLabel={activeGarage ? computeDistanceLabel(activeGarage) : undefined}
+                onClose={handleCloseSheet}
+            />
         </View>
     );
 };

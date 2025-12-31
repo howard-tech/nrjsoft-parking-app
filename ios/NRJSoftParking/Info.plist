@@ -46,6 +46,8 @@
 	<string>Allow NRJSoft to show nearby parking and your current position.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Allow NRJSoft to show nearby parking and your current position.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow NRJSoft to scan parking QR codes.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
 	<key>UIRequiredDeviceCapabilities</key>

@@ -17,6 +17,13 @@ export interface ParkingGarage {
     policies?: string;
 }
 
+export interface ParkingSession {
+    id: string;
+    garageId: string;
+    startedAt: string;
+    status: 'active' | 'pending' | 'completed';
+}
+
 export const parkingService = {
     async fetchNearby(lat: number, lng: number): Promise<ParkingGarage[]> {
         const response = await apiClient.get<{ data?: ParkingGarage[]; garages?: ParkingGarage[] } | ParkingGarage[]>(
@@ -59,5 +66,21 @@ export const parkingService = {
             longitude: 0,
             status: 'available',
         };
+    },
+
+    async startSessionWithQR(garageId: string, qrData: string): Promise<ParkingSession> {
+        const response = await apiClient.post<{ data?: ParkingSession; session?: ParkingSession }>(
+            '/parking/session/start',
+            { garageId, qrData }
+        );
+        const payload = response.data?.data ?? response.data?.session ?? response.data;
+        return (
+            payload ?? {
+                id: `session-${Date.now()}`,
+                garageId,
+                startedAt: new Date().toISOString(),
+                status: 'pending',
+            }
+        );
     },
 };

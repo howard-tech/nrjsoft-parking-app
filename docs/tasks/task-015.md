@@ -9,7 +9,7 @@
 | **Priority** | High |
 | **Estimated Effort** | 6 hours |
 | **Dependencies** | TASK-003 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -25,15 +25,21 @@ Implement the QR code scanner modal for garages that require QR-based entry. Use
 
 ## Acceptance Criteria
 
-- [ ] Camera permission request
-- [ ] QR code scanning with viewfinder
-- [ ] Alignment frame overlay
-- [ ] Garage info header
-- [ ] Manual QR data input fallback
-- [ ] Success state with animation
-- [ ] Error handling for invalid QR
-- [ ] Session start on valid scan
-- [ ] Close/cancel functionality
+- [x] Camera permission request
+- [x] QR code scanning with viewfinder
+- [x] Alignment frame overlay
+- [x] Garage info header
+- [x] Manual QR data input fallback
+- [x] Success state with animation
+- [x] Error handling for invalid QR
+- [x] Session start on valid scan
+- [x] Close/cancel functionality
+
+## Progress Notes
+
+- Added `QRScannerModal` using `react-native-vision-camera` with overlay frame, success animation, and manual fallback input.
+- Wires to `startSessionWithQR` service and routes to Active Session tab after a successful scan.
+- Added camera permission prompts (Android manifest + iOS `NSCameraUsageDescription`) and Jest mocks for camera module.
 
 ## Technical Implementation
 

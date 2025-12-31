@@ -79,3 +79,17 @@ jest.mock('react-native-ssl-pinning', () => ({
         })
     ),
 }));
+
+jest.mock('react-native-vision-camera', () => {
+    const mockCamera = jest.fn(() => null);
+    return {
+        Camera: mockCamera,
+        useCameraDevice: jest.fn(() => ({ id: 'back', name: 'Back Camera', position: 'back' })),
+        useCodeScanner: jest.fn(() => ({})),
+        CameraPermissionStatus: {
+            AUTHORIZED: 'authorized',
+            DENIED: 'denied',
+        },
+        requestCameraPermission: jest.fn(async () => 'authorized'),
+    };
+});

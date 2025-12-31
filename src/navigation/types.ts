@@ -76,7 +76,7 @@ export type RootStackParamList = {
     Notifications: undefined;
     // Modals
     PaymentModal: { amount: number; sessionId?: string };
-    QRScannerModal: { garageId: string };
+    QRScannerModal: { garageId: string; garageName?: string; garageAddress?: string };
 };
 
 // For useNavigation hook typing

@@ -18,12 +18,12 @@ import { SessionReceiptScreen } from '@screens/parking/SessionReceiptScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator: React.FC = () => {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, checkSessionLoading } = useAuth();
     const theme = useTheme();
     const navigationRef = useRef<NavigationContainerRef<RootStackParamList> | null>(null);
     const routeNameRef = useRef<string | undefined>(undefined);
 
-    if (isLoading) {
+    if (checkSessionLoading) {
         return <LoadingState fullScreen message="Loading your session..." />;
     }
 

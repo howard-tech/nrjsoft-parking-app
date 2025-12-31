@@ -31,6 +31,7 @@ export const LoginScreen: React.FC = () => {
 
     const [authMethod, setAuthMethod] = useState<'phone' | 'email'>('phone');
     const [identifier, setIdentifier] = useState('');
+    const [countryCode, setCountryCode] = useState('+359');
     const [gdprConsent, setGdprConsent] = useState(false);
 
     const handleLogin = async () => {
@@ -39,10 +40,18 @@ export const LoginScreen: React.FC = () => {
         }
 
         try {
-            await requestOTP(authMethod === 'phone' ? 'mobile' : 'email', identifier);
+            const cleanedIdentifier = identifier.trim();
+            const finalIdentifier =
+                authMethod === 'phone'
+                    ? cleanedIdentifier.startsWith('+')
+                        ? cleanedIdentifier
+                        : `${countryCode}${cleanedIdentifier}`
+                    : cleanedIdentifier;
+
+            await requestOTP(authMethod === 'phone' ? 'mobile' : 'email', finalIdentifier);
             navigation.navigate('OTPVerification', {
-                phone: authMethod === 'phone' ? identifier : undefined,
-                email: authMethod === 'email' ? identifier : undefined,
+                phone: authMethod === 'phone' ? finalIdentifier : undefined,
+                email: authMethod === 'email' ? finalIdentifier : undefined,
             });
         } catch (error) {
             console.error('Login request failed:', error);
@@ -102,7 +111,12 @@ export const LoginScreen: React.FC = () => {
                 {/* Input Fields */}
                 <View style={styles.formContainer}>
                     {authMethod === 'phone' ? (
-                        <PhoneInput value={identifier} onChangeText={setIdentifier} />
+                        <PhoneInput
+                            value={identifier}
+                            onChangeText={setIdentifier}
+                            countryCode={countryCode}
+                            onCountryChange={setCountryCode}
+                        />
                     ) : (
                         <View style={styles.inputBox}>
                             <TextInput

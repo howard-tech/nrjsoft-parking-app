@@ -6,6 +6,7 @@ import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@theme';
 import { LoadingState } from '@components/common/LoadingState';
 import { analyticsService } from '@services/analytics';
+import { QRScannerModal } from '@screens/parking/QRScannerModal';
 
 // Import navigators
 import AuthStack from './stacks/AuthStack';
@@ -72,7 +73,11 @@ export const RootNavigator: React.FC = () => {
                         {/* Modal screens */}
                         <Stack.Group screenOptions={{ presentation: 'modal' }}>
                             <Stack.Screen name="PaymentModal" component={PlaceholderScreen} />
-                            <Stack.Screen name="QRScannerModal" component={PlaceholderScreen} />
+                            <Stack.Screen
+                                name="QRScannerModal"
+                                component={QRScannerModal}
+                                options={{ headerShown: false }}
+                            />
                         </Stack.Group>
                     </>
                 )}

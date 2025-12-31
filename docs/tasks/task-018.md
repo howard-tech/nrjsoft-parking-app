@@ -9,7 +9,7 @@
 | **Priority** | High |
 | **Estimated Effort** | 4 hours |
 | **Dependencies** | TASK-017 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -17,12 +17,18 @@ Implement the live session timer component and real-time cost calculation logic 
 
 ## Acceptance Criteria
 
-- [ ] HH:MM:SS timer counting up from session start
-- [ ] Cost updates every minute
-- [ ] Handles app backgrounding correctly
-- [ ] Calculates cost based on pricing rules
-- [ ] Supports tiered pricing (if applicable)
-- [ ] Handles timezone differences
+- [x] HH:MM:SS timer counting up from session start
+- [x] Cost updates every minute
+- [x] Handles app backgrounding correctly
+- [x] Calculates cost based on pricing rules
+- [x] Supports tiered pricing (if applicable)
+- [x] Handles timezone differences
+
+## Progress Notes
+
+- Added `useSessionTimer` hook (handles background/foreground) and updated Active Session to use formatted timer + minute callbacks.
+- Cost calculator now supports tiered pricing, min/max caps, currency; session service exposes breakdown.
+- Updated timer/projection components and format utilities; lint/tests passing.
 
 ## Technical Implementation
 

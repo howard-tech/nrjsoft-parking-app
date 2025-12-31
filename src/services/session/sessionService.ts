@@ -2,7 +2,7 @@ import { apiClient } from '@services/api';
 import { store } from '@store';
 import { setActiveSession, updateSessionCost, clearSession, setHistory } from '@store/slices/sessionSlice';
 import { ParkingSession, SessionReceipt } from './types';
-import { calculateCurrentCost } from './costCalculator';
+import { calculateCurrentCost, calculateSessionCost } from './costCalculator';
 
 export const sessionService = {
     async getActiveSession(): Promise<ParkingSession | null> {
@@ -102,6 +102,7 @@ export const sessionService = {
     },
 
     calculateCurrentCost,
+    calculateSessionCost,
 
     async getHistory(page = 1, limit = 20): Promise<ParkingSession[]> {
         try {

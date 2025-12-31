@@ -1,20 +1,20 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { useTheme } from '@theme';
-import { formatDuration } from '@utils/formatters';
 
 interface SessionTimerProps {
-    seconds: number;
+    formattedTime: string;
+    size?: 'small' | 'large';
 }
 
-export const SessionTimer: React.FC<SessionTimerProps> = ({ seconds }) => {
+export const SessionTimer: React.FC<SessionTimerProps> = ({ formattedTime, size = 'large' }) => {
     const theme = useTheme();
-    return <Text style={[styles.timer, { color: theme.colors.neutral.textPrimary }]}>{formatDuration(seconds)}</Text>;
+    const fontSize = size === 'large' ? 42 : 20;
+    return <Text style={[styles.timer, { color: theme.colors.neutral.textPrimary, fontSize }]}>{formattedTime}</Text>;
 };
 
 const styles = StyleSheet.create({
     timer: {
-        fontSize: 42,
         fontWeight: '700',
         fontVariant: ['tabular-nums'],
     },

@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
-import { useActiveSession, useWallet } from '@hooks';
+import { useActiveSession, useWallet, useSessionTimer } from '@hooks';
 import { SessionTimer } from './components/SessionTimer';
 import { WalletProjectionBar } from './components/WalletProjectionBar';
 import { Button } from '@components/common/Button';
@@ -18,28 +18,21 @@ export const ActiveSessionScreen: React.FC = () => {
     const navigation = useNavigation();
     const { session, isLoading } = useActiveSession();
     const { balance, currency } = useWallet();
-
-    const [elapsedSeconds, setElapsedSeconds] = useState(0);
     const [currentCost, setCurrentCost] = useState(0);
 
-    useEffect(() => {
-        if (!session) {
-            return;
-        }
-        const start = new Date(session.startTime).getTime();
-        const tick = () => {
-            const now = Date.now();
-            setElapsedSeconds(Math.max(0, Math.floor((now - start) / 1000)));
-            setCurrentCost(sessionService.calculateCurrentCost(session));
-        };
-        tick();
-        const interval = setInterval(tick, 1000 * 60); // update cost per minute
-        const secondInterval = setInterval(() => setElapsedSeconds((prev) => prev + 1), 1000);
+    const { formattedTime } = useSessionTimer({
+        startTime: session?.startTime ?? new Date().toISOString(),
+        onMinuteElapsed: () => {
+            if (session) {
+                setCurrentCost(sessionService.calculateCurrentCost(session));
+            }
+        },
+    });
 
-        return () => {
-            clearInterval(interval);
-            clearInterval(secondInterval);
-        };
+    useEffect(() => {
+        if (session) {
+            setCurrentCost(sessionService.calculateCurrentCost(session));
+        }
     }, [session]);
 
     const status = useMemo(() => {
@@ -118,7 +111,7 @@ export const ActiveSessionScreen: React.FC = () => {
                     <Text style={[styles.sectionLabel, { color: theme.colors.neutral.textSecondary }]}>
                         Live timer
                     </Text>
-                    <SessionTimer seconds={elapsedSeconds} />
+                    <SessionTimer formattedTime={formattedTime} />
                     <Text style={[styles.caption, { color: theme.colors.neutral.textSecondary }]}>
                         Started {new Date(session.startTime).toLocaleTimeString()}
                     </Text>

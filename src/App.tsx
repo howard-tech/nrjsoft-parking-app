@@ -21,6 +21,7 @@ import { useNotifications } from './hooks/useNotifications';
 import { OfflineBanner } from '@components/common/OfflineBanner';
 import { ErrorBoundary } from '@components/common/ErrorBoundary';
 import { analyticsService, crashReportingService, performanceService } from '@services/analytics';
+import { deviceSecurity } from '@services/security';
 
 const AppContent = () => {
     const { checkSession, user } = useAuth();
@@ -102,6 +103,12 @@ const AppContent = () => {
 
         syncUserContext();
     }, [user]);
+
+    useEffect(() => {
+        if (!deviceSecurity.isDeviceSecure()) {
+            deviceSecurity.showSecurityWarning();
+        }
+    }, []);
 
     return (
         <GestureHandlerRootView style={styles.root}>

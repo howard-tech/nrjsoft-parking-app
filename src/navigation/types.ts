@@ -77,6 +77,7 @@ export type RootStackParamList = {
     // Modals
     PaymentModal: { amount: number; sessionId?: string };
     QRScannerModal: { garageId: string; garageName?: string; garageAddress?: string };
+    ReceiptModal: { sessionId: string; finalCost: number; durationMinutes: number; receiptUrl?: string; zoneName?: string; address?: string; currency?: string };
 };
 
 // For useNavigation hook typing

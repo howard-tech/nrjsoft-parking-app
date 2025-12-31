@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, Platform, Text, FlatList, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { useTheme } from '@theme';
 import { mapStyle } from '@theme/mapStyle';
 import { useLocation } from '@hooks/useLocation';
 import { useSearch } from '@hooks/useSearch';
 import { useFilters } from '@hooks/useFilters';
+import { useNetworkState, useOfflineQueue } from '@hooks';
 import { Button } from '@components/common/Button';
+import { EmptyState } from '@components/common/EmptyState';
 import { parkingService, ParkingGarage } from '@services/parking/parkingService';
+import { offlineCache } from '@services/offline/offlineCache';
 import { clusterItems, distanceInMeters, formatDistance } from '@utils/mapUtils';
 import { OnStreetZone } from '@types';
 import { GarageCard } from './components/GarageCard';
@@ -47,37 +51,95 @@ export const SmartMapScreen: React.FC = () => {
     const [onStreetZones] = useState<OnStreetZone[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const { activeFilter, setActiveFilter, applyFilters } = useFilters(coords);
+    const networkState = useNetworkState();
+    const isOffline = !networkState.isConnected || networkState.isInternetReachable === false;
 
-    const fetchGarages = useCallback(async (lat: number, lng: number) => {
-        setLoadingGarages(true);
-        setFetchError(null);
-        try {
-            const data = await parkingService.fetchNearby(lat, lng);
-            setGarages(data);
-            setSelectedId((previousSelected) => {
-                if (!data.length) {
-                    setActiveGarage(null);
-                    return null;
-                }
-
-                const stillSelected = data.find((garage) => garage.id === previousSelected);
-                if (stillSelected) {
-                    setActiveGarage(stillSelected);
-                    return stillSelected.id;
-                }
+    const updateSelection = useCallback((data: ParkingGarage[]) => {
+        setSelectedId((previousSelected) => {
+            if (!data.length) {
                 setActiveGarage(null);
-                return data[0].id;
-            });
-        } catch (err) {
-            console.warn('Failed to load garages', err);
-            setFetchError('Unable to load nearby garages. Try again in a moment.');
-            setGarages([]);
-            setSelectedId(null);
+                return null;
+            }
+
+            const stillSelected = data.find((garage) => garage.id === previousSelected);
+            if (stillSelected) {
+                setActiveGarage(stillSelected);
+                return stillSelected.id;
+            }
             setActiveGarage(null);
-        } finally {
-            setLoadingGarages(false);
-        }
+            return data[0].id;
+        });
     }, []);
+
+    const fetchGarages = useCallback(
+        async (lat: number, lng: number, regionOverride?: Region) => {
+            setLoadingGarages(true);
+            setFetchError(null);
+            try {
+                if (isOffline) {
+                    const cached = await offlineCache.loadGarages();
+                    if (cached?.garages?.length) {
+                        setGarages(cached.garages);
+                        updateSelection(cached.garages);
+                        if (cached.region) {
+                            setMapRegion((prev) => ({
+                                ...prev,
+                                ...cached.region,
+                            }));
+                        }
+                        setFetchError('Offline. Showing last known results.');
+                        return;
+                    }
+                    throw new Error('offline');
+                }
+
+                const data = await parkingService.fetchNearby(lat, lng);
+                setGarages(data);
+                updateSelection(data);
+
+                const regionToPersist =
+                    regionOverride ??
+                    {
+                        latitude: lat,
+                        longitude: lng,
+                        latitudeDelta: mapRegion.latitudeDelta,
+                        longitudeDelta: mapRegion.longitudeDelta,
+                    };
+                await offlineCache.saveGarages(data, regionToPersist);
+            } catch (err) {
+                console.warn('Failed to load garages', err);
+                setFetchError(
+                    isOffline
+                        ? 'Offline and no cached data available.'
+                        : 'Unable to load nearby garages. Try again in a moment.'
+                );
+                setGarages([]);
+                setSelectedId(null);
+                setActiveGarage(null);
+            } finally {
+                setLoadingGarages(false);
+            }
+        },
+        [isOffline, mapRegion.latitudeDelta, mapRegion.longitudeDelta, updateSelection]
+    );
+
+    useEffect(() => {
+        const loadCached = async () => {
+            const cached = await offlineCache.loadGarages();
+            if (cached?.garages?.length) {
+                setGarages(cached.garages);
+                updateSelection(cached.garages);
+                if (cached.region) {
+                    setMapRegion((prev) => ({
+                        ...prev,
+                        ...cached.region,
+                    }));
+                }
+            }
+        };
+
+        loadCached();
+    }, [updateSelection]);
 
     useEffect(() => {
         getCurrentPosition();
@@ -102,7 +164,7 @@ export const SmartMapScreen: React.FC = () => {
         };
         setMapRegion(nextRegion);
         mapRef.current?.animateToRegion(nextRegion, 500);
-        fetchGarages(nextRegion.latitude, nextRegion.longitude);
+        fetchGarages(nextRegion.latitude, nextRegion.longitude, nextRegion);
     }, [coords, fetchGarages]);
 
     const mapProps = useMemo(
@@ -112,6 +174,18 @@ export const SmartMapScreen: React.FC = () => {
         }),
         []
     );
+
+    const offlineHandlers = useMemo(
+        () => ({
+            refreshNearby: async (payload: unknown) => {
+                const coordsPayload = payload as { lat: number; lng: number };
+                await fetchGarages(coordsPayload.lat, coordsPayload.lng);
+            },
+        }),
+        [fetchGarages]
+    );
+
+    const { enqueue: enqueueOfflineAction } = useOfflineQueue(offlineHandlers, networkState);
 
     const garagesWithDistance = useMemo(
         () =>
@@ -229,13 +303,29 @@ export const SmartMapScreen: React.FC = () => {
     );
 
     const handleRefreshGarages = useCallback(() => {
+        if (isOffline) {
+            enqueueOfflineAction('refreshNearby', {
+                lat: mapRegion.latitude,
+                lng: mapRegion.longitude,
+            });
+            setFetchError('Offline. Refresh will retry automatically once online.');
+            return;
+        }
+
         if (coords) {
-            fetchGarages(coords.latitude, coords.longitude);
+            fetchGarages(coords.latitude, coords.longitude, mapRegion);
             return;
         }
 
         getCurrentPosition();
-    }, [coords, fetchGarages, getCurrentPosition]);
+    }, [
+        coords,
+        enqueueOfflineAction,
+        fetchGarages,
+        getCurrentPosition,
+        isOffline,
+        mapRegion,
+    ]);
 
     const handleRecenter = useCallback(async () => {
         setRecenterLoading(true);
@@ -436,11 +526,30 @@ export const SmartMapScreen: React.FC = () => {
                     contentContainerStyle={styles.listContent}
                     ListEmptyComponent={
                         !loadingGarages ? (
-                            <Text style={styles.emptyText}>
-                                {coords
-                                    ? 'No nearby garages match your search.'
-                                    : 'Enable location to load nearby garages.'}
-                            </Text>
+                            <EmptyState
+                                title={coords ? 'No garages match your search' : 'Location required'}
+                                description={
+                                    coords
+                                        ? 'Try clearing filters or searching another area.'
+                                        : 'Enable location services to see nearby parking.'
+                                }
+                                icon={
+                                    <Icon
+                                        name={coords ? 'map-search-outline' : 'map-marker-off'}
+                                        size={28}
+                                        color={theme.colors.neutral.textSecondary}
+                                    />
+                                }
+                                actionLabel={coords ? 'Clear search & filters' : 'Refresh'}
+                                onAction={
+                                    coords
+                                        ? () => {
+                                              setSearchQuery('');
+                                              handleClearFilters();
+                                          }
+                                        : handleRefreshGarages
+                                }
+                            />
                         ) : null
                     }
                 />
@@ -556,11 +665,6 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         fontSize: 12,
         fontWeight: '600',
-    },
-    emptyText: {
-        fontSize: 12,
-        color: '#2C3E50',
-        paddingVertical: 4,
     },
 });
 

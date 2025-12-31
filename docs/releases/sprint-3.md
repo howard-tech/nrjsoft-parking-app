@@ -10,9 +10,10 @@
 - Task-013: garage bottom sheet with snap points (45%, 80%), detail fetch, navigation/start/QR actions, and drag-to-close.
 - Task-014: search bar with autocomplete/history, filter chips (nearest/cheapest/EV-ready/max-time), and map/list updates based on search/filter selections.
 - Task-048: external navigation chooser (Google/Apple/Waze/Web) wired to garage detail navigate button.
+- Task-049: offline/error handling with global offline banner, cached nearby results for Smart Map, queued refresh actions, shared empty/loading states, and app-level error boundary.
 
 ## In Progress
-- Garage detail bottom sheet, navigation/QR actions, and search/filter UX are scheduled for TASK-012/013/014.
+- Upcoming: analytics & crash reporting (TASK-050) and security/data encryption hardening (TASK-051).
 
 ## Testing
 - Lint: `npm run lint`

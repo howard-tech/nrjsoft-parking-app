@@ -4,6 +4,8 @@ import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import { useTheme } from '@theme';
 import { mapStyle } from '@theme/mapStyle';
 import { useLocation } from '@hooks/useLocation';
+import { useSearch } from '@hooks/useSearch';
+import { useFilters } from '@hooks/useFilters';
 import { Button } from '@components/common/Button';
 import { parkingService, ParkingGarage } from '@services/parking/parkingService';
 import { clusterItems, distanceInMeters, formatDistance } from '@utils/mapUtils';
@@ -13,6 +15,8 @@ import { GarageMarker } from './components/GarageMarker';
 import { ClusterMarker } from './components/ClusterMarker';
 import { OnStreetMarker } from './components/OnStreetMarker';
 import { GarageBottomSheet } from './components/GarageBottomSheet';
+import { SearchBar } from './components/SearchBar';
+import { FilterChips } from './components/FilterChips';
 
 const DEFAULT_REGION: Region = {
     latitude: 52.52,
@@ -41,6 +45,8 @@ export const SmartMapScreen: React.FC = () => {
     const [fetchError, setFetchError] = useState<string | null>(null);
     const [recenterLoading, setRecenterLoading] = useState(false);
     const [onStreetZones] = useState<OnStreetZone[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const { activeFilter, setActiveFilter, applyFilters } = useFilters(coords);
 
     const fetchGarages = useCallback(async (lat: number, lng: number) => {
         setLoadingGarages(true);
@@ -107,6 +113,51 @@ export const SmartMapScreen: React.FC = () => {
         []
     );
 
+    const garagesWithDistance = useMemo(
+        () =>
+            garages.map((garage) => {
+                const computedDistance =
+                    garage.distanceMeters ??
+                    (coords
+                        ? distanceInMeters(coords.latitude, coords.longitude, garage.latitude, garage.longitude)
+                        : undefined);
+                return { ...garage, distanceMeters: computedDistance };
+            }),
+        [coords, garages]
+    );
+
+    const { results: searchResults, recentSearches, recordSelection, clearHistory } = useSearch(
+        garagesWithDistance,
+        searchQuery
+    );
+
+    const filteredGarages = useMemo(() => {
+        const base = searchQuery.trim() ? searchResults : garagesWithDistance;
+        return applyFilters(base);
+    }, [applyFilters, garagesWithDistance, searchQuery, searchResults]);
+
+    useEffect(() => {
+        if (filteredGarages.length === 0) {
+            setSelectedId(null);
+            setActiveGarage(null);
+            return;
+        }
+
+        if (selectedId && filteredGarages.some((g) => g.id === selectedId)) {
+            const found = filteredGarages.find((g) => g.id === selectedId) ?? null;
+            setActiveGarage(found);
+            return;
+        }
+
+        setSelectedId(filteredGarages[0].id);
+        setActiveGarage(filteredGarages[0]);
+    }, [filteredGarages, selectedId]);
+
+    const clusteredGarages = useMemo(
+        () => clusterItems(filteredGarages, mapRegion),
+        [filteredGarages, mapRegion]
+    );
+
     const computeDistanceLabel = useCallback(
         (garage: ParkingGarage) => {
             const meters =
@@ -117,11 +168,6 @@ export const SmartMapScreen: React.FC = () => {
             return formatDistance(meters);
         },
         [coords]
-    );
-
-    const clusteredGarages = useMemo(
-        () => clusterItems(garages, mapRegion),
-        [garages, mapRegion]
     );
 
     const shouldShowLocationOverlay =
@@ -227,8 +273,52 @@ export const SmartMapScreen: React.FC = () => {
         setActiveGarage(null);
     }, []);
 
+    const handleSearchSubmit = useCallback(() => {
+        if (searchQuery.trim() && filteredGarages.length > 0) {
+            handleSelect(filteredGarages[0]);
+        }
+    }, [filteredGarages, handleSelect, searchQuery]);
+
+    const handleSearchSelect = useCallback(
+        (result: ParkingGarage) => {
+            recordSelection(result);
+            handleSelect(result);
+            mapRef.current?.animateToRegion(
+                {
+                    latitude: result.latitude,
+                    longitude: result.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                },
+                300
+            );
+        },
+        [handleSelect, recordSelection]
+    );
+
+    const handleClearFilters = useCallback(() => {
+        setActiveFilter(null);
+    }, [setActiveFilter]);
+
     return (
         <View style={styles.container}>
+            <View style={styles.searchArea}>
+                <SearchBar
+                    query={searchQuery}
+                    onQueryChange={setSearchQuery}
+                    results={searchResults}
+                    recentSearches={recentSearches}
+                    onSelect={handleSearchSelect}
+                    onSubmit={handleSearchSubmit}
+                    onClearRecent={clearHistory}
+                />
+                <FilterChips activeFilter={activeFilter} onChange={setActiveFilter} />
+                {(searchQuery.length > 0 || activeFilter) && (
+                    <TouchableOpacity style={styles.clearFilters} onPress={() => { setSearchQuery(''); handleClearFilters(); }}>
+                        <Text style={styles.clearFiltersText}>Clear search & filters</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
             {shouldShowLocationOverlay && (
                 <Overlay>
                     {locationError ? (
@@ -338,7 +428,7 @@ export const SmartMapScreen: React.FC = () => {
                 )}
                 <FlatList
                     ref={listRef}
-                    data={garages}
+                    data={filteredGarages}
                     keyExtractor={(item) => item.id}
                     renderItem={renderGarageCard}
                     horizontal
@@ -348,7 +438,7 @@ export const SmartMapScreen: React.FC = () => {
                         !loadingGarages ? (
                             <Text style={styles.emptyText}>
                                 {coords
-                                    ? 'No nearby garages found yet.'
+                                    ? 'No nearby garages match your search.'
                                     : 'Enable location to load nearby garages.'}
                             </Text>
                         ) : null
@@ -405,7 +495,7 @@ const styles = StyleSheet.create({
     },
     controls: {
         position: 'absolute',
-        top: 16,
+        top: 140,
         right: 16,
         flexDirection: 'row',
         zIndex: 3,
@@ -423,6 +513,24 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         elevation: 3,
         minWidth: 96,
+    },
+    searchArea: {
+        position: 'absolute',
+        top: 16,
+        left: 16,
+        right: 16,
+        zIndex: 5,
+    },
+    clearFilters: {
+        marginTop: 4,
+        alignSelf: 'flex-start',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+    },
+    clearFiltersText: {
+        fontSize: 12,
+        color: '#1E3A5F',
+        fontWeight: '600',
     },
     controlText: {
         fontSize: 12,

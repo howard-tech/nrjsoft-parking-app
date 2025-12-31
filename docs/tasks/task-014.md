@@ -9,7 +9,7 @@
 | **Priority** | Medium |
 | **Estimated Effort** | 6 hours |
 | **Dependencies** | TASK-011 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -23,13 +23,19 @@ Implement the search functionality and filter options for finding parking garage
 
 ## Acceptance Criteria
 
-- [ ] Search bar with autocomplete
-- [ ] Search results list
-- [ ] Filter chips (Nearest, Cheapest, EV ready, Max time)
-- [ ] Clear search/filters
-- [ ] Recent searches history
-- [ ] Map updates based on filters
-- [ ] Results sorted by selected filter
+- [x] Search bar with autocomplete
+- [x] Search results list
+- [x] Filter chips (Nearest, Cheapest, EV ready, Max time)
+- [x] Clear search/filters
+- [x] Recent searches history
+- [x] Map updates based on filters
+- [x] Results sorted by selected filter
+
+## Progress Notes
+
+- Added search bar with dropdown results + recent history, integrated with map/markers/carousel.
+- Filters (nearest/cheapest/EV-ready/max-time fallback) sort displayed garages and update map markers.
+- Clear control resets search and filter state; selection recent history stored in AsyncStorage.
 
 ## Technical Implementation
 

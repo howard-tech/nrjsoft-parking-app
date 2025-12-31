@@ -7,6 +7,7 @@
 - Google Maps integration (Android/iOS) via `GOOGLE_MAPS_API_KEY` env/manifest placeholders with network security config restricted to debug.
 - Smart Map home screen scaffold: user location permissions/overlays, animated recenter, nearby garage fetch (`/parking/nearby`), colored markers by availability, and a horizontal carousel wired to marker selection with manual refresh.
 - Task-012: custom garage/on-street markers with status colors, animated selection, distance labels, lightweight clustering for zoomed-out views.
+- Task-013: garage bottom sheet with snap points (45%, 80%), detail fetch, navigation/start/QR actions, and drag-to-close.
 
 ## In Progress
 - Garage detail bottom sheet, navigation/QR actions, and search/filter UX are scheduled for TASK-012/013/014.

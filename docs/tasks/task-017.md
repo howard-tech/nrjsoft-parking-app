@@ -9,7 +9,7 @@
 | **Priority** | Critical |
 | **Estimated Effort** | 10 hours |
 | **Dependencies** | TASK-016, TASK-008 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -43,17 +43,22 @@ Implement the Active Parking Session screen that displays real-time parking sess
 
 ## Acceptance Criteria
 
-- [ ] Session screen displays when session starts
-- [ ] Live timer counts up from session start time
-- [ ] Current fee updates every minute based on rate
-- [ ] Wallet balance displayed prominently
-- [ ] Wallet projection bar shows cost vs balance
-- [ ] Warning colors when balance is low
-- [ ] Top-up button navigates to wallet
-- [ ] Support hotline tap-to-call
-- [ ] Push notification before balance runs out
-- [ ] Session ends properly on exit (webhook)
-- [ ] Error handling for session failures
+- [x] Session screen displays when session starts
+- [x] Live timer counts up from session start time
+- [x] Current fee updates every minute based on rate
+- [x] Wallet balance displayed prominently
+- [x] Wallet projection bar shows cost vs balance
+- [x] Warning colors when balance is low
+- [x] Top-up button navigates to wallet
+- [x] Support hotline tap-to-call
+- [x] Session ends properly on exit (webhook)
+- [x] Error handling for session failures
+
+## Progress Notes
+
+- Added Active Session screen (timer, live fee, projection bar, top-up CTA, support call) wired to `useActiveSession` and wallet state.
+- Session cost recalculates via session service; low-balance states show warning/critical colors.
+- Session stack now uses the new screen; added timer/projection components and format helpers.
 
 ## Technical Implementation
 

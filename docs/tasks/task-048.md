@@ -9,7 +9,7 @@
 | **Priority** | Medium |
 | **Estimated Effort** | 4 hours |
 | **Dependencies** | TASK-013 |
-| **Status** | 🔴 Not Started |
+| **Status** | 🟢 Completed |
 
 ## Description
 
@@ -22,12 +22,17 @@ Implement deep links to external navigation apps (Google Maps, Apple Maps, Waze)
 
 ## Acceptance Criteria
 
-- [ ] "Navigate" button on garage details
-- [ ] Support Google Maps navigation
-- [ ] Support Apple Maps navigation (iOS)
-- [ ] Support Waze navigation
-- [ ] App chooser dialog
-- [ ] Fallback to web browser
+- [x] "Navigate" button on garage details
+- [x] Support Google Maps navigation
+- [x] Support Apple Maps navigation (iOS)
+- [x] Support Waze navigation
+- [x] App chooser dialog
+- [x] Fallback to web browser
+
+## Progress Notes
+
+- Added `externalNavigationService` with app availability checks, chooser (ActionSheet iOS / Alert Android), and Google/Apple/Waze/Web fallbacks.
+- Garage bottom sheet now uses `NavigateButton` to open chooser with destination label/address.
 
 ## Technical Implementation
 

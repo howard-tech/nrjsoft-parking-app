@@ -10,6 +10,7 @@ import {
     ScrollView,
     TextInput,
     Alert,
+    Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -48,6 +49,7 @@ export const LoginScreen: React.FC = () => {
                         : `${countryCode}${cleanedIdentifier}`
                     : cleanedIdentifier;
 
+            Keyboard.dismiss();
             await requestOTP(authMethod === 'phone' ? 'mobile' : 'email', finalIdentifier);
             navigation.navigate('OTPVerification', {
                 phone: authMethod === 'phone' ? finalIdentifier : undefined,

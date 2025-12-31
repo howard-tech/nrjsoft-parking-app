@@ -32,7 +32,6 @@ export const OTPVerificationScreen: React.FC = () => {
     const [otp, setOtp] = useState('');
     const [isTimerActive, setIsTimerActive] = useState(true);
     const [localError, setLocalError] = useState<string | null>(null);
-
     const { phone, email } = route.params;
     const identifier = phone || email || '';
     const type = phone ? 'mobile' : 'email';
@@ -92,6 +91,12 @@ export const OTPVerificationScreen: React.FC = () => {
                     <Text style={styles.subtitle}>
                         {t('auth.otpSentTo')} {'\n'}
                         <Text style={styles.identifier}>{identifier}</Text>
+                        {__DEV__ && (
+                            <>
+                                {'\n'}
+                                <Text style={styles.devHint}>{t('auth.devOtpHint', { defaultValue: 'Use mock OTP 123456' })}</Text>
+                            </>
+                        )}
                     </Text>
                 </View>
 

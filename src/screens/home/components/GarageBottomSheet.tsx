@@ -3,9 +3,7 @@ import {
     ActivityIndicator,
     Animated,
     Dimensions,
-    Linking,
     PanResponder,
-    Platform,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -15,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ParkingGarage, parkingService } from '@services/parking/parkingService';
 import { useTheme } from '@theme';
 import { Button } from '@components/common/Button';
+import { NavigateButton } from '@components/map/NavigateButton';
 
 const SNAP_POINTS = [0.45, 0.8];
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -102,26 +101,6 @@ export const GarageBottomSheet: React.FC<Props> = ({ garage, distanceLabel, onCl
             }),
         [onClose, snapTo, translateY]
     );
-
-    const openNavigation = useCallback(() => {
-        if (!garage) {
-            return;
-        }
-
-        const appleMaps = `maps:?daddr=${garage.latitude},${garage.longitude}&dirflg=d`;
-        const geo = `geo:0,0?q=${garage.latitude},${garage.longitude}(${encodeURIComponent(garage.name)})`;
-        const url = Platform.OS === 'ios' ? appleMaps : geo;
-
-        Linking.canOpenURL(url).then((supported) => {
-            if (supported) {
-                Linking.openURL(url);
-            } else {
-                Linking.openURL(
-                    `https://www.google.com/maps/dir/?api=1&destination=${garage.latitude},${garage.longitude}`
-                );
-            }
-        });
-    }, [garage]);
 
     const handleStartSession = useCallback(() => {
         if (!garage) {
@@ -231,7 +210,14 @@ export const GarageBottomSheet: React.FC<Props> = ({ garage, distanceLabel, onCl
                     )}
 
                     <View style={styles.actions}>
-                        <Button title="Navigate" onPress={openNavigation} />
+                        <NavigateButton
+                            destination={{
+                                latitude: garage.latitude,
+                                longitude: garage.longitude,
+                                label: garage.name,
+                                address: garage.address,
+                            }}
+                        />
                         {isQREntry ? (
                             <Button title="Scan QR" onPress={handleScanQR} style={styles.actionSpacing} />
                         ) : (

@@ -28,8 +28,10 @@ seededGarages.forEach((garage) => {
         totalSlots: garage.totalSpots ?? 100,
         hourlyRate: garage.pricing?.hourly ?? 2.5,
         currency: garage.pricing?.currency ?? 'EUR',
-        features: {},
-        policies: { prepayRequired: false },
+        features: garage.features ?? {},
+        policies: garage.policies ?? { prepayRequired: false },
+        maxTime: garage.maxTime,
+        status: garage.status,
     };
     garageStore.set(seeded.id, seeded);
 });

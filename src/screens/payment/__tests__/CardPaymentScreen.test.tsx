@@ -19,11 +19,13 @@ jest.mock('@react-navigation/native', () => {
 });
 
 // Mock Stripe
-const mockCreatePaymentMethod = jest.fn();
 jest.mock('@stripe/stripe-react-native', () => ({
     StripeProvider: ({ children }: { children: React.ReactNode }) => children,
     useStripe: () => ({
-        createPaymentMethod: mockCreatePaymentMethod,
+        createPaymentMethod: jest.fn().mockResolvedValue({
+            paymentMethod: { id: 'pm_123' },
+            error: undefined
+        }),
     }),
     CardField: ({ onCardChange: _onCardChange }: { onCardChange: (details: { complete: boolean }) => void }) => {
         // Find a way to trigger onCardChange in test if needed, or simply force button enable

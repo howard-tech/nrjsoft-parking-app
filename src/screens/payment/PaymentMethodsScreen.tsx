@@ -8,24 +8,35 @@ import { EmptyState } from '@components/common/EmptyState';
 // You might need an icon component
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-// Mock data interface
-interface PaymentMethod {
-    id: string;
-    type: 'card' | 'apple_pay' | 'google_pay';
-    last4?: string;
-    brand?: string; // visa, mastercard, etc.
-    isDefault?: boolean;
-}
-
-const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
-    { id: '1', type: 'card', last4: '4242', brand: 'Visa', isDefault: true },
-    { id: '2', type: 'apple_pay' },
-];
+import { paymentService } from '@services/payment/paymentService';
+import { LoadingState } from '@components/common/LoadingState';
+import { PaymentMethod } from '@types/payment';
 
 export const PaymentMethodsScreen: React.FC = () => {
     const theme = useTheme();
     const navigation = useNavigation();
-    const [methods, setMethods] = useState<PaymentMethod[]>(MOCK_PAYMENT_METHODS);
+    const [methods, setMethods] = useState<PaymentMethod[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const loadMethods = async () => {
+        try {
+            setLoading(true);
+            const data = await paymentService.getPaymentMethods();
+            setMethods(data);
+        } catch (error) {
+            console.error('Failed to load payment methods', error);
+            Alert.alert('Error', 'Failed to load payment methods');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            loadMethods();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     const handleAddMethod = () => {
         navigation.navigate('AddPaymentMethod' as never);
@@ -48,7 +59,7 @@ export const PaymentMethodsScreen: React.FC = () => {
 
     const renderItem = ({ item }: { item: PaymentMethod }) => {
         const iconName = item.type === 'card' ? 'credit-card' : item.type === 'apple_pay' ? 'apple' : 'google';
-        const title = item.type === 'card' ? `**** **** **** ${item.last4}` : item.type === 'apple_pay' ? 'Apple Pay' : 'Google Pay';
+        const title = item.type === 'card' ? `**** **** **** ${item.last4 ?? '****'}` : item.type === 'apple_pay' ? 'Apple Pay' : 'Google Pay';
 
         return (
             <View style={[styles.card, { backgroundColor: theme.colors.neutral.surface }]}>
@@ -56,7 +67,7 @@ export const PaymentMethodsScreen: React.FC = () => {
                     <Icon name={iconName} size={24} color={theme.colors.primary.main} style={styles.icon} />
                     <View>
                         <Text style={[styles.cardTitle, { color: theme.colors.neutral.textPrimary }]}>{title}</Text>
-                        {item.type === 'card' && <Text style={[styles.cardSubtitle, { color: theme.colors.neutral.textSecondary }]}>{item.brand}</Text>}
+                        {item.type === 'card' && <Text style={[styles.cardSubtitle, { color: theme.colors.neutral.textSecondary }]}>{item.brand ?? 'Card'}</Text>}
                     </View>
                 </View>
                 <View style={styles.cardRight}>
@@ -72,6 +83,15 @@ export const PaymentMethodsScreen: React.FC = () => {
             </View>
         );
     };
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}>
+                <AppHeader title="Payment Methods" showBack onBack={() => navigation.goBack()} />
+                <LoadingState message="Loading payment methods..." />
+            </View>
+        );
+    }
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}>

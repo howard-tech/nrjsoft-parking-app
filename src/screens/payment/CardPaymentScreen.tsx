@@ -5,6 +5,7 @@ import { useTheme } from '@theme';
 import { AppHeader } from '@components/common/AppHeader';
 import { Button } from '@components/common/Button';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
+import { paymentService } from '@services/payment/paymentService';
 
 export const CardPaymentScreen: React.FC = () => {
     const theme = useTheme();
@@ -33,9 +34,11 @@ export const CardPaymentScreen: React.FC = () => {
 
             if (paymentMethod) {
                 // 2. Send paymentMethod.id to backend to attach to customer
-                // await paymentService.attachPaymentMethod(paymentMethod.id);
+                await paymentService.attachPaymentMethod(paymentMethod.id);
                 Alert.alert('Success', 'Card added successfully');
                 navigation.goBack();
+            } else {
+                Alert.alert('Error', 'Failed to create payment method');
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to add card');

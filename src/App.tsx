@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import { ThemeProvider } from '@theme';
 import RNBootSplash from 'react-native-bootsplash';
+import { StripeProvider } from '@stripe/stripe-react-native';
+import Config from 'react-native-config';
 import './i18n';
 
 const styles = StyleSheet.create({
@@ -114,9 +116,13 @@ const AppContent = () => {
         <GestureHandlerRootView style={styles.root}>
             <ThemeProvider>
                 <ErrorBoundary>
-                    <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-                    <OfflineBanner />
-                    <RootNavigator />
+                    <StripeProvider
+                        publishableKey={Config.STRIPE_PUBLISHABLE_KEY || ''}
+                    >
+                        <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+                        <OfflineBanner />
+                        <RootNavigator />
+                    </StripeProvider>
                 </ErrorBoundary>
             </ThemeProvider>
         </GestureHandlerRootView>

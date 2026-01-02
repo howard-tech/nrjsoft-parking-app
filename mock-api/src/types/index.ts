@@ -54,6 +54,8 @@ export interface Garage {
         close: string;
     };
     images?: string[];
+    status?: 'available' | 'limited' | 'full';
+    evChargers?: number;
 }
 
 // On-street zone type

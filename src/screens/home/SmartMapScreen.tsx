@@ -29,6 +29,13 @@ const DEFAULT_REGION: Region = {
     longitudeDelta: 0.05,
 };
 
+const DEMO_CENTER: Region = {
+    latitude: 43.8505,
+    longitude: 25.919,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
+};
+
 export const SmartMapScreen: React.FC = () => {
     const theme = useTheme();
     const {
@@ -396,9 +403,22 @@ export const SmartMapScreen: React.FC = () => {
                 },
                 350
             );
+            fetchGarages(current.latitude, current.longitude, undefined, {
+                sortBy: activeFilter,
+                query: searchQuery.trim() || undefined,
+            });
         }
         setRecenterLoading(false);
-    }, [getCurrentPosition]);
+    }, [activeFilter, fetchGarages, getCurrentPosition, searchQuery]);
+
+    const handleJumpToDemo = useCallback(() => {
+        mapRef.current?.animateToRegion(DEMO_CENTER, 500);
+        setMapRegion(DEMO_CENTER);
+        fetchGarages(DEMO_CENTER.latitude, DEMO_CENTER.longitude, DEMO_CENTER, {
+            sortBy: activeFilter,
+            query: searchQuery.trim() || undefined,
+        });
+    }, [activeFilter, fetchGarages, searchQuery]);
 
     const handleZonePress = useCallback(
         (zone: OnStreetZone) => {
@@ -562,6 +582,17 @@ export const SmartMapScreen: React.FC = () => {
                             My location
                         </Text>
                     )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={handleJumpToDemo}
+                    style={[styles.controlButton, themedStyles.controlsSurface, styles.controlSpacing, theme.shadows.md]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Jump to demo center"
+                >
+                    <Text style={[styles.controlText, { color: theme.colors.primary.main }]}>
+                        Demo center
+                    </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.9}

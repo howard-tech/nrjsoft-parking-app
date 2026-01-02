@@ -29,6 +29,13 @@ const DEFAULT_REGION: Region = {
     longitudeDelta: 0.05,
 };
 
+const DEMO_CENTER: Region = {
+    latitude: 43.8505,
+    longitude: 25.919,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
+};
+
 export const SmartMapScreen: React.FC = () => {
     const theme = useTheme();
     const {
@@ -55,6 +62,7 @@ export const SmartMapScreen: React.FC = () => {
     const isOffline = !networkState.isConnected || networkState.isInternetReachable === false;
     const lastFetchRef = useRef<{ key: string; ts: number }>({ key: '', ts: 0 });
     const MIN_FETCH_INTERVAL = 800; // ms guard to avoid rapid refetch jitter
+    const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
     const updateSelection = useCallback((data: ParkingGarage[]) => {
         setSelectedId((previousSelected) => {
@@ -191,6 +199,27 @@ export const SmartMapScreen: React.FC = () => {
         }
         fetchGarages(coords.latitude, coords.longitude, mapRegion, { sortBy: activeFilter });
     }, [activeFilter, coords, fetchGarages, mapRegion]);
+
+    useEffect(() => {
+        if (!coords) {
+            return;
+        }
+        if (searchDebounceRef.current) {
+            clearTimeout(searchDebounceRef.current);
+        }
+        searchDebounceRef.current = setTimeout(() => {
+            fetchGarages(coords.latitude, coords.longitude, mapRegion, {
+                sortBy: activeFilter,
+                query: searchQuery.trim() || undefined,
+            });
+        }, 500);
+
+        return () => {
+            if (searchDebounceRef.current) {
+                clearTimeout(searchDebounceRef.current);
+            }
+        };
+    }, [activeFilter, coords, fetchGarages, mapRegion, searchQuery]);
 
     const mapProps = useMemo(
         () => ({
@@ -349,12 +378,15 @@ export const SmartMapScreen: React.FC = () => {
 
         const targetLat = coords?.latitude ?? mapRegion.latitude;
         const targetLng = coords?.longitude ?? mapRegion.longitude;
-        fetchGarages(targetLat, targetLng, mapRegion, { sortBy: activeFilter, query: searchQuery.trim() || undefined });
+        fetchGarages(targetLat, targetLng, mapRegion, {
+            sortBy: activeFilter,
+            query: searchQuery.trim() || undefined,
+            refresh: true,
+        });
     }, [
         coords,
         enqueueOfflineAction,
         fetchGarages,
-        getCurrentPosition,
         isOffline,
         mapRegion,
         activeFilter,
@@ -374,9 +406,30 @@ export const SmartMapScreen: React.FC = () => {
                 },
                 350
             );
+            fetchGarages(current.latitude, current.longitude, undefined, {
+                sortBy: activeFilter,
+                query: searchQuery.trim() || undefined,
+            });
         }
         setRecenterLoading(false);
-    }, [getCurrentPosition]);
+    }, [activeFilter, fetchGarages, getCurrentPosition, searchQuery]);
+
+    const handleJumpToDemo = useCallback(() => {
+        const key = `${DEMO_CENTER.latitude}|${DEMO_CENTER.longitude}|${activeFilter ?? ''}|${searchQuery.trim()}`;
+        const now = Date.now();
+        if (lastFetchRef.current.key === key && now - lastFetchRef.current.ts < MIN_FETCH_INTERVAL) {
+            mapRef.current?.animateToRegion(DEMO_CENTER, 400);
+            setMapRegion(DEMO_CENTER);
+            return;
+        }
+
+        mapRef.current?.animateToRegion(DEMO_CENTER, 400);
+        setMapRegion(DEMO_CENTER);
+        fetchGarages(DEMO_CENTER.latitude, DEMO_CENTER.longitude, DEMO_CENTER, {
+            sortBy: activeFilter,
+            query: searchQuery.trim() || undefined,
+        });
+    }, [MIN_FETCH_INTERVAL, activeFilter, fetchGarages, searchQuery]);
 
     const handleZonePress = useCallback(
         (zone: OnStreetZone) => {
@@ -540,6 +593,17 @@ export const SmartMapScreen: React.FC = () => {
                             My location
                         </Text>
                     )}
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={handleJumpToDemo}
+                    style={[styles.controlButton, themedStyles.controlsSurface, styles.controlSpacing, theme.shadows.md]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Jump to demo center"
+                >
+                    <Text style={[styles.controlText, { color: theme.colors.primary.main }]}>
+                        Demo center
+                    </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.9}

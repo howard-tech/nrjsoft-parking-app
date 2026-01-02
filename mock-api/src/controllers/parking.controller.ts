@@ -80,14 +80,22 @@ export class ParkingController {
         const q = (req.query.q as string | undefined)?.toLowerCase().trim();
         const garages = Array.from(garageStore.values());
 
-        // Simulate live availability for Downtown Central
-        const downtownId = 'garage_downtown_central_champion';
-        const downtown = garageStore.get(downtownId);
-        if (downtown) {
-            const delta = Math.floor(Math.random() * 5) - 2; // -2..+2
-            const nextSlots = Math.max(0, Math.min(downtown.totalSlots ?? 50, (downtown.availableSlots ?? 0) + delta));
-            const status = nextSlots === 0 ? 'full' : nextSlots < 5 ? 'limited' : 'available';
-            garageStore.set(downtownId, { ...downtown, availableSlots: nextSlots, status });
+        const refreshTick = (req.query.refresh as string) === 'true';
+
+        // Simulate live availability for Downtown Central only on explicit refresh calls
+        if (refreshTick) {
+            const downtownId = 'garage_downtown_central_champion';
+            const downtown = garageStore.get(downtownId);
+            if (downtown) {
+                const delta = Math.floor(Math.random() * 2) + 1; // 1..2
+                const direction = Math.random() > 0.5 ? 1 : -1;
+                const nextSlots = Math.max(
+                    0,
+                    Math.min(downtown.totalSlots ?? 100, (downtown.availableSlots ?? 0) + delta * direction)
+                );
+                const status = nextSlots === 0 ? 'full' : nextSlots > 5 ? 'available' : 'limited';
+                garageStore.set(downtownId, { ...downtown, availableSlots: nextSlots, status });
+            }
         }
 
         // Filter garages within radius and calculate distances
@@ -104,17 +112,17 @@ export class ParkingController {
             .filter((garage) => (garage.distanceMeters ?? 0) <= radiusMeters)
             .sort((a, b) => (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0));
 
-        // Simulated availability logic remains visual-only, we don't persist it to store 
-        // to avoid race conditions with generator in this simple mock
-        const withUpdatedAvailability = nearbyGarages.map((garage) => ({
-            ...garage,
-            availableSlots: Math.max(
-                0,
-                garage.availableSlots + Math.floor(Math.random() * 5 - 2)
-            ),
-        }));
+        // Keep availability stable to prevent UI flicker; only Downtown Central is mutated on explicit refresh
+        const withStableAvailability = nearbyGarages.map((garage) => {
+            const latest = garageStore.get(garage.id);
+            return {
+                ...garage,
+                availableSlots: latest?.availableSlots ?? garage.availableSlots,
+                status: latest?.status ?? garage.status,
+            };
+        });
 
-        const withChampionOverrides = withUpdatedAvailability.map((garage) => {
+        const withChampionOverrides = withStableAvailability.map((garage) => {
             const override = championOverrides[garage.id];
             if (!override) return garage;
             return {
@@ -161,7 +169,7 @@ export class ParkingController {
                 break;
         }
 
-        await delay(600);
+        await delay(700);
 
         res.json({
             garages: sorted,

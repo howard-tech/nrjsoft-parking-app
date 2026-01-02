@@ -43,9 +43,9 @@ export const parkingService = {
     async fetchNearby(
         lat: number,
         lng: number,
-        options?: { sortBy?: SortBy | null; query?: string }
+        options?: { sortBy?: SortBy | null; query?: string; refresh?: boolean }
     ): Promise<ParkingGarage[]> {
-        const { sortBy, query } = options || {};
+        const { sortBy, query, refresh } = options || {};
         const response = await apiClient.get<{ data?: ParkingGarage[]; garages?: ParkingGarage[] } | ParkingGarage[]>(
             '/parking/nearby',
             {
@@ -54,6 +54,7 @@ export const parkingService = {
                     lng,
                     ...(sortBy ? { sortBy } : {}),
                     ...(query ? { q: query } : {}),
+                    ...(refresh ? { refresh: true } : {}),
                 },
             }
         );
@@ -71,7 +72,7 @@ export const parkingService = {
     async fetchDetail(id: string): Promise<ParkingGarage> {
         try {
             const response = await apiClient.get<{ data?: ParkingGarage; garage?: ParkingGarage }>(
-                `/parking/garage/${id}`
+                `/parking/${id}`
             );
             const payload = response.data?.data ?? response.data?.garage ?? response.data;
             if (payload) {

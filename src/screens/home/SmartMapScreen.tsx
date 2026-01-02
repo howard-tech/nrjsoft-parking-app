@@ -53,6 +53,8 @@ export const SmartMapScreen: React.FC = () => {
     const { activeFilter, setActiveFilter, applyFilters } = useFilters(coords);
     const networkState = useNetworkState();
     const isOffline = !networkState.isConnected || networkState.isInternetReachable === false;
+    const lastFetchRef = useRef<{ key: string; ts: number }>({ key: '', ts: 0 });
+    const MIN_FETCH_INTERVAL = 800; // ms guard to avoid rapid refetch jitter
 
     const updateSelection = useCallback((data: ParkingGarage[]) => {
         setSelectedId((previousSelected) => {
@@ -78,6 +80,14 @@ export const SmartMapScreen: React.FC = () => {
             regionOverride?: Region,
             options?: { query?: string; sortBy?: typeof activeFilter }
         ) => {
+            const key = `${lat.toFixed(4)}|${lng.toFixed(4)}|${options?.sortBy ?? activeFilter ?? ''}|${
+                options?.query ?? searchQuery.trim()
+            }`;
+            const now = Date.now();
+            if (lastFetchRef.current.key === key && now - lastFetchRef.current.ts < MIN_FETCH_INTERVAL) {
+                return;
+            }
+            lastFetchRef.current = { key, ts: now };
             setLoadingGarages(true);
             setFetchError(null);
             try {
@@ -128,7 +138,7 @@ export const SmartMapScreen: React.FC = () => {
                 setLoadingGarages(false);
             }
         },
-        [activeFilter, isOffline, mapRegion.latitudeDelta, mapRegion.longitudeDelta, searchQuery, updateSelection]
+        [MIN_FETCH_INTERVAL, activeFilter, isOffline, mapRegion.latitudeDelta, mapRegion.longitudeDelta, searchQuery, updateSelection]
     );
 
     useEffect(() => {

@@ -84,7 +84,11 @@ android {
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-            GOOGLE_MAPS_API_KEY: project.hasProperty('GOOGLE_MAPS_API_KEY') ? project.getProperty('GOOGLE_MAPS_API_KEY') : "${System.getenv('GOOGLE_MAPS_API_KEY') ?: 'YOUR_GOOGLE_MAPS_API_KEY'}"
+            GOOGLE_MAPS_API_KEY: (project.ext.has('env') && project.ext.env.GOOGLE_MAPS_API_KEY)
+                ? project.ext.env.GOOGLE_MAPS_API_KEY
+                : (project.hasProperty('GOOGLE_MAPS_API_KEY')
+                    ? project.getProperty('GOOGLE_MAPS_API_KEY')
+                    : "${System.getenv('GOOGLE_MAPS_API_KEY') ?: 'YOUR_GOOGLE_MAPS_API_KEY'}")
         ]
     }
     signingConfigs {

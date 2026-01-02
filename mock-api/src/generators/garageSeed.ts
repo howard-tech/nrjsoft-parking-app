@@ -1,0 +1,26 @@
+export const seededGarages = [
+    {
+        id: 'garage_emulator_1',
+        name: 'Downtown Garage',
+        address: '100 Main St',
+        latitude: 37.421998,
+        longitude: -122.084,
+        status: 'available',
+        distanceMeters: 180,
+        availableSpots: 42,
+        totalSpots: 120,
+        pricing: { hourly: 2.5, currency: 'EUR' },
+    },
+    {
+        id: 'garage_emulator_2',
+        name: 'Shoreline Parking',
+        address: '200 Shoreline Blvd',
+        latitude: 37.4228,
+        longitude: -122.0855,
+        status: 'limited',
+        distanceMeters: 350,
+        availableSpots: 10,
+        totalSpots: 80,
+        pricing: { hourly: 3.0, currency: 'EUR' },
+    },
+];

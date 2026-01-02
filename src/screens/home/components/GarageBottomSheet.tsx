@@ -137,6 +137,29 @@ export const GarageBottomSheet: React.FC<Props> = ({ garage, distanceLabel, onCl
     const content = detail ?? garage;
     const isQREntry = content?.entryMethod === 'QR';
 
+    const policiesLabel = useMemo(() => {
+        if (!content?.policies) {
+            return null;
+        }
+
+        if (typeof content.policies === 'string') {
+            return content.policies;
+        }
+
+        const segments: string[] = [];
+        if (content.policies.prepayRequired) {
+            segments.push('Prepayment required');
+        }
+        if (typeof content.policies.badgeAfterHour === 'number') {
+            segments.push(`Badge after ${content.policies.badgeAfterHour}h`);
+        }
+        if (typeof content.policies.overstayPenalty === 'number') {
+            segments.push(`Overstay penalty €${content.policies.overstayPenalty}`);
+        }
+
+        return segments.length ? segments.join(' • ') : null;
+    }, [content?.policies]);
+
     return (
         <Animated.View
             style={[
@@ -202,7 +225,7 @@ export const GarageBottomSheet: React.FC<Props> = ({ garage, distanceLabel, onCl
                                 <View style={styles.infoRow}>
                                     <Text style={styles.infoLabel}>Policy</Text>
                                     <Text style={[styles.infoValue, styles.infoMultiline]} numberOfLines={2}>
-                                        {content.policies}
+                                        {policiesLabel ?? 'See garage rules'}
                                     </Text>
                                 </View>
                             ) : null}

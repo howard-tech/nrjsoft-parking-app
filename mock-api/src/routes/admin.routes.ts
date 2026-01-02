@@ -5,6 +5,7 @@ import {
     zoneStore, walletStore, transactionStore, notificationStore,
     paymentMethodStore, clearAllData
 } from '../services/data.store';
+import { seededGarages } from '../generators/garageSeed';
 import { anprSimulator } from '../services/anpr.service';
 import { getSimulationConfig, updateSimulationConfig, startSessionCostTicker, stopSessionCostTicker } from '../services/simulation.service';
 import { paymentSimulator } from '../services/payment-simulator.service';
@@ -28,6 +29,23 @@ function populateStores(data: GeneratedData) {
     data.transactions.forEach(t => transactionStore.set(t.id, t));
     data.notifications.forEach(n => notificationStore.set(n.id, n));
     data.paymentMethods.forEach(p => paymentMethodStore.set(p.id, p));
+
+    // Inject seeded garages near emulator location
+    seededGarages.forEach((garage) => {
+        garageStore.set(garage.id, {
+            id: garage.id,
+            name: garage.name,
+            address: garage.address ?? 'Test Address',
+            location: { lat: garage.latitude, lng: garage.longitude },
+            entryMethod: 'QR',
+            availableSlots: garage.availableSpots ?? 20,
+            totalSlots: garage.totalSpots ?? 100,
+            hourlyRate: garage.pricing?.hourly ?? 2.5,
+            currency: garage.pricing?.currency ?? 'EUR',
+            features: {},
+            policies: { prepayRequired: false },
+        });
+    });
 }
 
 // Initialize with generated data on module load

@@ -90,7 +90,8 @@ app.use('/api/v1/auth', authRoutes);
 
 // Protected routes (require auth)
 app.use('/api/v1/me', authMiddleware, userRoutes);
-app.use('/api/v1/parking', authMiddleware, parkingRoutes);
+// Parking routes: allow unauthenticated access for map preview in dev
+app.use('/api/v1/parking', parkingRoutes);
 app.use('/api/v1/sessions', authMiddleware, sessionRoutes);
 app.use('/api/v1/wallet', authMiddleware, walletRoutes);
 app.use('/api/v1/payment-methods', authMiddleware, paymentMethodsRoutes);

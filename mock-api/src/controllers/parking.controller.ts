@@ -23,6 +23,19 @@ function calculateDistance(
     return R * c; // Distance in meters
 }
 
+const mapGarageWithCoordinates = (garage: Garage, distanceMeters?: number) => {
+    const roundedDistance = typeof distanceMeters === 'number' ? Math.round(distanceMeters) : undefined;
+    return {
+        ...garage,
+        latitude: garage.location.lat,
+        longitude: garage.location.lng,
+        ...(roundedDistance !== undefined && {
+            distance: roundedDistance,
+            distanceMeters: roundedDistance,
+        }),
+    };
+};
+
 export class ParkingController {
     // GET /parking/nearby
     getNearby = async (req: Request, res: Response): Promise<void> => {
@@ -41,16 +54,11 @@ export class ParkingController {
         // Filter garages within radius and calculate distances
         const nearbyGarages = garages
             .map((garage) => {
-                const distance = calculateDistance(
-                    latitude,
-                    longitude,
-                    garage.location.lat,
-                    garage.location.lng
-                );
-                return { ...garage, distance: Math.round(distance) };
+                const distance = calculateDistance(latitude, longitude, garage.location.lat, garage.location.lng);
+                return mapGarageWithCoordinates(garage, distance);
             })
-            .filter((garage) => garage.distance <= radiusMeters)
-            .sort((a, b) => a.distance - b.distance);
+            .filter((garage) => (garage.distanceMeters ?? 0) <= radiusMeters)
+            .sort((a, b) => (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0));
 
         // Simulated availability logic remains visual-only, we don't persist it to store 
         // to avoid race conditions with generator in this simple mock
@@ -80,13 +88,13 @@ export class ParkingController {
         }
 
         // Simulate real-time availability
-        const updatedGarage = {
+        const updatedGarage = mapGarageWithCoordinates({
             ...garage,
             availableSlots: Math.max(
                 0,
                 garage.availableSlots + Math.floor(Math.random() * 3 - 1)
             ),
-        };
+        });
 
         res.json(updatedGarage);
     };
@@ -95,7 +103,7 @@ export class ParkingController {
     search = async (req: Request, res: Response): Promise<void> => {
         const { q, lat, lng, minSlots, maxRate, features } = req.query;
 
-        let results = Array.from(garageStore.values());
+        let results = Array.from(garageStore.values()).map((garage) => mapGarageWithCoordinates(garage));
 
         // Search by name or address
         if (q) {
@@ -141,14 +149,15 @@ export class ParkingController {
             results = results
                 .map((garage) => ({
                     ...garage,
-                    distance: calculateDistance(
-                        latitude,
-                        longitude,
-                        garage.location.lat,
-                        garage.location.lng
-                    ),
+                    distance: calculateDistance(latitude, longitude, garage.latitude, garage.longitude),
                 }))
-                .sort((a, b) => (a.distance || 0) - (b.distance || 0));
+                .map((garage) =>
+                    mapGarageWithCoordinates(
+                        garage as Garage,
+                        typeof garage.distance === 'number' ? garage.distance : undefined
+                    )
+                )
+                .sort((a, b) => (a.distanceMeters || 0) - (b.distanceMeters || 0));
         }
 
         res.json({

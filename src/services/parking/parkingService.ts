@@ -15,7 +15,19 @@ export interface ParkingGarage {
     entryMethod?: 'QR' | 'ANPR';
     evChargers?: number;
     securityFeatures?: string[];
-    policies?: string;
+    features?: {
+        evChargers?: number;
+        security?: string;
+        coveredParking?: boolean;
+        disabledAccess?: boolean;
+    };
+    policies?:
+        | string
+        | {
+              prepayRequired?: boolean;
+              badgeAfterHour?: number | null;
+              overstayPenalty?: number;
+          };
 }
 
 export interface ParkingSession {

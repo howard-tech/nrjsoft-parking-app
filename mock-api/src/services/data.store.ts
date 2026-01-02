@@ -2,6 +2,7 @@ import {
     User, Vehicle, Garage, ParkingSession,
     Zone, Wallet, Transaction, Notification, PaymentMethod
 } from '../types';
+import { seededGarages } from '../generators/garageSeed';
 
 // Centralized stores - shared across all controllers
 // Initialized empty to avoid duplication - populated by initializeGeneratedData()
@@ -14,6 +15,24 @@ export const walletStore: Map<string, Wallet> = new Map();
 export const transactionStore: Map<string, Transaction> = new Map();
 export const notificationStore: Map<string, Notification> = new Map();
 export const paymentMethodStore: Map<string, PaymentMethod> = new Map();
+
+// Seed garages near emulator location for map testing
+seededGarages.forEach((garage) => {
+    const seeded: Garage = {
+        id: garage.id,
+        name: garage.name,
+        address: garage.address ?? 'Test Address',
+        location: { lat: garage.latitude, lng: garage.longitude },
+        entryMethod: 'QR',
+        availableSlots: garage.availableSpots ?? 20,
+        totalSlots: garage.totalSpots ?? 100,
+        hourlyRate: garage.pricing?.hourly ?? 2.5,
+        currency: garage.pricing?.currency ?? 'EUR',
+        features: {},
+        policies: { prepayRequired: false },
+    };
+    garageStore.set(seeded.id, seeded);
+});
 
 // --- Helper Functions ---
 

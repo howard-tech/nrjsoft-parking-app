@@ -55,6 +55,7 @@ export const SmartMapScreen: React.FC = () => {
     const isOffline = !networkState.isConnected || networkState.isInternetReachable === false;
     const lastFetchRef = useRef<{ key: string; ts: number }>({ key: '', ts: 0 });
     const MIN_FETCH_INTERVAL = 800; // ms guard to avoid rapid refetch jitter
+    const searchDebounceRef = useRef<NodeJS.Timeout | null>(null);
 
     const updateSelection = useCallback((data: ParkingGarage[]) => {
         setSelectedId((previousSelected) => {
@@ -191,6 +192,27 @@ export const SmartMapScreen: React.FC = () => {
         }
         fetchGarages(coords.latitude, coords.longitude, mapRegion, { sortBy: activeFilter });
     }, [activeFilter, coords, fetchGarages, mapRegion]);
+
+    useEffect(() => {
+        if (!coords) {
+            return;
+        }
+        if (searchDebounceRef.current) {
+            clearTimeout(searchDebounceRef.current);
+        }
+        searchDebounceRef.current = setTimeout(() => {
+            fetchGarages(coords.latitude, coords.longitude, mapRegion, {
+                sortBy: activeFilter,
+                query: searchQuery.trim() || undefined,
+            });
+        }, 500);
+
+        return () => {
+            if (searchDebounceRef.current) {
+                clearTimeout(searchDebounceRef.current);
+            }
+        };
+    }, [activeFilter, coords, fetchGarages, mapRegion, searchQuery]);
 
     const mapProps = useMemo(
         () => ({

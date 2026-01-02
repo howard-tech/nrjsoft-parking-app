@@ -4,23 +4,29 @@ This PR implements Payment Methods management and Card Payment integration for S
 
 ## Changes
 - **Payment Methods Screen** (`TASK-021`):
-    - Added `PaymentMethodsScreen` to list saved payment methods.
+    - Added `PaymentMethodsScreen` to list saved payment methods from backend.
+    - Supports pull-to-refresh and loading/empty states.
+    - Delete uses `paymentService.detachPaymentMethod` before removing locally.
     - Updated `WalletStack` to include the new screen.
     - Enhanced `AppHeader` to support back navigation.
 - **Card Payment Integration** (`TASK-022`):
     - Added `CardPaymentScreen` utilizing Stripe's `CardField`.
-    - Updated `paymentService` to support attaching payment methods.
-    - Added unit tests for both screens.
-- **Android Configuration**:
-    - Updated `build.gradle` for vector icons.
-    - Updated `.env.development` with valid Maps API key.
-- **Components**:
-    - Improved `PhoneInput` with Country Code selector (carried over).
+    - Fixed `createPaymentMethod` to use correct type (`{ type: 'Card' }`).
+    - Attaches payment method to customer via backend before showing success.
+    - Improved error handling.
+- **Services**:
+    - Added `attachPaymentMethod` and `detachPaymentMethod` to `paymentService`.
+- **Security Fixes** (Codex Review):
+    - Removed real API key from `.env.development`.
+    - Removed `usesCleartextTraffic` from main `AndroidManifest.xml`.
+    - Added `StripeProvider` wrapper in `App.tsx`.
+- **Test Configuration**:
+    - Updated `jest.config.js` for ESM module transformation.
+    - Added mocks for `react-native-config`, `AsyncStorage`, `Keychain`.
 
 ## Verification
-- **Unit Tests**: All new tests passed.
-- **Manual Test**: Android app launches and navigates to screens.
-- **Lint**: Passed.
+- **Unit Tests**: All payment screen tests passed.
+- **Lint**: Passed (warnings only for inline styles).
 
 ## Tasks
 - [x] TASK-021: Payment methods screen

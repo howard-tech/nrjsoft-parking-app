@@ -2,7 +2,14 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { PaymentMethodsScreen } from '../PaymentMethodsScreen';
 import { NavigationContainer } from '@react-navigation/native';
+import { Platform } from 'react-native';
 
+
+// Mock Platform
+jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+    OS: 'android',
+    select: jest.fn(obj => obj.android || obj.default),
+}));
 
 // Mock navigation
 const mockNavigate = jest.fn();
@@ -33,6 +40,10 @@ jest.mock('@stripe/stripe-react-native', () => ({
     StripeProvider: ({ children }: { children: React.ReactNode }) => children,
     initStripe: jest.fn(),
     confirmPayment: jest.fn(),
+    usePlatformPay: () => ({
+        isPlatformPaySupported: jest.fn().mockResolvedValue(true),
+        confirmPlatformPayPayment: jest.fn().mockResolvedValue({ error: null }),
+    }),
 }));
 
 // Mock paymentService
@@ -40,6 +51,21 @@ jest.mock('@services/payment/paymentService', () => ({
     paymentService: {
         getPaymentMethods: jest.fn().mockResolvedValue([]),
         detachPaymentMethod: jest.fn().mockResolvedValue(undefined),
+        createPaymentIntent: jest.fn().mockResolvedValue({
+            id: 'pi_test',
+            clientSecret: 'pi_test_secret',
+            amount: 100,
+            currency: 'eur',
+            status: 'requires_payment_method',
+        }),
+    },
+}));
+
+// Mock googlePayService
+jest.mock('@services/payment/googlePayService', () => ({
+    googlePayService: {
+        isSupported: jest.fn().mockReturnValue(true),
+        getInitConfig: jest.fn().mockReturnValue({}),
     },
 }));
 
@@ -57,11 +83,12 @@ describe('PaymentMethodsScreen', () => {
 
         expect(getByText('Payment Methods')).toBeTruthy();
         await waitFor(() => {
-            expect(getByText('Add Payment Method')).toBeTruthy();
+            expect(getByText('Add Card')).toBeTruthy();
+            expect(getByText('Add Google Pay')).toBeTruthy();
         });
     });
 
-    it('navigates to AddPaymentMethod when button is pressed', async () => {
+    it('navigates to AddPaymentMethod when Add Card button is pressed', async () => {
         const { getByText } = render(
             <NavigationContainer>
                 <PaymentMethodsScreen />
@@ -69,10 +96,30 @@ describe('PaymentMethodsScreen', () => {
         );
 
         await waitFor(() => {
-            expect(getByText('Add Payment Method')).toBeTruthy();
+            expect(getByText('Add Card')).toBeTruthy();
         });
 
-        fireEvent.press(getByText('Add Payment Method'));
+        fireEvent.press(getByText('Add Card'));
         expect(mockNavigate).toHaveBeenCalledWith('AddPaymentMethod');
+    });
+
+    it('triggers Google Pay flow when Add Google Pay button is pressed', async () => {
+        const { getByText } = render(
+            <NavigationContainer>
+                <PaymentMethodsScreen />
+            </NavigationContainer>
+        );
+
+        await waitFor(() => {
+            expect(getByText('Add Google Pay')).toBeTruthy();
+        });
+
+        fireEvent.press(getByText('Add Google Pay'));
+
+        // Check if createPaymentIntent was called
+        const { paymentService } = require('@services/payment/paymentService');
+        await waitFor(() => {
+            expect(paymentService.createPaymentIntent).toHaveBeenCalled();
+        });
     });
 });

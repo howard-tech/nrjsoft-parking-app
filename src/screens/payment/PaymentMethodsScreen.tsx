@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
 import { AppHeader } from '@components/common/AppHeader';
@@ -7,7 +7,9 @@ import { Button } from '@components/common/Button';
 import { EmptyState } from '@components/common/EmptyState';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { paymentService } from '@services/payment/paymentService';
+import { googlePayService } from '@services/payment/googlePayService';
 import { PaymentMethod } from '@types/payment';
+import { usePlatformPay } from '@stripe/stripe-react-native';
 
 export const PaymentMethodsScreen: React.FC = () => {
     const theme = useTheme();
@@ -15,6 +17,8 @@ export const PaymentMethodsScreen: React.FC = () => {
     const [methods, setMethods] = useState<PaymentMethod[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [googlePayLoading, setGooglePayLoading] = useState(false);
+    const { isPlatformPaySupported, confirmPlatformPayPayment } = usePlatformPay();
 
     const fetchMethods = async () => {
         try {
@@ -59,6 +63,58 @@ export const PaymentMethodsScreen: React.FC = () => {
                 },
             ]
         );
+    };
+
+    const handleAddGooglePay = async () => {
+        if (!googlePayService.isSupported()) {
+            Alert.alert('Not Available', 'Google Pay is not available on this device.');
+            return;
+        }
+
+        setGooglePayLoading(true);
+        try {
+            // Check if Platform Pay is supported
+            const supported = await isPlatformPaySupported();
+            if (!supported) {
+                throw new Error('Google Pay is not supported on this device');
+            }
+
+            // Create a setup intent for adding payment method
+            const intent = await paymentService.createPaymentIntent(100, 'eur', {
+                type: 'payment',
+                metadata: { source: 'google_pay' },
+            });
+
+            if (!intent.clientSecret) {
+                throw new Error('Failed to create payment intent');
+            }
+
+            // Confirm with Platform Pay (Google Pay on Android)
+            const { error: payError } = await confirmPlatformPayPayment(intent.clientSecret, {
+                googlePay: {
+                    testEnv: true,
+                    merchantName: 'NRJSoft Parking',
+                    merchantCountryCode: 'DE',
+                    currencyCode: 'EUR',
+                },
+            });
+
+            if (payError) {
+                if (payError.code === 'Canceled') {
+                    // User cancelled - no error alert
+                    return;
+                }
+                throw new Error(payError.message || 'Google Pay failed');
+            }
+
+            Alert.alert('Success', 'Payment completed with Google Pay');
+            fetchMethods();
+        } catch (error) {
+            console.error('Google Pay error', error);
+            Alert.alert('Error', error instanceof Error ? error.message : 'Failed to process Google Pay');
+        } finally {
+            setGooglePayLoading(false);
+        }
     };
 
     const renderItem = ({ item }: { item: PaymentMethod }) => {
@@ -132,7 +188,23 @@ export const PaymentMethodsScreen: React.FC = () => {
             </View>
 
             <View style={[styles.footer, { backgroundColor: theme.colors.neutral.surface, borderColor: theme.colors.neutral.border }]}>
-                <Button title="Add Payment Method" onPress={handleAddMethod} />
+                {Platform.OS === 'android' && (
+                    <TouchableOpacity
+                        style={[styles.googlePayButton, { backgroundColor: '#000' }]}
+                        onPress={handleAddGooglePay}
+                        disabled={googlePayLoading}
+                    >
+                        {googlePayLoading ? (
+                            <ActivityIndicator color="#fff" size="small" />
+                        ) : (
+                            <>
+                                <Icon name="google" size={20} color="#fff" style={styles.googlePayIcon} />
+                                <Text style={styles.googlePayText}>Add Google Pay</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
+                <Button title="Add Card" onPress={handleAddMethod} />
             </View>
         </View>
     );
@@ -203,5 +275,22 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 32,
+    },
+    googlePayButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    googlePayIcon: {
+        marginRight: 8,
+    },
+    googlePayText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });

@@ -1,35 +1,29 @@
-# Sprint 4: Payment Methods & Card Integration (TASK-021, TASK-022)
+# Sprint 4: Google Pay Integration (TASK-024)
 
-This PR implements Payment Methods management and Card Payment integration for Sprint 4.
+This PR implements Google Pay payment flow for the Android version of the app.
 
 ## Changes
-- **Payment Methods Screen** (`TASK-021`):
-    - Added `PaymentMethodsScreen` to list saved payment methods from backend.
-    - Supports pull-to-refresh and loading/empty states.
-    - Delete uses `paymentService.detachPaymentMethod` before removing locally.
-    - Updated `WalletStack` to include the new screen.
-    - Enhanced `AppHeader` to support back navigation.
-- **Card Payment Integration** (`TASK-022`):
-    - Added `CardPaymentScreen` utilizing Stripe's `CardField`.
-    - Fixed `createPaymentMethod` to use correct type (`{ type: 'Card' }`).
-    - Attaches payment method to customer via backend before showing success.
-    - Improved error handling.
-- **Services**:
-    - Added `attachPaymentMethod` and `detachPaymentMethod` to `paymentService`.
-- **Security Fixes** (Codex Review):
-    - Removed real API key from `.env.development`.
-    - Removed `usesCleartextTraffic` from main `AndroidManifest.xml`.
-    - Added `StripeProvider` wrapper in `App.tsx`.
-- **Test Configuration**:
-    - Updated `jest.config.js` for ESM module transformation.
-    - Added mocks for `react-native-config`, `AsyncStorage`, `Keychain`.
+- **Google Pay Integration** (`TASK-024`):
+    - Implemented Google Pay flow using Stripe's `usePlatformPay` hook.
+    - Added "Add Google Pay" button to `PaymentMethodsScreen`.
+    - Integrated `googlePayService` utility for configuration and result processing.
+    - Automatically creates a Payment Intent and processes the payment/setup via Google Pay.
+- **UI Enhancements**:
+    - Updated `PaymentMethodsScreen` footer to include both Google Pay and Card payment options.
+    - Improved loading states and error handling for the Google Pay flow.
+- **Service Layer**:
+    - Updated `googlePayService.ts` with helper methods for Stripe's Platform Pay configuration.
+- **Tests**:
+    - Updated `PaymentMethodsScreen.test.tsx` to cover Google Pay button rendering and interaction.
+    - Mapped ESM modules in `jest.config.js` to support `immer` and other dependencies during tests.
 
 ## Verification
-- **Unit Tests**: All payment screen tests passed.
-- **Lint**: Passed (warnings only for inline styles).
+- **Unit Tests**: `npm test -- PaymentMethodsScreen.test.tsx CardPaymentScreen.test.tsx` passed.
+- **Lint**: `npm run lint` passed (minor warnings for inline styles).
+- **Manual Verification**: Verified button rendering on Android.
 
 ## Tasks
-- [x] TASK-021: Payment methods screen
-- [x] TASK-022: Card payment
+- [x] TASK-021: Payment methods screen (Completed)
+- [x] TASK-022: Card payment (Completed)
+- [x] TASK-024: Google Pay Integration
 - [ ] TASK-023: Apple Pay (Next)
-- [ ] TASK-024: Google Pay (Next)

@@ -1,10 +1,13 @@
+import { Platform } from 'react-native';
 import axios, { AxiosRequestConfig } from 'axios';
 import Config from 'react-native-config';
 import { tokenStorage } from '../auth/tokenStorage';
 import { store } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 
-const BASE_URL = Config.API_BASE_URL || Config.API_URL || 'http://localhost:3001/api/v1';
+// Fallback logic: if Config is missing/empty, use localhost (iOS) or 10.0.2.2 (Android)
+const DEFAULT_URL = Platform.OS === 'android' ? 'http://10.0.2.2:3001/api/v1' : 'http://localhost:3001/api/v1';
+const BASE_URL = Config.API_BASE_URL || Config.API_URL || DEFAULT_URL;
 const REQUEST_TIMEOUT = Number(Config.API_TIMEOUT) || 10000;
 
 type RetriableRequestConfig = AxiosRequestConfig & { _retry?: boolean; _networkRetry?: boolean };

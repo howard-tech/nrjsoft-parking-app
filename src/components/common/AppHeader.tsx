@@ -3,24 +3,30 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '@theme';
-import { useNotifications } from '@hooks/useNotifications';
+
 import Icon from 'react-native-vector-icons/Feather';
 import { RootStackParamList } from '../../navigation/types';
 
 interface AppHeaderProps {
     title?: string;
     showLogo?: boolean;
+
     showNotificationBadge?: boolean;
+    showBack?: boolean;
+    onBack?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
     title = 'NRJSoft',
     showLogo = true,
     showNotificationBadge = true,
+    showBack = false,
+    onBack,
 }) => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const theme = useTheme();
-    const { unreadCount } = useNotifications();
+    // const { unreadCount } = useNotifications();
+    const unreadCount = 0; // TODO: Implement unread count in store
 
     const handleNotificationPress = () => {
         navigation.navigate('Notifications');
@@ -29,12 +35,17 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.primary.main }]}>
             <View style={styles.leftSection}>
-                {showLogo && (
+                {showBack && (
+                    <TouchableOpacity onPress={onBack || (() => navigation.goBack())} style={styles.backButton}>
+                        <Icon name="arrow-left" color={theme.colors.primary.contrast} size={24} />
+                    </TouchableOpacity>
+                )}
+                {showLogo && !showBack && (
                     <View style={styles.logoPlaceholder}>
                         <Icon name="activity" color="white" size={24} />
                     </View>
                 )}
-                <Text style={[styles.title, { color: theme.colors.primary.contrast }]}>
+                <Text style={[styles.title, { color: theme.colors.primary.contrast, marginLeft: showBack ? 8 : 0 }]}>
                     {title}
                 </Text>
             </View>
@@ -70,6 +81,9 @@ const styles = StyleSheet.create({
     leftSection: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    backButton: {
+        paddingRight: 8,
     },
     logoPlaceholder: {
         width: 32,

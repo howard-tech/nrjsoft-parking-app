@@ -18,6 +18,10 @@ export const paymentService = {
         return response.data?.data ?? response.data?.methods ?? [];
     },
 
+    attachPaymentMethod: async (paymentMethodId: string): Promise<void> => {
+        await apiClient.post('/payment-methods/attach', { paymentMethodId });
+    },
+
     createPaymentIntent: async (
         amount: number,
         currency: string,

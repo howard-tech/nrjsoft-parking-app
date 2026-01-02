@@ -23,6 +23,8 @@ function calculateDistance(
     return R * c; // Distance in meters
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const mapGarageWithCoordinates = (garage: Garage, distanceMeters?: number) => {
     const roundedDistance = typeof distanceMeters === 'number' ? Math.round(distanceMeters) : undefined;
     return {
@@ -49,10 +51,27 @@ export class ParkingController {
         const latitude = parseFloat(lat as string);
         const longitude = parseFloat(lng as string);
         const radiusMeters = parseInt(radius as string, 10);
+        const sortBy = (req.query.sortBy as string) || '';
+        const q = (req.query.q as string | undefined)?.toLowerCase().trim();
         const garages = Array.from(garageStore.values());
+
+        // Simulate live availability for Downtown Central
+        const downtownId = 'garage_downtown_central_champion';
+        const downtown = garageStore.get(downtownId);
+        if (downtown) {
+            const delta = Math.floor(Math.random() * 5) - 2; // -2..+2
+            const nextSlots = Math.max(0, Math.min(downtown.totalSlots ?? 50, (downtown.availableSlots ?? 0) + delta));
+            const status = nextSlots === 0 ? 'full' : nextSlots < 5 ? 'limited' : 'available';
+            garageStore.set(downtownId, { ...downtown, availableSlots: nextSlots, status });
+        }
 
         // Filter garages within radius and calculate distances
         const nearbyGarages = garages
+            .filter((garage) =>
+                q
+                    ? garage.name.toLowerCase().includes(q) || garage.address.toLowerCase().includes(q)
+                    : true
+            )
             .map((garage) => {
                 const distance = calculateDistance(latitude, longitude, garage.location.lat, garage.location.lng);
                 return mapGarageWithCoordinates(garage, distance);
@@ -70,9 +89,37 @@ export class ParkingController {
             ),
         }));
 
+        let sorted = withUpdatedAvailability;
+        switch (sortBy) {
+            case 'nearest':
+                sorted = [...withUpdatedAvailability].sort(
+                    (a, b) => (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0)
+                );
+                break;
+            case 'cheapest':
+                sorted = [...withUpdatedAvailability].sort(
+                    (a, b) => (a.hourlyRate ?? Number.MAX_VALUE) - (b.hourlyRate ?? Number.MAX_VALUE)
+                );
+                break;
+            case 'ev_ready':
+                sorted = [...withUpdatedAvailability].sort(
+                    (a, b) => (b.features?.evChargers ?? 0) - (a.features?.evChargers ?? 0)
+                );
+                break;
+            case 'max_time':
+                sorted = [...withUpdatedAvailability].sort(
+                    (a, b) => (b.maxTime ?? 0) - (a.maxTime ?? 0)
+                );
+                break;
+            default:
+                break;
+        }
+
+        await delay(600);
+
         res.json({
-            garages: withUpdatedAvailability,
-            total: withUpdatedAvailability.length,
+            garages: sorted,
+            total: sorted.length,
         });
     };
 

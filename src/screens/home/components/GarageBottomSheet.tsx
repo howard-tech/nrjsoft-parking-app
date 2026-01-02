@@ -148,7 +148,7 @@ export const GarageBottomSheet: React.FC<Props> = ({ garage, distanceLabel, onCl
 
         const segments: string[] = [];
         if (content.policies.prepayRequired) {
-            segments.push('Prepayment required');
+            segments.push('Prepayment Required');
         }
         if (typeof content.policies.badgeAfterHour === 'number') {
             segments.push(`Badge after ${content.policies.badgeAfterHour}h`);

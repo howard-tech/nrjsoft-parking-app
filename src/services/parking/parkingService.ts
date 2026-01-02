@@ -1,6 +1,8 @@
 import { apiClient } from '@services/api';
 import { sessionService } from '@services/session/sessionService';
 
+type SortBy = 'nearest' | 'cheapest' | 'ev_ready' | 'max_time';
+
 export interface ParkingGarage {
     id: string;
     name: string;
@@ -38,11 +40,21 @@ export interface ParkingSession {
 }
 
 export const parkingService = {
-    async fetchNearby(lat: number, lng: number): Promise<ParkingGarage[]> {
+    async fetchNearby(
+        lat: number,
+        lng: number,
+        options?: { sortBy?: SortBy | null; query?: string }
+    ): Promise<ParkingGarage[]> {
+        const { sortBy, query } = options || {};
         const response = await apiClient.get<{ data?: ParkingGarage[]; garages?: ParkingGarage[] } | ParkingGarage[]>(
             '/parking/nearby',
             {
-            params: { lat, lng },
+                params: {
+                    lat,
+                    lng,
+                    ...(sortBy ? { sortBy } : {}),
+                    ...(query ? { q: query } : {}),
+                },
             }
         );
 
@@ -52,6 +64,7 @@ export const parkingService = {
         return (items ?? []).map((garage) => ({
             ...garage,
             status: garage.status ?? 'available',
+            evChargers: garage.evChargers ?? garage.features?.evChargers,
         }));
     },
 

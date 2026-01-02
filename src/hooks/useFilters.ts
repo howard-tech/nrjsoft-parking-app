@@ -34,8 +34,7 @@ export const useFilters = (coords?: { latitude: number; longitude: number } | nu
                 case 'ev_ready':
                     return copy.sort((a, b) => (b.evChargers ?? 0) - (a.evChargers ?? 0));
                 case 'max_time':
-                    // Fallback: prioritize higher available slots if max duration not provided
-                    return copy.sort((a, b) => (b.availableSlots ?? 0) - (a.availableSlots ?? 0));
+                    return copy.sort((a, b) => (b.maxTime ?? 0) - (a.maxTime ?? 0));
                 default:
                     return garages;
             }

@@ -72,7 +72,12 @@ export const SmartMapScreen: React.FC = () => {
     }, []);
 
     const fetchGarages = useCallback(
-        async (lat: number, lng: number, regionOverride?: Region) => {
+        async (
+            lat: number,
+            lng: number,
+            regionOverride?: Region,
+            options?: { query?: string; sortBy?: typeof activeFilter }
+        ) => {
             setLoadingGarages(true);
             setFetchError(null);
             try {
@@ -93,7 +98,10 @@ export const SmartMapScreen: React.FC = () => {
                     throw new Error('offline');
                 }
 
-                const data = await parkingService.fetchNearby(lat, lng);
+                const data = await parkingService.fetchNearby(lat, lng, {
+                    sortBy: options?.sortBy ?? activeFilter,
+                    query: options?.query ?? (searchQuery.trim() || undefined),
+                });
                 setGarages(data);
                 updateSelection(data);
 
@@ -120,7 +128,7 @@ export const SmartMapScreen: React.FC = () => {
                 setLoadingGarages(false);
             }
         },
-        [isOffline, mapRegion.latitudeDelta, mapRegion.longitudeDelta, updateSelection]
+        [activeFilter, isOffline, mapRegion.latitudeDelta, mapRegion.longitudeDelta, searchQuery, updateSelection]
     );
 
     useEffect(() => {
@@ -166,6 +174,13 @@ export const SmartMapScreen: React.FC = () => {
         mapRef.current?.animateToRegion(nextRegion, 500);
         fetchGarages(nextRegion.latitude, nextRegion.longitude, nextRegion);
     }, [coords, fetchGarages]);
+
+    useEffect(() => {
+        if (!coords) {
+            return;
+        }
+        fetchGarages(coords.latitude, coords.longitude, mapRegion, { sortBy: activeFilter });
+    }, [activeFilter, coords, fetchGarages, mapRegion]);
 
     const mapProps = useMemo(
         () => ({
@@ -322,12 +337,9 @@ export const SmartMapScreen: React.FC = () => {
             return;
         }
 
-        if (coords) {
-            fetchGarages(coords.latitude, coords.longitude, mapRegion);
-            return;
-        }
-
-        getCurrentPosition();
+        const targetLat = coords?.latitude ?? mapRegion.latitude;
+        const targetLng = coords?.longitude ?? mapRegion.longitude;
+        fetchGarages(targetLat, targetLng, mapRegion, { sortBy: activeFilter, query: searchQuery.trim() || undefined });
     }, [
         coords,
         enqueueOfflineAction,
@@ -335,6 +347,8 @@ export const SmartMapScreen: React.FC = () => {
         getCurrentPosition,
         isOffline,
         mapRegion,
+        activeFilter,
+        searchQuery,
     ]);
 
     const handleRecenter = useCallback(async () => {
@@ -392,8 +406,12 @@ export const SmartMapScreen: React.FC = () => {
                 },
                 300
             );
+            fetchGarages(result.latitude, result.longitude, undefined, {
+                sortBy: activeFilter,
+                query: searchQuery.trim() || undefined,
+            });
         },
-        [handleSelect, recordSelection]
+        [activeFilter, fetchGarages, handleSelect, recordSelection, searchQuery]
     );
 
     const handleClearFilters = useCallback(() => {

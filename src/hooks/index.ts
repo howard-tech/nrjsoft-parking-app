@@ -11,3 +11,4 @@ export * from './useActiveSession';
 export * from './useWallet';
 export * from './useSessionTimer';
 export * from './useSessionHistory';
+export * from './usePayment';

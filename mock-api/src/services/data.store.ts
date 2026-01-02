@@ -31,7 +31,7 @@ seededGarages.forEach((garage) => {
         features: garage.features ?? {},
         policies: garage.policies ?? { prepayRequired: false },
         maxTime: garage.maxTime,
-        status: garage.status,
+        status: garage.status as Garage['status'],
     };
     garageStore.set(seeded.id, seeded);
 });

@@ -412,13 +412,21 @@ export const SmartMapScreen: React.FC = () => {
     }, [activeFilter, fetchGarages, getCurrentPosition, searchQuery]);
 
     const handleJumpToDemo = useCallback(() => {
-        mapRef.current?.animateToRegion(DEMO_CENTER, 500);
+        const key = `${DEMO_CENTER.latitude}|${DEMO_CENTER.longitude}|${activeFilter ?? ''}|${searchQuery.trim()}`;
+        const now = Date.now();
+        if (lastFetchRef.current.key === key && now - lastFetchRef.current.ts < MIN_FETCH_INTERVAL) {
+            mapRef.current?.animateToRegion(DEMO_CENTER, 400);
+            setMapRegion(DEMO_CENTER);
+            return;
+        }
+
+        mapRef.current?.animateToRegion(DEMO_CENTER, 400);
         setMapRegion(DEMO_CENTER);
         fetchGarages(DEMO_CENTER.latitude, DEMO_CENTER.longitude, DEMO_CENTER, {
             sortBy: activeFilter,
             query: searchQuery.trim() || undefined,
         });
-    }, [activeFilter, fetchGarages, searchQuery]);
+    }, [MIN_FETCH_INTERVAL, activeFilter, fetchGarages, searchQuery]);
 
     const handleZonePress = useCallback(
         (zone: OnStreetZone) => {

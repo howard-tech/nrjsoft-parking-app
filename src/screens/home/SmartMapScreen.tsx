@@ -378,12 +378,15 @@ export const SmartMapScreen: React.FC = () => {
 
         const targetLat = coords?.latitude ?? mapRegion.latitude;
         const targetLng = coords?.longitude ?? mapRegion.longitude;
-        fetchGarages(targetLat, targetLng, mapRegion, { sortBy: activeFilter, query: searchQuery.trim() || undefined });
+        fetchGarages(targetLat, targetLng, mapRegion, {
+            sortBy: activeFilter,
+            query: searchQuery.trim() || undefined,
+            refresh: true,
+        });
     }, [
         coords,
         enqueueOfflineAction,
         fetchGarages,
-        getCurrentPosition,
         isOffline,
         mapRegion,
         activeFilter,

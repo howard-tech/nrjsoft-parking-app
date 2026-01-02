@@ -80,18 +80,22 @@ export class ParkingController {
         const q = (req.query.q as string | undefined)?.toLowerCase().trim();
         const garages = Array.from(garageStore.values());
 
-        // Simulate live availability for Downtown Central
-        const downtownId = 'garage_downtown_central_champion';
-        const downtown = garageStore.get(downtownId);
-        if (downtown) {
-            const delta = Math.floor(Math.random() * 2) + 1; // 1..2
-            const direction = Math.random() > 0.5 ? 1 : -1;
-            const nextSlots = Math.max(
-                0,
-                Math.min(downtown.totalSlots ?? 100, (downtown.availableSlots ?? 0) + delta * direction)
-            );
-            const status = nextSlots === 0 ? 'full' : nextSlots > 5 ? 'available' : 'limited';
-            garageStore.set(downtownId, { ...downtown, availableSlots: nextSlots, status });
+        const refreshTick = (req.query.refresh as string) === 'true';
+
+        // Simulate live availability for Downtown Central only on explicit refresh calls
+        if (refreshTick) {
+            const downtownId = 'garage_downtown_central_champion';
+            const downtown = garageStore.get(downtownId);
+            if (downtown) {
+                const delta = Math.floor(Math.random() * 2) + 1; // 1..2
+                const direction = Math.random() > 0.5 ? 1 : -1;
+                const nextSlots = Math.max(
+                    0,
+                    Math.min(downtown.totalSlots ?? 100, (downtown.availableSlots ?? 0) + delta * direction)
+                );
+                const status = nextSlots === 0 ? 'full' : nextSlots > 5 ? 'available' : 'limited';
+                garageStore.set(downtownId, { ...downtown, availableSlots: nextSlots, status });
+            }
         }
 
         // Filter garages within radius and calculate distances

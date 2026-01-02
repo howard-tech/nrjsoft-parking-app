@@ -112,17 +112,17 @@ export class ParkingController {
             .filter((garage) => (garage.distanceMeters ?? 0) <= radiusMeters)
             .sort((a, b) => (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0));
 
-        // Simulated availability logic remains visual-only, we don't persist it to store 
-        // to avoid race conditions with generator in this simple mock
-        const withUpdatedAvailability = nearbyGarages.map((garage) => ({
-            ...garage,
-            availableSlots: Math.max(
-                0,
-                garage.availableSlots + Math.floor(Math.random() * 5 - 2)
-            ),
-        }));
+        // Keep availability stable to prevent UI flicker; only Downtown Central is mutated on explicit refresh
+        const withStableAvailability = nearbyGarages.map((garage) => {
+            const latest = garageStore.get(garage.id);
+            return {
+                ...garage,
+                availableSlots: latest?.availableSlots ?? garage.availableSlots,
+                status: latest?.status ?? garage.status,
+            };
+        });
 
-        const withChampionOverrides = withUpdatedAvailability.map((garage) => {
+        const withChampionOverrides = withStableAvailability.map((garage) => {
             const override = championOverrides[garage.id];
             if (!override) return garage;
             return {

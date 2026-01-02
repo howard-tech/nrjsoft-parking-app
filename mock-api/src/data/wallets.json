@@ -7,6 +7,13 @@
     "updatedAt": "2025-12-03T03:09:42.903Z"
   },
   {
+    "id": "wallet_demo_primary",
+    "userId": "user_demo_primary",
+    "balance": 1500,
+    "currency": "EUR",
+    "updatedAt": "2025-12-31T00:00:00.000Z"
+  },
+  {
     "id": "wallet_9qggCWJE",
     "userId": "user_sEf5X4zi",
     "balance": 106.7,

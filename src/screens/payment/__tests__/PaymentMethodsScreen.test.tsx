@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { PaymentMethodsScreen } from '../PaymentMethodsScreen';
 import { NavigationContainer } from '@react-navigation/native';
-import { Platform } from 'react-native';
+import { paymentService } from '@services/payment/paymentService';
 
 
 // Mock Platform
@@ -42,7 +42,11 @@ jest.mock('@stripe/stripe-react-native', () => ({
     confirmPayment: jest.fn(),
     usePlatformPay: () => ({
         isPlatformPaySupported: jest.fn().mockResolvedValue(true),
-        confirmPlatformPayPayment: jest.fn().mockResolvedValue({ error: null }),
+        confirmPlatformPayPayment: jest.fn().mockResolvedValue({
+            error: null,
+            setupIntent: { status: 'Succeeded', paymentMethodId: 'pm_test_123' },
+            paymentMethod: { id: 'pm_test_123' },
+        }),
     }),
 }));
 
@@ -51,6 +55,7 @@ jest.mock('@services/payment/paymentService', () => ({
     paymentService: {
         getPaymentMethods: jest.fn().mockResolvedValue([]),
         detachPaymentMethod: jest.fn().mockResolvedValue(undefined),
+        attachPaymentMethod: jest.fn().mockResolvedValue(undefined),
         createPaymentIntent: jest.fn().mockResolvedValue({
             id: 'pi_test',
             clientSecret: 'pi_test_secret',
@@ -117,7 +122,6 @@ describe('PaymentMethodsScreen', () => {
         fireEvent.press(getByText('Add Google Pay'));
 
         // Check if createPaymentIntent was called
-        const { paymentService } = require('@services/payment/paymentService');
         await waitFor(() => {
             expect(paymentService.createPaymentIntent).toHaveBeenCalled();
         });

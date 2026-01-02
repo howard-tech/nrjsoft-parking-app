@@ -73,42 +73,59 @@ export const PaymentMethodsScreen: React.FC = () => {
 
         setGooglePayLoading(true);
         try {
-            // Check if Platform Pay is supported
+            // Check if Platform Pay is supported and initialized
             const supported = await isPlatformPaySupported();
             if (!supported) {
                 throw new Error('Google Pay is not supported on this device');
             }
 
-            // Create a setup intent for adding payment method
-            const intent = await paymentService.createPaymentIntent(100, 'eur', {
-                type: 'payment',
+            // Create a setup intent for saving payment method (amount=0, type='setup')
+            const intent = await paymentService.createPaymentIntent(0, 'eur', {
+                type: 'setup',
                 metadata: { source: 'google_pay' },
             });
 
             if (!intent.clientSecret) {
-                throw new Error('Failed to create payment intent');
+                throw new Error('Failed to create setup intent');
             }
 
             // Confirm with Platform Pay (Google Pay on Android)
-            const { error: payError } = await confirmPlatformPayPayment(intent.clientSecret, {
+            const result = await confirmPlatformPayPayment(intent.clientSecret, {
                 googlePay: {
-                    testEnv: true,
-                    merchantName: 'NRJSoft Parking',
-                    merchantCountryCode: 'DE',
+                    ...googlePayService.getInitConfig(),
                     currencyCode: 'EUR',
-                },
+                } as Parameters<typeof confirmPlatformPayPayment>[1]['googlePay'],
             });
 
-            if (payError) {
-                if (payError.code === 'Canceled') {
+            if (result.error) {
+                if (result.error.code === 'Canceled') {
                     // User cancelled - no error alert
                     return;
                 }
-                throw new Error(payError.message || 'Google Pay failed');
+                throw new Error(result.error.message || 'Google Pay failed');
             }
 
-            Alert.alert('Success', 'Payment completed with Google Pay');
-            fetchMethods();
+            // Inspect result status. Platform Pay can return paymentIntent or setupIntent.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const anyResult = result as any;
+            const status = anyResult.paymentIntent?.status || anyResult.setupIntent?.status || 'Succeeded';
+
+            if (status !== 'Succeeded' && status !== 'RequiresCapture') {
+                throw new Error('Google Pay confirmation failed with status: ' + status);
+            }
+
+            // 3. Extract paymentMethodId and attach to user server-side
+            const paymentMethodId = anyResult.paymentMethod?.id ||
+                anyResult.paymentIntent?.paymentMethodId ||
+                anyResult.setupIntent?.paymentMethodId;
+
+            if (paymentMethodId) {
+                await paymentService.attachPaymentMethod(paymentMethodId);
+                Alert.alert('Success', 'Google Pay added successfully');
+                fetchMethods();
+            } else {
+                throw new Error('No payment method retrieved from Google Pay');
+            }
         } catch (error) {
             console.error('Google Pay error', error);
             Alert.alert('Error', error instanceof Error ? error.message : 'Failed to process Google Pay');

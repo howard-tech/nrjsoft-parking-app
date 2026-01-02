@@ -15,7 +15,7 @@ This PR implements Google Pay payment flow for the Android version of the app.
     - Updated `googlePayService.ts` with helper methods for Stripe's Platform Pay configuration.
 - **Tests**:
     - Updated `PaymentMethodsScreen.test.tsx` to cover Google Pay button rendering and interaction.
-    - Mapped ESM modules in `jest.config.js` to support `immer` and other dependencies during tests.
+    - Added ESM module mapping in `jest.config.js` (`transformIgnorePatterns`) to correctly handle libraries like `immer`, `@reduxjs/toolkit`, and `react-redux` during tests. (This was added in the previous PR but is relevant for verification of current tests).
 
 ## Verification
 - **Unit Tests**: `npm test -- PaymentMethodsScreen.test.tsx CardPaymentScreen.test.tsx` passed.

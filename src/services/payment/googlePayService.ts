@@ -1,9 +1,10 @@
 import { PaymentResult } from '@types/payment';
 import { Platform } from 'react-native';
+import Config from 'react-native-config';
 
-// Note: Google Pay in Stripe RN SDK uses hooks (useGooglePay) which require component context.
+// Note: Google Pay in Stripe RN SDK uses hooks (usePlatformPay) which require component context.
 // For service layer, we provide utility functions. The actual Google Pay flow
-// should use useGooglePay hook in the component.
+// should use usePlatformPay hook in the component.
 
 export interface GooglePayConfig {
     testEnv?: boolean;
@@ -15,7 +16,7 @@ export interface GooglePayConfig {
 export const googlePayService = {
     /**
      * Check if Google Pay is available on this device (platform check only)
-     * Actual availability should be checked via useGooglePay.isGooglePaySupported
+     * Actual availability should be checked via usePlatformPay.isPlatformPaySupported
      */
     isSupported: (): boolean => {
         return Platform.OS === 'android';
@@ -26,17 +27,18 @@ export const googlePayService = {
      */
     getInitConfig: (config: GooglePayConfig = {}) => {
         const {
-            testEnv = true,
-            merchantName = 'NRJSoft Parking',
+            testEnv = Config.GOOGLE_PAY_ENVIRONMENT !== 'PRODUCTION',
+            merchantName = Config.APP_NAME || 'NRJSoft Parking',
             countryCode = 'DE',
         } = config;
 
         return {
             testEnv,
             merchantName,
+            merchantCountryCode: countryCode,
             countryCode,
             billingAddressConfig: {
-                format: 'MIN' as const,
+                format: 'Full' as string, // Use 'Full' or 'Min' based on SDK requirements
                 isRequired: false,
             },
             existingPaymentMethodRequired: false,

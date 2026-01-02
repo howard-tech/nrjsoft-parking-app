@@ -37,6 +37,13 @@ jest.mock('@stripe/stripe-react-native', () => ({
 jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => 'Icon');
 jest.mock('react-native-vector-icons/Feather', () => 'Icon');
 
+// Mock payment service
+jest.mock('@services/payment/paymentService', () => ({
+    paymentService: {
+        attachPaymentMethod: jest.fn(),
+    },
+}));
+
 describe('CardPaymentScreen', () => {
     beforeEach(() => {
         jest.clearAllMocks();

@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '@theme'; // Assuming alias exists
+import { useTheme } from '@theme';
 import { AppHeader } from '@components/common/AppHeader';
 import { Button } from '@components/common/Button';
 import { EmptyState } from '@components/common/EmptyState';
-// You might need an icon component
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { paymentService } from '@services/payment/paymentService';
-import { LoadingState } from '@components/common/LoadingState';
 import { PaymentMethod } from '@types/payment';
 
 export const PaymentMethodsScreen: React.FC = () => {
@@ -17,26 +14,25 @@ export const PaymentMethodsScreen: React.FC = () => {
     const navigation = useNavigation();
     const [methods, setMethods] = useState<PaymentMethod[]>([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
-    const loadMethods = async () => {
+    const fetchMethods = async () => {
         try {
-            setLoading(true);
             const data = await paymentService.getPaymentMethods();
             setMethods(data);
         } catch (error) {
             console.error('Failed to load payment methods', error);
-            Alert.alert('Error', 'Failed to load payment methods');
+            Alert.alert('Error', 'Could not load payment methods. Please try again.');
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     };
 
-    React.useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            loadMethods();
-        });
-        return unsubscribe;
-    }, [navigation]);
+    useEffect(() => {
+        fetchMethods();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleAddMethod = () => {
         navigation.navigate('AddPaymentMethod' as never);
@@ -51,7 +47,15 @@ export const PaymentMethodsScreen: React.FC = () => {
                 {
                     text: 'Remove',
                     style: 'destructive',
-                    onPress: () => setMethods(prev => prev.filter(m => m.id !== id)),
+                    onPress: async () => {
+                        try {
+                            await paymentService.detachPaymentMethod(id);
+                            setMethods(prev => prev.filter(m => m.id !== id));
+                        } catch (error) {
+                            console.error('Failed to remove payment method', error);
+                            Alert.alert('Error', 'Could not remove payment method. Please try again.');
+                        }
+                    },
                 },
             ]
         );
@@ -59,7 +63,7 @@ export const PaymentMethodsScreen: React.FC = () => {
 
     const renderItem = ({ item }: { item: PaymentMethod }) => {
         const iconName = item.type === 'card' ? 'credit-card' : item.type === 'apple_pay' ? 'apple' : 'google';
-        const title = item.type === 'card' ? `**** **** **** ${item.last4 ?? '****'}` : item.type === 'apple_pay' ? 'Apple Pay' : 'Google Pay';
+        const title = item.type === 'card' ? `**** **** **** ${item.last4 ?? ''}` : item.type === 'apple_pay' ? 'Apple Pay' : 'Google Pay';
 
         return (
             <View style={[styles.card, { backgroundColor: theme.colors.neutral.surface }]}>
@@ -67,7 +71,9 @@ export const PaymentMethodsScreen: React.FC = () => {
                     <Icon name={iconName} size={24} color={theme.colors.primary.main} style={styles.icon} />
                     <View>
                         <Text style={[styles.cardTitle, { color: theme.colors.neutral.textPrimary }]}>{title}</Text>
-                        {item.type === 'card' && <Text style={[styles.cardSubtitle, { color: theme.colors.neutral.textSecondary }]}>{item.brand ?? 'Card'}</Text>}
+                        {item.type === 'card' && item.brand && (
+                            <Text style={[styles.cardSubtitle, { color: theme.colors.neutral.textSecondary }]}>{item.brand}</Text>
+                        )}
                     </View>
                 </View>
                 <View style={styles.cardRight}>
@@ -84,14 +90,23 @@ export const PaymentMethodsScreen: React.FC = () => {
         );
     };
 
-    if (loading) {
+    const listEmpty = useMemo(() => {
+        if (loading) {
+            return (
+                <View style={styles.loadingState}>
+                    <ActivityIndicator color={theme.colors.primary.main} />
+                </View>
+            );
+        }
+
         return (
-            <View style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}>
-                <AppHeader title="Payment Methods" showBack onBack={() => navigation.goBack()} />
-                <LoadingState message="Loading payment methods..." />
-            </View>
+            <EmptyState
+                title="No Payment Methods"
+                description="Add a payment method to pay for parking easily."
+                icon={<Icon name="credit-card-off-outline" size={48} color={theme.colors.neutral.textSecondary} />}
+            />
         );
-    }
+    }, [loading, theme.colors]);
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}>
@@ -103,13 +118,16 @@ export const PaymentMethodsScreen: React.FC = () => {
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
                     contentContainerStyle={styles.listContent}
-                    ListEmptyComponent={
-                        <EmptyState
-                            title="No Payment Methods"
-                            description="Add a payment method to pay for parking easily."
-                            icon={<Icon name="credit-card-off-outline" size={48} color={theme.colors.neutral.textSecondary} />}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={() => {
+                                setRefreshing(true);
+                                fetchMethods();
+                            }}
                         />
                     }
+                    ListEmptyComponent={listEmpty}
                 />
             </View>
 
@@ -179,5 +197,11 @@ const styles = StyleSheet.create({
         padding: 16,
         borderTopWidth: 1,
         paddingBottom: 32, // For safe area
+    },
+    loadingState: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 32,
     },
 });

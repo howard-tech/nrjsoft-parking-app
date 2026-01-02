@@ -22,27 +22,18 @@ export const CardPaymentScreen: React.FC = () => {
 
         setLoading(true);
         try {
-            // 1. Create Payment Method via Stripe SDK
-            const { paymentMethod, error } = await createPaymentMethod({
-                paymentMethodType: 'Card',
-            });
+            const { paymentMethod, error } = await createPaymentMethod({ type: 'Card' });
 
-            if (error) {
-                Alert.alert('Error', error.message);
-                return;
+            if (error || !paymentMethod) {
+                throw new Error(error?.message || 'Unable to create payment method');
             }
 
-            if (paymentMethod) {
-                // 2. Send paymentMethod.id to backend to attach to customer
-                await paymentService.attachPaymentMethod(paymentMethod.id);
-                Alert.alert('Success', 'Card added successfully');
-                navigation.goBack();
-            } else {
-                Alert.alert('Error', 'Failed to create payment method');
-            }
+            await paymentService.attachPaymentMethod(paymentMethod.id);
+            Alert.alert('Success', 'Card added successfully');
+            navigation.goBack();
         } catch (error) {
-            Alert.alert('Error', 'Failed to add card');
-            console.error(error);
+            console.error('Failed to add card', error);
+            Alert.alert('Error', 'Failed to add card. Please try again.');
         } finally {
             setLoading(false);
         }

@@ -22,6 +22,10 @@ export const paymentService = {
         await apiClient.post('/payment-methods/attach', { paymentMethodId });
     },
 
+    detachPaymentMethod: async (paymentMethodId: string): Promise<void> => {
+        await apiClient.post('/payment-methods/detach', { paymentMethodId });
+    },
+
     createPaymentIntent: async (
         amount: number,
         currency: string,

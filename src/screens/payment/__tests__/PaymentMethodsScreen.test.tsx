@@ -39,6 +39,7 @@ jest.mock('@stripe/stripe-react-native', () => ({
 jest.mock('@services/payment/paymentService', () => ({
     paymentService: {
         getPaymentMethods: jest.fn().mockResolvedValue([]),
+        detachPaymentMethod: jest.fn().mockResolvedValue(undefined),
     },
 }));
 

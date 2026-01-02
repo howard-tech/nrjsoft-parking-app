@@ -71,7 +71,7 @@ export const parkingService = {
     async fetchDetail(id: string): Promise<ParkingGarage> {
         try {
             const response = await apiClient.get<{ data?: ParkingGarage; garage?: ParkingGarage }>(
-                `/parking/garage/${id}`
+                `/parking/${id}`
             );
             const payload = response.data?.data ?? response.data?.garage ?? response.data;
             if (payload) {

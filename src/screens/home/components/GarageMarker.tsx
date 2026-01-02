@@ -38,6 +38,8 @@ export const GarageMarker: React.FC<GarageMarkerProps> = memo(
                 onPress={onPress}
                 tracksViewChanges={false}
                 identifier={garage.id}
+                accessibilityLabel={`Garage ${garage.name ?? garage.id}${distanceLabel ? `, ${distanceLabel}` : ''}`}
+                accessibilityRole="button"
             >
                 <Animated.View
                     style={[

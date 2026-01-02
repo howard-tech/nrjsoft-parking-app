@@ -14,6 +14,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'PaymentModal'> & {
             finalCost: number;
             durationMinutes: number;
             receiptUrl?: string;
+            transactionId?: string;
+            paymentMethod?: string;
             zoneName?: string;
             address?: string;
             currency?: string;
@@ -22,8 +24,17 @@ type Props = NativeStackScreenProps<RootStackParamList, 'PaymentModal'> & {
 };
 
 export const SessionReceiptScreen: React.FC<Props> = ({ route, navigation }) => {
-    const { sessionId, finalCost, durationMinutes, receiptUrl, zoneName, address, currency = 'EUR' } =
-        route.params;
+    const {
+        sessionId,
+        finalCost,
+        durationMinutes,
+        receiptUrl,
+        transactionId,
+        paymentMethod,
+        zoneName,
+        address,
+        currency = 'EUR',
+    } = route.params;
     const theme = useTheme();
 
     const handleDownload = () => {
@@ -67,6 +78,20 @@ export const SessionReceiptScreen: React.FC<Props> = ({ route, navigation }) => 
                         {currency} {formatCurrency(finalCost, currency)}
                     </Text>
                 </View>
+
+                {transactionId ? (
+                    <View style={styles.row}>
+                        <Text style={[styles.label, { color: theme.colors.neutral.textSecondary }]}>Transaction ID</Text>
+                        <Text style={[styles.value, { color: theme.colors.neutral.textPrimary }]}>{transactionId}</Text>
+                    </View>
+                ) : null}
+
+                {paymentMethod ? (
+                    <View style={styles.row}>
+                        <Text style={[styles.label, { color: theme.colors.neutral.textSecondary }]}>Payment Method</Text>
+                        <Text style={[styles.value, { color: theme.colors.neutral.textPrimary }]}>{paymentMethod}</Text>
+                    </View>
+                ) : null}
 
                 <View style={styles.actions}>
                     <Button title="Done" onPress={() => navigation.goBack()} />

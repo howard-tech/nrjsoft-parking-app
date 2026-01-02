@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -31,6 +31,18 @@ export const TutorialScreen: React.FC = () => {
     const theme = useTheme();
     const flatListRef = useRef<FlatList>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const themedStyles = useMemo(
+        () =>
+            StyleSheet.create({
+                slideDescColor: { color: 'rgba(255, 255, 255, 0.8)' },
+                badgeBg: { backgroundColor: 'rgba(255, 255, 255, 0.15)' },
+                indicatorActive: { backgroundColor: theme.colors.neutral.white, width: 18 },
+                indicatorInactive: { backgroundColor: 'rgba(255, 255, 255, 0.3)', width: 6 },
+                navBorder: { borderColor: 'rgba(255, 255, 255, 0.3)' },
+                helpSubtextMuted: { color: 'rgba(255, 255, 255, 0.6)' },
+            }),
+        [theme.colors.neutral.white]
+    );
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const scrollOffset = event.nativeEvent.contentOffset.x;
@@ -75,10 +87,10 @@ export const TutorialScreen: React.FC = () => {
         <View style={[styles.slide, { width }]}>
             <Image source={item.image} style={styles.slideImage} resizeMode="contain" />
             <View style={styles.slideContent}>
-                <Text style={styles.slideTitle}>
+                <Text style={[styles.slideTitle, { color: theme.colors.neutral.white }]}>
                     {t(item.titleKey)}
                 </Text>
-                <Text style={styles.slideDesc}>
+                <Text style={[styles.slideDesc, themedStyles.slideDescColor]}>
                     {t(item.descriptionKey)}
                 </Text>
             </View>
@@ -87,8 +99,13 @@ export const TutorialScreen: React.FC = () => {
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.primary.main }]}>
-            <TouchableOpacity style={styles.skipButton} onPress={handleSkip} accessibilityRole="button">
-                <Text style={styles.skipText}>{t('tutorial.skip')}</Text>
+            <TouchableOpacity
+                style={styles.skipButton}
+                onPress={handleSkip}
+                accessibilityRole="button"
+                accessibilityLabel={t('tutorial.skip')}
+            >
+                <Text style={[styles.skipText, { color: theme.colors.neutral.white }]}>{t('tutorial.skip')}</Text>
             </TouchableOpacity>
             {/* Header with Logo */}
             <View style={styles.header}>
@@ -96,9 +113,9 @@ export const TutorialScreen: React.FC = () => {
                     source={require('../../../assets/images/nrj-logo.png')}
                     style={styles.logo}
                 />
-                <Text style={styles.brandName}>NRJSOFT MOBILITY</Text>
-                <View style={styles.tutorialBadge}>
-                    <Text style={styles.tutorialBadgeText}>TUTORIAL</Text>
+                <Text style={[styles.brandName, { color: theme.colors.neutral.white }]}>NRJSOFT MOBILITY</Text>
+                <View style={[styles.tutorialBadge, themedStyles.badgeBg]}>
+                    <Text style={[styles.tutorialBadgeText, { color: theme.colors.neutral.white }]}>TUTORIAL</Text>
                 </View>
             </View>
 
@@ -123,14 +140,17 @@ export const TutorialScreen: React.FC = () => {
             </View>
 
             {/* Pagination Indicators */}
-            <View style={styles.indicatorContainer}>
+            <View
+                style={styles.indicatorContainer}
+                accessibilityElementsHidden={true}
+                importantForAccessibility="no-hide-descendants"
+            >
                 {tutorialSlides.map((_, index) => (
                     <View
                         key={index}
                         style={[
                             styles.indicator,
-                            index === currentIndex ? styles.activeIndicator : styles.inactiveIndicator,
-                            index === currentIndex ? styles.activeIndicatorWidth : styles.inactiveIndicatorWidth,
+                            index === currentIndex ? themedStyles.indicatorActive : themedStyles.indicatorInactive,
                         ]}
                     />
                 ))}
@@ -139,22 +159,29 @@ export const TutorialScreen: React.FC = () => {
             {/* Navigation Buttons */}
             <View style={styles.navButtons}>
                 <TouchableOpacity
-                    style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
+                    style={[styles.navButton, themedStyles.navBorder, currentIndex === 0 && styles.navButtonDisabled]}
                     onPress={handlePrev}
                     disabled={currentIndex === 0}
+                    accessibilityLabel={t('tutorial.prev')}
+                    accessibilityRole="button"
+                    accessibilityState={{ disabled: currentIndex === 0 }}
                 >
-                    <Text style={styles.navButtonText}>{t('tutorial.prev')}</Text>
+                    <Text style={[styles.navButtonText, { color: theme.colors.neutral.white }]}>{t('tutorial.prev')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     style={[
                         styles.navButton,
+                        themedStyles.navBorder,
                         currentIndex === tutorialSlides.length - 1 && styles.navButtonDisabled,
                     ]}
                     onPress={handleNext}
                     disabled={currentIndex === tutorialSlides.length - 1}
+                    accessibilityLabel={t('tutorial.next')}
+                    accessibilityRole="button"
+                    accessibilityState={{ disabled: currentIndex === tutorialSlides.length - 1 }}
                 >
-                    <Text style={styles.navButtonText}>{t('tutorial.next')}</Text>
+                    <Text style={[styles.navButtonText, { color: theme.colors.neutral.white }]}>{t('tutorial.next')}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -162,15 +189,21 @@ export const TutorialScreen: React.FC = () => {
             <View style={styles.bottomSection}>
                 <View style={styles.footerRow}>
                     <LanguageSelector />
-                    <TouchableOpacity style={styles.helpButton} onPress={handleCallSupport}>
-                        <View style={styles.helpIconContainer}>
+                    <TouchableOpacity
+                        style={styles.helpButton}
+                        onPress={handleCallSupport}
+                        accessibilityLabel={t('tutorial.helpHotline')}
+                        accessibilityRole="button"
+                        accessibilityHint={SUPPORT_PHONE}
+                    >
+                        <View style={[styles.helpIconContainer, { backgroundColor: theme.colors.neutral.white }]}>
                             <Icon name="phone" size={16} color={theme.colors.primary.main} />
                         </View>
                         <View>
-                            <Text style={styles.helpText}>
+                            <Text style={[styles.helpText, { color: theme.colors.neutral.white }]}>
                                 {t('tutorial.helpHotline')}
                             </Text>
-                            <Text style={styles.helpSubtext}>
+                            <Text style={[styles.helpSubtext, themedStyles.helpSubtextMuted]}>
                                 {SUPPORT_PHONE}
                             </Text>
                         </View>
@@ -220,16 +253,13 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         letterSpacing: 2,
         marginBottom: 12,
-        color: '#FFFFFF',
     },
     tutorialBadge: {
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         paddingHorizontal: 12,
         paddingVertical: 4,
         borderRadius: 12,
     },
     tutorialBadgeText: {
-        color: '#FFFFFF',
         fontSize: 10,
         fontWeight: '800',
         letterSpacing: 1,
@@ -255,14 +285,12 @@ const styles = StyleSheet.create({
     slideTitle: {
         textAlign: 'center',
         marginBottom: 12,
-        color: '#FFFFFF',
         fontSize: 24,
         fontWeight: '700',
     },
     slideDesc: {
         textAlign: 'center',
         lineHeight: 20,
-        color: 'rgba(255, 255, 255, 0.8)',
         fontSize: 14,
     },
     indicatorContainer: {
@@ -276,18 +304,6 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         marginHorizontal: 3,
     },
-    activeIndicator: {
-        backgroundColor: '#FFFFFF',
-    },
-    inactiveIndicator: {
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    },
-    activeIndicatorWidth: {
-        width: 18,
-    },
-    inactiveIndicatorWidth: {
-        width: 6,
-    },
     navButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -299,13 +315,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     navButtonDisabled: {
         opacity: 0.3,
     },
     navButtonText: {
-        color: '#FFFFFF',
         fontSize: 12,
         fontWeight: '600',
     },
@@ -327,7 +341,6 @@ const styles = StyleSheet.create({
         width: 32,
         height: 32,
         borderRadius: 16,
-        backgroundColor: '#FFFFFF',
         alignItems: 'center',
         justifyContent: 'center',
         marginRight: 10,
@@ -335,11 +348,9 @@ const styles = StyleSheet.create({
     helpText: {
         fontSize: 13,
         fontWeight: '700',
-        color: '#FFFFFF',
     },
     helpSubtext: {
         fontSize: 11,
-        color: 'rgba(255, 255, 255, 0.6)',
     },
     continueButton: {
         width: '100%',

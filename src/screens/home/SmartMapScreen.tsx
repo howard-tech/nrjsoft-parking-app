@@ -217,8 +217,8 @@ export const SmartMapScreen: React.FC = () => {
             return;
         }
 
-        if (selectedId && filteredGarages.some((g) => g.id === selectedId)) {
-            const found = filteredGarages.find((g) => g.id === selectedId) ?? null;
+        if (selectedId && filteredGarages.some((g: ParkingGarage) => g.id === selectedId)) {
+            const found = filteredGarages.find((g: ParkingGarage) => g.id === selectedId) ?? null;
             setActiveGarage(found);
             return;
         }
@@ -247,12 +247,22 @@ export const SmartMapScreen: React.FC = () => {
     const shouldShowLocationOverlay =
         !coords && permission !== 'blocked' && permission !== 'denied';
 
-    const controlSurfaceStyle = useMemo(
-        () => ({
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            borderColor: theme.colors.neutral.border,
-        }),
-        [theme.colors.neutral.border]
+    const themedStyles = useMemo(
+        () =>
+            StyleSheet.create({
+                overlayBg: { backgroundColor: theme.colors.neutral.surface },
+                statusTitle: { color: theme.colors.primary.main },
+                statusText: { color: theme.colors.neutral.textSecondary },
+                clearFiltersText: { color: theme.colors.primary.main },
+                controlsSurface: {
+                    backgroundColor: theme.colors.neutral.surface,
+                    borderColor: theme.colors.neutral.border,
+                },
+                overlayBase: {
+                    backgroundColor: theme.colors.neutral.surface,
+                }
+            }),
+        [theme.colors]
     );
 
     const handleSelect = useCallback(
@@ -392,7 +402,7 @@ export const SmartMapScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.searchArea}>
+            <View style={[styles.searchArea, theme.shadows.md]}>
                 <SearchBar
                     query={searchQuery}
                     onQueryChange={setSearchQuery}
@@ -404,8 +414,15 @@ export const SmartMapScreen: React.FC = () => {
                 />
                 <FilterChips activeFilter={activeFilter} onChange={setActiveFilter} />
                 {(searchQuery.length > 0 || activeFilter) && (
-                    <TouchableOpacity style={styles.clearFilters} onPress={() => { setSearchQuery(''); handleClearFilters(); }}>
-                        <Text style={styles.clearFiltersText}>Clear search & filters</Text>
+                    <TouchableOpacity
+                        style={styles.clearFilters}
+                        onPress={() => { setSearchQuery(''); handleClearFilters(); }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Clear search and filters"
+                    >
+                        <Text style={[styles.clearFiltersText, themedStyles.clearFiltersText]}>
+                            Clear search & filters
+                        </Text>
                     </TouchableOpacity>
                 )}
             </View>
@@ -413,22 +430,22 @@ export const SmartMapScreen: React.FC = () => {
                 <Overlay>
                     {locationError ? (
                         <>
-                            <Text style={styles.statusTitle}>Unable to get location</Text>
-                            <Text style={styles.statusText}>{locationError}</Text>
+                            <Text style={[styles.statusTitle, themedStyles.statusTitle]}>Unable to get location</Text>
+                            <Text style={[styles.statusText, themedStyles.statusText]}>{locationError}</Text>
                             <Button title="Try again" onPress={getCurrentPosition} />
                         </>
                     ) : (
                         <>
                             <ActivityIndicator color={theme.colors.primary.main} size="large" />
-                            <Text style={styles.statusText}>Getting your location...</Text>
+                            <Text style={[styles.statusText, themedStyles.statusText]}>Getting your location...</Text>
                         </>
                     )}
                 </Overlay>
             )}
             {(permission === 'denied' || permission === 'blocked') && (
                 <Overlay>
-                    <Text style={styles.statusTitle}>Location access needed</Text>
-                    <Text style={styles.statusText}>Allow location to show nearby parking.</Text>
+                    <Text style={[styles.statusTitle, themedStyles.statusTitle]}>Location access needed</Text>
+                    <Text style={[styles.statusText, themedStyles.statusText]}>Allow location to show nearby parking.</Text>
                     {permission === 'denied' ? (
                         <Button title="Allow location" onPress={requestPermission} />
                     ) : (
@@ -483,8 +500,10 @@ export const SmartMapScreen: React.FC = () => {
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={handleRecenter}
-                    style={[styles.controlButton, controlSurfaceStyle]}
+                    style={[styles.controlButton, themedStyles.controlsSurface, theme.shadows.md]}
                     disabled={recenterLoading}
+                    accessibilityRole="button"
+                    accessibilityLabel="Recenter map to my location"
                 >
                     {recenterLoading ? (
                         <ActivityIndicator size="small" color={theme.colors.primary.main} />
@@ -497,8 +516,10 @@ export const SmartMapScreen: React.FC = () => {
                 <TouchableOpacity
                     activeOpacity={0.9}
                     onPress={handleRefreshGarages}
-                    style={[styles.controlButton, controlSurfaceStyle, styles.controlSpacing]}
+                    style={[styles.controlButton, themedStyles.controlsSurface, styles.controlSpacing, theme.shadows.md]}
                     disabled={loadingGarages}
+                    accessibilityRole="button"
+                    accessibilityLabel="Refresh nearby garages"
                 >
                     {loadingGarages ? (
                         <ActivityIndicator size="small" color={theme.colors.primary.main} />
@@ -544,9 +565,9 @@ export const SmartMapScreen: React.FC = () => {
                                 onAction={
                                     coords
                                         ? () => {
-                                              setSearchQuery('');
-                                              handleClearFilters();
-                                          }
+                                            setSearchQuery('');
+                                            handleClearFilters();
+                                        }
                                         : handleRefreshGarages
                                 }
                             />
@@ -563,11 +584,14 @@ export const SmartMapScreen: React.FC = () => {
     );
 };
 
-const Overlay: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <View style={styles.overlay}>
-        {children}
-    </View>
-);
+const Overlay: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const theme = useTheme();
+    return (
+        <View style={[styles.overlay, { backgroundColor: theme.colors.neutral.surface }]}>
+            {children}
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -592,13 +616,11 @@ const styles = StyleSheet.create({
     statusTitle: {
         fontSize: 16,
         fontWeight: '700',
-        color: '#1E3A5F',
         textAlign: 'center',
         marginBottom: 4,
     },
     statusText: {
         fontSize: 14,
-        color: '#2C3E50',
         textAlign: 'center',
         marginBottom: 12,
     },
@@ -638,7 +660,6 @@ const styles = StyleSheet.create({
     },
     clearFiltersText: {
         fontSize: 12,
-        color: '#1E3A5F',
         fontWeight: '600',
     },
     controlText: {

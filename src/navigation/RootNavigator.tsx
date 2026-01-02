@@ -7,6 +7,7 @@ import { useTheme } from '@theme';
 import { LoadingState } from '@components/common/LoadingState';
 import { analyticsService } from '@services/analytics';
 import { QRScannerModal } from '@screens/parking/QRScannerModal';
+import { linking } from './linking';
 
 // Import navigators
 import AuthStack from './stacks/AuthStack';
@@ -30,6 +31,7 @@ export const RootNavigator: React.FC = () => {
     return (
         <NavigationContainer
             ref={navigationRef}
+            linking={linking}
             onReady={() => {
                 const currentRoute = navigationRef.current?.getCurrentRoute();
                 routeNameRef.current = currentRoute?.name;

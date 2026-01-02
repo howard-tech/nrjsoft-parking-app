@@ -28,6 +28,7 @@ export interface PaymentResult {
     success: boolean;
     receiptUrl?: string;
     errorMessage?: string;
+    transaction?: Transaction;
     status?: PaymentIntentStatus;
 }
 

@@ -67,6 +67,22 @@ export const sessionService = {
         }
     },
 
+    async endSession(sessionId: string): Promise<ParkingSession | null> {
+        try {
+            const response = await apiClient.post<{ data?: ParkingSession; session?: ParkingSession }>(
+                `/sessions/${sessionId}/end`
+            );
+            const session = response.data?.data ?? response.data?.session ?? null;
+            if (session) {
+                store.dispatch(clearSession());
+            }
+            return session;
+        } catch (error) {
+            console.error('Failed to end session', error);
+            return null;
+        }
+    },
+
     handleSessionStart(payload: {
         sessionId: string;
         garageId: string;

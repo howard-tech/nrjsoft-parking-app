@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
 import { useActiveSession, useWallet, useSessionTimer } from '@hooks';
@@ -7,8 +7,12 @@ import { SessionTimer } from './components/SessionTimer';
 import { WalletProjectionBar } from './components/WalletProjectionBar';
 import { Button } from '@components/common/Button';
 import { sessionService } from '@services/session/sessionService';
+import { paymentService } from '@services/payment/paymentService';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { formatCurrency } from '@utils/formatters';
+import { setReceipt } from '@store/slices/sessionSlice';
+import { useAppDispatch } from '@store';
+import { useEffect } from 'react';
 
 const SUPPORT_PHONE = '+49 800 223 4455';
 const LOW_BALANCE_THRESHOLD = 1;
@@ -16,9 +20,11 @@ const LOW_BALANCE_THRESHOLD = 1;
 export const ActiveSessionScreen: React.FC = () => {
     const theme = useTheme();
     const navigation = useNavigation();
-    const { session, isLoading } = useActiveSession();
+    const dispatch = useAppDispatch();
+    const { session, isLoading, end } = useActiveSession();
     const { balance, currency } = useWallet();
     const [currentCost, setCurrentCost] = useState(0);
+    const [isEnding, setIsEnding] = useState(false);
 
     const { formattedTime } = useSessionTimer({
         startTime: session?.startTime ?? new Date().toISOString(),
@@ -51,6 +57,82 @@ export const ActiveSessionScreen: React.FC = () => {
 
     const handleTopUp = () => {
         navigation.navigate('WalletTab' as never, { screen: 'TopUp' } as never);
+    };
+
+    const handleEndSession = async () => {
+        if (!session) { return; }
+
+        Alert.alert(
+            'End Session',
+            'Are you sure you want to end your parking session? The total cost will be charged to your default payment method.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'End & Pay',
+                    style: 'destructive',
+                    onPress: async () => {
+                        setIsEnding(true);
+                        try {
+                            // 1. End session to get final fee
+                            const completedSession = await end();
+                            if (!completedSession) {
+                                throw new Error('Failed to end session');
+                            }
+
+                            const totalFee = completedSession.totalFee ?? currentCost;
+
+                            // 2. Fetch default payment method
+                            const methods = await paymentService.getPaymentMethods();
+                            const defaultMethod = methods.find((m) => m.isDefault) || methods[0];
+
+                            if (!defaultMethod) {
+                                // No payment method found - handle accordingly (maybe show a warning or fallback to wallet)
+                                Alert.alert(
+                                    'Notice',
+                                    'Session ended, but no saved payment method was found. Please pay at the counter or add a card.'
+                                );
+                                navigation.navigate('HomeTab' as never);
+                                return;
+                            }
+
+                            // 3. Charge the default method
+                            const chargeResult = await paymentService.chargePayment(
+                                totalFee,
+                                completedSession.currency || currency || 'EUR',
+                                defaultMethod.id,
+                                `Parking at ${completedSession.garageName || 'NRJSoft Garage'}`
+                            );
+
+                            if (chargeResult.success) {
+                                // 4. Set receipt and navigate
+                                const transaction = chargeResult.transaction;
+                                dispatch(
+                                    setReceipt({
+                                        sessionId: completedSession.id,
+                                        finalCost: totalFee,
+                                        durationMinutes: completedSession.elapsedMinutes || 0,
+                                        receiptUrl: transaction?.receiptUrl || completedSession.receiptUrl,
+                                        transactionId: transaction?.id,
+                                        paymentMethod: defaultMethod.type === 'card'
+                                            ? `${defaultMethod.brand} •••• ${defaultMethod.last4}`
+                                            : defaultMethod.type,
+                                    })
+                                );
+                                navigation.navigate('WalletTab' as never, { screen: 'SessionReceipt' } as never);
+                            } else {
+                                throw new Error(chargeResult.errorMessage || 'Payment failed');
+                            }
+                        } catch (error: unknown) {
+                            const message = error instanceof Error ? error.message : 'There was an issue processing your payment.';
+                            console.error('Failed to process final payment', error);
+                            Alert.alert('Payment Error', message);
+                        } finally {
+                            setIsEnding(false);
+                        }
+                    },
+                },
+            ]
+        );
     };
 
     const handleCallSupport = () => Linking.openURL(`tel:${SUPPORT_PHONE}`);
@@ -141,6 +223,14 @@ export const ActiveSessionScreen: React.FC = () => {
                     variant={status === 'normal' ? 'secondary' : 'primary'}
                     onPress={handleTopUp}
                     style={styles.topUpButton}
+                />
+
+                <Button
+                    title="End Session"
+                    variant="primary"
+                    onPress={handleEndSession}
+                    loading={isEnding}
+                    style={styles.endSessionButton}
                 />
             </View>
         </View>
@@ -242,6 +332,9 @@ const styles = StyleSheet.create({
     },
     topUpButton: {
         marginTop: 16,
+    },
+    endSessionButton: {
+        marginTop: 12,
     },
     emptyCard: {
         margin: 20,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import axios from 'axios';
 import {
     View,
@@ -18,7 +18,7 @@ import { AuthStackParamList, RootStackParamList } from '../../navigation/types';
 import { OTPInput } from '../../components/common/OTPInput';
 import { Button } from '../../components/common/Button';
 import { CountdownTimer } from './components/CountdownTimer';
-import { useAuth } from '@hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
 
 type OTPRouteProp = RouteProp<AuthStackParamList, 'OTPVerification'>;
 
@@ -35,6 +35,21 @@ export const OTPVerificationScreen: React.FC = () => {
     const { phone, email } = route.params;
     const identifier = phone || email || '';
     const type = phone ? 'mobile' : 'email';
+    const themedStyles = useMemo(
+        () =>
+            StyleSheet.create({
+                containerBg: { backgroundColor: theme.colors.primary.main },
+                titleColor: { color: theme.colors.neutral.white },
+                subtitleMuted: { color: 'rgba(255, 255, 255, 0.7)' },
+                identifierColor: { color: theme.colors.neutral.white },
+                devHint: { color: 'rgba(255, 255, 255, 0.8)' },
+                resendLabelMuted: { color: 'rgba(255, 255, 255, 0.6)' },
+                resendAccent: { color: theme.colors.secondary.light },
+                backTextMuted: { color: 'rgba(255, 255, 255, 0.6)' },
+                errorColor: { color: theme.colors.error.main },
+            }),
+        [theme.colors]
+    );
 
     const handleVerify = async () => {
         if (otp.length < 6) {
@@ -82,19 +97,19 @@ export const OTPVerificationScreen: React.FC = () => {
 
     return (
         <KeyboardAvoidingView
-            style={[styles.container, { backgroundColor: theme.colors.primary.main }]}
+            style={[styles.container, themedStyles.containerBg]}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>{t('auth.verifyAccount')}</Text>
-                    <Text style={styles.subtitle}>
+                    <Text style={[styles.title, themedStyles.titleColor]}>{t('auth.verifyAccount')}</Text>
+                    <Text style={[styles.subtitle, themedStyles.subtitleMuted]}>
                         {t('auth.otpSentTo')} {'\n'}
-                        <Text style={styles.identifier}>{identifier}</Text>
+                        <Text style={[styles.identifier, themedStyles.identifierColor]}>{identifier}</Text>
                         {__DEV__ && (
                             <>
                                 {'\n'}
-                                <Text style={styles.devHint}>{t('auth.devOtpHint', { defaultValue: 'Use mock OTP 123456' })}</Text>
+                                <Text style={[styles.devHint, themedStyles.devHint]}>{t('auth.devOtpHint', { defaultValue: 'Use mock OTP 123456' })}</Text>
                             </>
                         )}
                     </Text>
@@ -104,21 +119,27 @@ export const OTPVerificationScreen: React.FC = () => {
                     <OTPInput length={6} value={otp} onChangeText={setOtp} />
 
                     {otp.length === 6 && (authError || localError) && (
-                        <Text style={styles.errorText}>{authError || localError}</Text>
+                        <Text style={[styles.errorText, themedStyles.errorColor]}>{authError || localError}</Text>
                     )}
 
                     <View style={styles.timerSection}>
                         {isTimerActive ? (
                             <View style={styles.timerRow}>
-                                <Text style={styles.resendLabel}>{t('auth.resendCodeIn')}: </Text>
+                                <Text style={[styles.resendLabel, themedStyles.resendLabelMuted]}>{t('auth.resendCodeIn')}: </Text>
                                 <CountdownTimer
                                     initialSeconds={90}
                                     onTimerEnd={() => setIsTimerActive(false)}
                                 />
                             </View>
                         ) : (
-                            <TouchableOpacity onPress={handleResend} disabled={requestOtpLoading}>
-                                <Text style={[styles.resendText, requestOtpLoading && styles.disabledText]}>
+                            <TouchableOpacity
+                                onPress={handleResend}
+                                disabled={requestOtpLoading}
+                                accessibilityRole="button"
+                                accessibilityLabel={t('auth.resendCodeNow')}
+                                accessibilityState={{ disabled: requestOtpLoading }}
+                            >
+                                <Text style={[styles.resendText, themedStyles.resendAccent, requestOtpLoading && styles.disabledText]}>
                                     {requestOtpLoading ? t('common.loading') : t('auth.resendCodeNow')}
                                 </Text>
                             </TouchableOpacity>
@@ -139,8 +160,10 @@ export const OTPVerificationScreen: React.FC = () => {
                     onPress={() => {
                         navigation.goBack();
                     }}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('auth.changeNumber')}
                 >
-                    <Text style={styles.backButtonText}>{t('auth.changeNumber')}</Text>
+                    <Text style={[styles.backButtonText, themedStyles.backTextMuted]}>{t('auth.changeNumber')}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -163,18 +186,19 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#FFFFFF',
         marginBottom: 16,
     },
     subtitle: {
         fontSize: 16,
-        color: 'rgba(255, 255, 255, 0.7)',
         textAlign: 'center',
         lineHeight: 24,
     },
     identifier: {
-        color: '#FFFFFF',
         fontWeight: '600',
+    },
+    devHint: {
+        fontSize: 12,
+        fontWeight: '400',
     },
     otpContainer: {
         marginBottom: 40,
@@ -188,11 +212,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     resendLabel: {
-        color: 'rgba(255, 255, 255, 0.6)',
         fontSize: 14,
     },
     resendText: {
-        color: '#F76C5E', // theme.colors.secondary.light
         fontSize: 14,
         fontWeight: '700',
         textDecorationLine: 'underline',
@@ -201,7 +223,6 @@ const styles = StyleSheet.create({
         opacity: 0.5,
     },
     errorText: {
-        color: '#E74C3C',
         fontSize: 14,
         textAlign: 'center',
         marginTop: 16,
@@ -214,7 +235,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     backButtonText: {
-        color: 'rgba(255, 255, 255, 0.6)',
         fontSize: 14,
         fontWeight: '600',
     },

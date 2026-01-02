@@ -23,6 +23,9 @@ export interface ParkingSession {
     currentCost?: number;
     pricingRules?: PricingRule[];
     currency?: string;
+    elapsedMinutes?: number;
+    totalFee?: number;
+    paymentStatus?: 'pending' | 'paid' | 'failed';
 }
 
 export interface SessionReceipt {
@@ -30,4 +33,6 @@ export interface SessionReceipt {
     finalCost: number;
     durationMinutes: number;
     receiptUrl?: string;
+    transactionId?: string;
+    paymentMethod?: string;
 }

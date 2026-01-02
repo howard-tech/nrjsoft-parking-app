@@ -25,6 +25,13 @@ export const useActiveSession = () => {
         [activeSession]
     );
 
+    const end = useCallback(async () => {
+        if (activeSession) {
+            return sessionService.endSession(activeSession.id);
+        }
+        return null;
+    }, [activeSession]);
+
     const currentCost = useMemo(
         () => (activeSession ? sessionService.calculateCurrentCost(activeSession) : 0),
         [activeSession]
@@ -37,5 +44,6 @@ export const useActiveSession = () => {
         currentCost,
         refresh,
         extend,
+        end,
     };
 };

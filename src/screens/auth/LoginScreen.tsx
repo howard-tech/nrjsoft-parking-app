@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
     View,
     Text,
@@ -71,6 +71,22 @@ export const LoginScreen: React.FC = () => {
         Alert.alert(t('common.error'), message);
     };
 
+    const themedStyles = useMemo(
+        () =>
+            StyleSheet.create({
+                tabContainerBg: { backgroundColor: 'rgba(255, 255, 255, 0.1)' },
+                tabSelected: { backgroundColor: theme.colors.neutral.white },
+                tabTextActive: { color: theme.colors.primary.main },
+                tabTextInactive: { color: 'rgba(255, 255, 255, 0.6)' },
+                emailBox: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                },
+                subtitleMuted: { color: 'rgba(255, 255, 255, 0.6)' },
+            }),
+        [theme.colors.neutral.white, theme.colors.primary.main]
+    );
+
     return (
         <KeyboardAvoidingView
             style={[styles.container, { backgroundColor: theme.colors.primary.main }]}
@@ -84,30 +100,46 @@ export const LoginScreen: React.FC = () => {
                         style={styles.logo}
                     />
                     <Text style={styles.title}>{t('auth.secureSignIn')}</Text>
-                    <Text style={styles.subtitle}>{t('auth.gdprNotice')}</Text>
+                    <Text style={[styles.subtitle, themedStyles.subtitleMuted]}>{t('auth.gdprNotice')}</Text>
                 </View>
 
                 {/* Tab Selector */}
-                <View style={styles.tabContainer}>
+                <View style={[styles.tabContainer, themedStyles.tabContainerBg]}>
                     <TouchableOpacity
-                        style={[styles.tab, authMethod === 'phone' && styles.activeTab]}
+                        style={[styles.tab, authMethod === 'phone' && themedStyles.tabSelected]}
                         onPress={() => {
                             setAuthMethod('phone');
                             setIdentifier('');
                         }}
+                        accessibilityLabel={t('auth.mobileNumber')}
+                        accessibilityRole="tab"
+                        accessibilityState={{ selected: authMethod === 'phone' }}
                     >
-                        <Text style={[styles.tabText, authMethod === 'phone' && styles.activeTabText]}>
+                        <Text
+                            style={[
+                                styles.tabText,
+                                authMethod === 'phone' ? themedStyles.tabTextActive : themedStyles.tabTextInactive,
+                            ]}
+                        >
                             {t('auth.mobileNumber')}
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.tab, authMethod === 'email' && styles.activeTab]}
+                        style={[styles.tab, authMethod === 'email' && themedStyles.tabSelected]}
                         onPress={() => {
                             setAuthMethod('email');
                             setIdentifier('');
                         }}
+                        accessibilityLabel={t('auth.corporateEmail')}
+                        accessibilityRole="tab"
+                        accessibilityState={{ selected: authMethod === 'email' }}
                     >
-                        <Text style={[styles.tabText, authMethod === 'email' && styles.activeTabText]}>
+                        <Text
+                            style={[
+                                styles.tabText,
+                                authMethod === 'email' ? themedStyles.tabTextActive : themedStyles.tabTextInactive,
+                            ]}
+                        >
                             {t('auth.corporateEmail')}
                         </Text>
                     </TouchableOpacity>
@@ -121,17 +153,19 @@ export const LoginScreen: React.FC = () => {
                             onChangeText={setIdentifier}
                             countryCode={countryCode}
                             onCountryChange={setCountryCode}
+                            accessibilityLabel={t('auth.mobileNumber')}
                         />
                     ) : (
-                        <View style={styles.inputBox}>
+                        <View style={[styles.inputBox, themedStyles.emailBox]}>
                             <TextInput
-                                style={styles.emailInput}
+                                style={[styles.emailInput, { color: theme.colors.neutral.white }]}
                                 placeholder={t('auth.emailPlaceholder')}
                                 placeholderTextColor="rgba(255, 255, 255, 0.4)"
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 value={identifier}
                                 onChangeText={setIdentifier}
+                                accessibilityLabel={t('auth.corporateEmail')}
                             />
                         </View>
                     )}
@@ -140,10 +174,11 @@ export const LoginScreen: React.FC = () => {
                         checked={gdprConsent}
                         onChange={setGdprConsent}
                         style={styles.checkbox}
+                        accessibilityLabel={t('auth.iAccept')}
                         label={
-                            <Text style={styles.checkboxLabel}>
+                            <Text style={[styles.checkboxLabel, { color: theme.colors.neutral.white }]}>
                                 {t('auth.iAccept')}{' '}
-                                <Text style={styles.linkText}>{t('auth.termsAndConditions')}</Text>
+                                <Text style={[styles.linkText, { color: theme.colors.neutral.white }]}>{t('auth.termsAndConditions')}</Text>
                             </Text>
                         }
                     />
@@ -155,10 +190,11 @@ export const LoginScreen: React.FC = () => {
                         disabled={!identifier || !gdprConsent}
                         loading={requestOtpLoading}
                         style={styles.loginButton}
+                        accessibilityLabel={t('auth.secureLogin')}
                     />
 
                     {authError && (
-                        <Text style={styles.errorText}>{authError}</Text>
+                        <Text style={[styles.errorText, { color: theme.colors.secondary.light }]}>{authError}</Text>
                     )}
                 </View>
 
@@ -197,7 +233,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#FFFFFF',
         marginBottom: 8,
     },
     subtitle: {
@@ -218,31 +253,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
     },
-    activeTab: {
-        backgroundColor: '#FFFFFF',
-    },
     tabText: {
         fontSize: 14,
         fontWeight: '600',
-        color: 'rgba(255, 255, 255, 0.6)',
-    },
-    activeTabText: {
-        color: '#1E3A5F',
     },
     formContainer: {
         marginBottom: 40,
     },
     inputBox: {
         height: 56,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.2)',
         paddingHorizontal: 16,
         justifyContent: 'center',
     },
     emailInput: {
-        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: '500',
     },
@@ -250,12 +275,10 @@ const styles = StyleSheet.create({
         marginTop: 24,
     },
     checkboxLabel: {
-        color: '#FFFFFF',
         fontSize: 13,
         lineHeight: 18,
     },
     linkText: {
-        color: '#FFFFFF',
         textDecorationLine: 'underline',
         fontWeight: '600',
     },
@@ -278,7 +301,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     errorText: {
-        color: '#FF4D4D',
         fontSize: 14,
         textAlign: 'center',
         marginTop: 16,

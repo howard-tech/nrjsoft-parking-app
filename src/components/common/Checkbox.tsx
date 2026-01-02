@@ -8,9 +8,10 @@ interface CheckboxProps {
     onChange: (checked: boolean) => void;
     label?: string | React.ReactNode;
     style?: ViewStyle;
+    accessibilityLabel?: string;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, style }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, style, accessibilityLabel }) => {
     const theme = useTheme();
 
     const checkboxDynamicStyle = {
@@ -23,6 +24,9 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, onChange, label, st
             style={[styles.container, style]}
             onPress={() => onChange(!checked)}
             activeOpacity={0.7}
+            accessibilityLabel={accessibilityLabel}
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked }}
         >
             <View style={[styles.checkbox, checkboxDynamicStyle]}>
                 {checked && <Icon name="check" size={14} color="#FFFFFF" />}

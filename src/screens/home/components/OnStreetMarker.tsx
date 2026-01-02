@@ -21,6 +21,8 @@ export const OnStreetMarker: React.FC<OnStreetMarkerProps> = memo(
                 coordinate={{ latitude: zone.latitude, longitude: zone.longitude }}
                 onPress={onPress}
                 tracksViewChanges={false}
+                accessibilityLabel={`On-street zone ${zone.name}`}
+                accessibilityRole="button"
             >
                 <View
                     style={[

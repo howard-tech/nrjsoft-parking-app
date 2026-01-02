@@ -22,6 +22,8 @@ export const ClusterMarker: React.FC<ClusterMarkerProps> = memo(
                 coordinate={{ latitude, longitude }}
                 onPress={onPress}
                 tracksViewChanges={false}
+                accessibilityLabel={`Cluster of ${count} garages`}
+                accessibilityRole="button"
             >
                 <View style={styles.container}>
                     <Text style={styles.count}>{count}</Text>

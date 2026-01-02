@@ -6,14 +6,16 @@ import { PaymentMethodsScreen } from '@screens/payment/PaymentMethodsScreen';
 import { CardPaymentScreen } from '@screens/payment/CardPaymentScreen';
 import { PaymentHistoryScreen } from '@screens/payment/PaymentHistoryScreen';
 import { PaymentCheckoutScreen } from '@screens/payment/PaymentCheckoutScreen';
+import { TopUpScreen } from '@screens/wallet/TopUpScreen';
+import { WalletHomeScreen } from '@screens/wallet/WalletHomeScreen';
 
 const Stack = createNativeStackNavigator<WalletStackParamList>();
 
 const WalletStack = () => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="WalletHome" component={PlaceholderScreen} />
-            <Stack.Screen name="TopUp" component={PlaceholderScreen} />
+            <Stack.Screen name="WalletHome" component={WalletHomeScreen} />
+            <Stack.Screen name="TopUp" component={TopUpScreen} />
             <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
             <Stack.Screen name="AddPaymentMethod" component={CardPaymentScreen} />
             <Stack.Screen name="PaymentHistory" component={PaymentHistoryScreen} />

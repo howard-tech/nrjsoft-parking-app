@@ -31,6 +31,7 @@ interface PhoneInputProps {
     placeholder?: string;
     countryCode?: string;
     onCountryChange?: (code: string) => void;
+    accessibilityLabel?: string;
 }
 
 export const PhoneInput: React.FC<PhoneInputProps> = ({
@@ -39,6 +40,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     placeholder = 'Mobile number',
     countryCode = '+49',
     onCountryChange,
+    accessibilityLabel,
 }) => {
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -68,6 +70,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     value={value}
                     onChangeText={onChangeText}
                     maxLength={15}
+                    accessibilityLabel={accessibilityLabel || placeholder}
                 />
             </View>
 

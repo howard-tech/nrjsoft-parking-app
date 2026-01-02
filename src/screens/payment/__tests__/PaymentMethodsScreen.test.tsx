@@ -66,10 +66,17 @@ jest.mock('@services/payment/paymentService', () => ({
     },
 }));
 
-// Mock googlePayService
+// Mock applePayService
 jest.mock('@services/payment/googlePayService', () => ({
     googlePayService: {
         isSupported: jest.fn().mockReturnValue(true),
+        getInitConfig: jest.fn().mockReturnValue({}),
+    },
+}));
+
+jest.mock('@services/payment/applePayService', () => ({
+    applePayService: {
+        isSupported: jest.fn().mockReturnValue(false),
         getInitConfig: jest.fn().mockReturnValue({}),
     },
 }));
@@ -122,6 +129,30 @@ describe('PaymentMethodsScreen', () => {
         fireEvent.press(getByText('Add Google Pay'));
 
         // Check if createPaymentIntent was called
+        await waitFor(() => {
+            expect(paymentService.createPaymentIntent).toHaveBeenCalled();
+        });
+    });
+
+    it('triggers Apple Pay flow when Add Apple Pay button is pressed', async () => {
+        const { applePayService } = require('@services/payment/applePayService');
+        const { Platform } = require('react-native');
+
+        applePayService.isSupported.mockReturnValue(true);
+        Platform.OS = 'ios';
+
+        const { getByText } = render(
+            <NavigationContainer>
+                <PaymentMethodsScreen />
+            </NavigationContainer>
+        );
+
+        await waitFor(() => {
+            expect(getByText('Add Apple Pay')).toBeTruthy();
+        });
+
+        fireEvent.press(getByText('Add Apple Pay'));
+
         await waitFor(() => {
             expect(paymentService.createPaymentIntent).toHaveBeenCalled();
         });

@@ -1,29 +1,31 @@
-# Sprint 4: Google Pay Integration (TASK-024)
+# Sprint 4: Apple Pay & Google Pay Integration (TASK-023, TASK-024)
 
-This PR implements Google Pay payment flow for the Android version of the app.
+This PR implements Apple Pay and Google Pay payment flows using Stripe's `usePlatformPay` hook.
 
 ## Changes
+- **Apple Pay Integration** (`TASK-023`):
+    - Added "Add Apple Pay" button for iOS users.
+    - Implemented setup flow using `SetupIntent` to save payment methods securely.
+    - Integrated with `applePayService` for configuration and status checking.
 - **Google Pay Integration** (`TASK-024`):
-    - Implemented Google Pay flow using Stripe's `usePlatformPay` hook.
-    - Added "Add Google Pay" button to `PaymentMethodsScreen`.
-    - Integrated `googlePayService` utility for configuration and result processing.
-    - Automatically creates a Setup Intent and processes the payment/setup via Google Pay.
+    - Refined Google Pay flow to use `SetupIntent` (type: setup, amount: 0) for saving payment methods without charging.
+    - Added "Add Google Pay" button for Android users.
+    - Wired with environment configuration via `react-native-config`.
+    - Persists payment methods by calling `attachPaymentMethod` after successful confirmation.
 - **UI Enhancements**:
-    - Updated `PaymentMethodsScreen` footer to include both Google Pay and Card payment options.
-    - Improved loading states and error handling for the Google Pay flow.
-- **Service Layer**:
-    - Updated `googlePayService.ts` with helper methods for Stripe's Platform Pay configuration.
+    - Refactored `PaymentMethodsScreen` footer to provide platform-specific payment options (Apple Pay on iOS, Google Pay on Android).
+    - Improved loading states and error handling for platform payments.
 - **Tests**:
-    - Updated `PaymentMethodsScreen.test.tsx` to cover Google Pay button rendering and interaction.
-    - Added ESM module mapping in `jest.config.js` (`transformIgnorePatterns`) to correctly handle libraries like `immer`, `@reduxjs/toolkit`, and `react-redux` during tests. (This was added in the previous PR but is relevant for verification of current tests).
+    - Updated `PaymentMethodsScreen.test.tsx` to cover both Apple Pay and Google Pay rendering and logic.
+    - Mocked `Platform.OS` and platform services for comprehensive unit testing.
+    - Added ESM mapping in `jest.config.js` for library compatibility.
 
 ## Verification
-- **Unit Tests**: `npm test -- PaymentMethodsScreen.test.tsx CardPaymentScreen.test.tsx` passed.
-- **Lint**: `npm run lint` passed (minor warnings for inline styles).
-- **Manual Verification**: Verified button rendering on Android.
+- **Unit Tests**: `npm test -- PaymentMethodsScreen.test.tsx CardPaymentScreen.test.tsx` passed (6 tests).
+- **Lint**: `npm run lint` passed with zero errors.
 
 ## Tasks
 - [x] TASK-021: Payment methods screen (Completed)
 - [x] TASK-022: Card payment (Completed)
+- [x] TASK-023: Apple Pay Flow
 - [x] TASK-024: Google Pay Integration
-- [ ] TASK-023: Apple Pay (Next)

@@ -8,6 +8,7 @@ import { EmptyState } from '@components/common/EmptyState';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { paymentService } from '@services/payment/paymentService';
 import { googlePayService } from '@services/payment/googlePayService';
+import { applePayService } from '@services/payment/applePayService';
 import { PaymentMethod } from '@types/payment';
 import { usePlatformPay } from '@stripe/stripe-react-native';
 
@@ -17,7 +18,7 @@ export const PaymentMethodsScreen: React.FC = () => {
     const [methods, setMethods] = useState<PaymentMethod[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
-    const [googlePayLoading, setGooglePayLoading] = useState(false);
+    const [platformPayLoading, setPlatformPayLoading] = useState(false);
     const { isPlatformPaySupported, confirmPlatformPayPayment } = usePlatformPay();
 
     const fetchMethods = async () => {
@@ -71,7 +72,7 @@ export const PaymentMethodsScreen: React.FC = () => {
             return;
         }
 
-        setGooglePayLoading(true);
+        setPlatformPayLoading(true);
         try {
             // Check if Platform Pay is supported and initialized
             const supported = await isPlatformPaySupported();
@@ -130,7 +131,69 @@ export const PaymentMethodsScreen: React.FC = () => {
             console.error('Google Pay error', error);
             Alert.alert('Error', error instanceof Error ? error.message : 'Failed to process Google Pay');
         } finally {
-            setGooglePayLoading(false);
+            setPlatformPayLoading(false);
+        }
+    };
+
+    const handleAddApplePay = async () => {
+        if (!applePayService.isSupported()) {
+            Alert.alert('Not Available', 'Apple Pay is not available on this device.');
+            return;
+        }
+
+        setPlatformPayLoading(true);
+        try {
+            const supported = await isPlatformPaySupported();
+            if (!supported) {
+                throw new Error('Apple Pay is not supported on this device');
+            }
+
+            // Create a setup intent for saving payment method
+            const intent = await paymentService.createPaymentIntent(0, 'eur', {
+                type: 'setup',
+                metadata: { source: 'apple_pay' },
+            });
+
+            if (!intent.clientSecret) {
+                throw new Error('Failed to create setup intent');
+            }
+
+            // Confirm with Platform Pay (Apple Pay on iOS)
+            const result = await confirmPlatformPayPayment(intent.clientSecret, {
+                applePay: applePayService.getInitConfig() as any,
+            });
+
+            if (result.error) {
+                if (result.error.code === 'Canceled') {
+                    return;
+                }
+                throw new Error(result.error.message || 'Apple Pay failed');
+            }
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const anyResult = result as any;
+            const status = anyResult.paymentIntent?.status || anyResult.setupIntent?.status || 'Succeeded';
+
+            if (status !== 'Succeeded' && status !== 'RequiresCapture') {
+                throw new Error('Apple Pay confirmation failed with status: ' + status);
+            }
+
+            const paymentMethodId = anyResult.paymentMethod?.id ||
+                anyResult.paymentIntent?.paymentMethodId ||
+                anyResult.setupIntent?.paymentMethodId;
+
+            if (paymentMethodId) {
+                await paymentService.attachPaymentMethod(paymentMethodId);
+                Alert.alert('Success', 'Apple Pay added successfully');
+                fetchMethods();
+            } else {
+                throw new Error('No payment method retrieved from Apple Pay');
+            }
+        } catch (error) {
+            console.error('Apple Pay error', error);
+            Alert.alert('Error', error instanceof Error ? error.message : 'Failed to process Apple Pay');
+        } finally {
+            setPlatformPayLoading(false);
         }
     };
 
@@ -207,16 +270,32 @@ export const PaymentMethodsScreen: React.FC = () => {
             <View style={[styles.footer, { backgroundColor: theme.colors.neutral.surface, borderColor: theme.colors.neutral.border }]}>
                 {Platform.OS === 'android' && (
                     <TouchableOpacity
-                        style={[styles.googlePayButton, { backgroundColor: '#000' }]}
+                        style={[styles.platformButton, { backgroundColor: '#000' }]}
                         onPress={handleAddGooglePay}
-                        disabled={googlePayLoading}
+                        disabled={platformPayLoading}
                     >
-                        {googlePayLoading ? (
+                        {platformPayLoading ? (
                             <ActivityIndicator color="#fff" size="small" />
                         ) : (
                             <>
-                                <Icon name="google" size={20} color="#fff" style={styles.googlePayIcon} />
-                                <Text style={styles.googlePayText}>Add Google Pay</Text>
+                                <Icon name="google" size={20} color="#fff" style={styles.platformIcon} />
+                                <Text style={styles.platformText}>Add Google Pay</Text>
+                            </>
+                        )}
+                    </TouchableOpacity>
+                )}
+                {Platform.OS === 'ios' && (
+                    <TouchableOpacity
+                        style={[styles.platformButton, { backgroundColor: '#000' }]}
+                        onPress={handleAddApplePay}
+                        disabled={platformPayLoading}
+                    >
+                        {platformPayLoading ? (
+                            <ActivityIndicator color="#fff" size="small" />
+                        ) : (
+                            <>
+                                <Icon name="apple" size={20} color="#fff" style={styles.platformIcon} />
+                                <Text style={styles.platformText}>Add Apple Pay</Text>
                             </>
                         )}
                     </TouchableOpacity>
@@ -302,10 +381,19 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 12,
     },
-    googlePayIcon: {
+    platformButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 14,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        marginBottom: 12,
+    },
+    platformIcon: {
         marginRight: 8,
     },
-    googlePayText: {
+    platformText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '600',

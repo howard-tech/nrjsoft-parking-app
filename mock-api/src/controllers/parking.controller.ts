@@ -38,6 +38,31 @@ const mapGarageWithCoordinates = (garage: Garage, distanceMeters?: number) => {
     };
 };
 
+const championOverrides: Record<string, Partial<Garage & { evChargers?: number }>> = {
+    garage_tesla_hub_champion: {
+        features: { evChargers: 32, coveredParking: true, disabledAccess: true },
+        evChargers: 32,
+        policies: { prepayRequired: true, overstayPenalty: 25 },
+        hourlyRate: 4,
+    },
+    garage_budget_champion: {
+        hourlyRate: 0.5,
+        policies: { prepayRequired: false },
+        features: { evChargers: 2, coveredParking: false, disabledAccess: true },
+    },
+    garage_longstay_champion: {
+        maxTime: 43200,
+        features: { evChargers: 6, coveredParking: true, disabledAccess: true },
+    },
+    garage_shoreline_champion: {
+        features: { evChargers: 4, coveredParking: true, disabledAccess: true },
+    },
+    garage_downtown_central_champion: {
+        features: { evChargers: 4, coveredParking: true, disabledAccess: true },
+        policies: { prepayRequired: true, overstayPenalty: 15 },
+    },
+};
+
 export class ParkingController {
     // GET /parking/nearby
     getNearby = async (req: Request, res: Response): Promise<void> => {
@@ -89,31 +114,50 @@ export class ParkingController {
             ),
         }));
 
-        let sorted = withUpdatedAvailability;
+        const withChampionOverrides = withUpdatedAvailability.map((garage) => {
+            const override = championOverrides[garage.id];
+            if (!override) return garage;
+            return {
+                ...garage,
+                ...override,
+                features: {
+                    ...(garage.features ?? {}),
+                    ...(override.features ?? {}),
+                    ...(override.evChargers ? { evChargers: override.evChargers } : {}),
+                },
+                evChargers: override.evChargers ?? garage.evChargers,
+                policies: override.policies ?? garage.policies,
+                maxTime: override.maxTime ?? garage.maxTime,
+                hourlyRate: override.hourlyRate ?? garage.hourlyRate,
+            };
+        });
+
+        let sorted = withChampionOverrides;
         switch (sortBy) {
             case 'nearest':
-                sorted = [...withUpdatedAvailability].sort(
+                sorted = [...withChampionOverrides].sort(
                     (a, b) => (a.distanceMeters ?? 0) - (b.distanceMeters ?? 0)
                 );
                 break;
             case 'cheapest':
-                sorted = [...withUpdatedAvailability].sort(
+                sorted = [...withChampionOverrides].sort(
                     (a, b) => (a.hourlyRate ?? Number.MAX_VALUE) - (b.hourlyRate ?? Number.MAX_VALUE)
                 );
                 break;
             case 'ev_ready':
-                sorted = [...withUpdatedAvailability].sort(
+                sorted = [...withChampionOverrides].sort(
                     (a, b) =>
                         (b.features?.evChargers ?? b.evChargers ?? 0) -
                         (a.features?.evChargers ?? a.evChargers ?? 0)
                 );
                 break;
             case 'max_time':
-                sorted = [...withUpdatedAvailability].sort(
+                sorted = [...withChampionOverrides].sort(
                     (a, b) => (b.maxTime ?? 0) - (a.maxTime ?? 0)
                 );
                 break;
             default:
+                sorted = withChampionOverrides;
                 break;
         }
 

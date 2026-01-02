@@ -103,7 +103,9 @@ export class ParkingController {
                 break;
             case 'ev_ready':
                 sorted = [...withUpdatedAvailability].sort(
-                    (a, b) => (b.features?.evChargers ?? 0) - (a.features?.evChargers ?? 0)
+                    (a, b) =>
+                        (b.features?.evChargers ?? b.evChargers ?? 0) -
+                        (a.features?.evChargers ?? a.evChargers ?? 0)
                 );
                 break;
             case 'max_time':

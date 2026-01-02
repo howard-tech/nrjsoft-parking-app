@@ -18,6 +18,7 @@ export const paymentMethodStore: Map<string, PaymentMethod> = new Map();
 
 // Seed garages near emulator location for map testing
 seededGarages.forEach((garage) => {
+    const evChargers = garage.features?.evChargers ?? (garage as any).evChargers;
     const seeded: Garage = {
         id: garage.id,
         name: garage.name,
@@ -28,10 +29,11 @@ seededGarages.forEach((garage) => {
         totalSlots: garage.totalSpots ?? 100,
         hourlyRate: garage.pricing?.hourly ?? 2.5,
         currency: garage.pricing?.currency ?? 'EUR',
-        features: garage.features ?? {},
+        features: { ...(garage.features ?? {}), ...(evChargers ? { evChargers } : {}) },
         policies: garage.policies ?? { prepayRequired: false },
         maxTime: garage.maxTime,
         status: garage.status as Garage['status'],
+        evChargers,
     };
     garageStore.set(seeded.id, seeded);
 });

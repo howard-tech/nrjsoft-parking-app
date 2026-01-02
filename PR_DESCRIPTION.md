@@ -7,7 +7,7 @@ This PR implements Google Pay payment flow for the Android version of the app.
     - Implemented Google Pay flow using Stripe's `usePlatformPay` hook.
     - Added "Add Google Pay" button to `PaymentMethodsScreen`.
     - Integrated `googlePayService` utility for configuration and result processing.
-    - Automatically creates a Payment Intent and processes the payment/setup via Google Pay.
+    - Automatically creates a Setup Intent and processes the payment/setup via Google Pay.
 - **UI Enhancements**:
     - Updated `PaymentMethodsScreen` footer to include both Google Pay and Card payment options.
     - Improved loading states and error handling for the Google Pay flow.

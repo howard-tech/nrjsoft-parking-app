@@ -1,6 +1,6 @@
-# Sprint 4: Apple Pay & Google Pay Integration (TASK-023, TASK-024)
+# Sprint 4: Payment Hardening & New Flows (TASK-023 → TASK-027)
 
-This PR implements Apple Pay and Google Pay payment flows using Stripe's `usePlatformPay` hook.
+This PR hardens the platform pay flows (Apple Pay, Google Pay) and adds real charge/default/transaction history features.
 
 ## Changes
 - **Apple Pay Integration** (`TASK-023`):
@@ -14,14 +14,22 @@ This PR implements Apple Pay and Google Pay payment flows using Stripe's `usePla
     - Persists payment methods by calling `attachPaymentMethod` after successful confirmation.
 - **UI Enhancements**:
     - Refactored `PaymentMethodsScreen` footer to provide platform-specific payment options (Apple Pay on iOS, Google Pay on Android).
-    - Improved loading states and error handling for platform payments.
+    - Improved loading states, error handling (error/cancel), and type safety (Stripe PlatformPay result narrowing).
 - **Tests**:
-    - Updated `PaymentMethodsScreen.test.tsx` to cover both Apple Pay and Google Pay rendering and logic.
+    - Updated `PaymentMethodsScreen.test.tsx` to cover Apple/Google Pay success, cancel, and error paths.
     - Mocked `Platform.OS` and platform services for comprehensive unit testing.
     - Added ESM mapping in `jest.config.js` for library compatibility.
+- **Task-025: Process Payment / Charge Flow**
+    - Added `PaymentCheckoutScreen` to charge a real amount with a saved payment method.
+    - Added `paymentService.chargePayment` and mock API endpoint `/payments/charge`.
+- **Task-026: Default Payment Method UX**
+    - Added “Set Default” action in `PaymentMethodsScreen` and backend `/payment-methods/set-default`.
+- **Task-027: Transaction History & Receipts**
+    - Added `PaymentHistoryScreen` listing transactions from `/transactions`.
+    - Extended mock API with `/transactions` endpoint and receipt metadata.
 
 ## Verification
-- **Unit Tests**: `npm test -- PaymentMethodsScreen.test.tsx CardPaymentScreen.test.tsx` passed (6 tests).
+- **Unit Tests**: `npm test -- PaymentMethodsScreen.test.tsx CardPaymentScreen.test.tsx` passed (8 tests).
 - **Lint**: `npm run lint` passed with zero errors.
 
 ## Tasks

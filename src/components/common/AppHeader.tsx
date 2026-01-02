@@ -45,7 +45,13 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                         <Icon name="activity" color="white" size={24} />
                     </View>
                 )}
-                <Text style={[styles.title, { color: theme.colors.primary.contrast, marginLeft: showBack ? 8 : 0 }]}>
+                <Text
+                    style={[
+                        styles.title,
+                        showBack ? styles.titleWithBack : null,
+                        { color: theme.colors.primary.contrast },
+                    ]}
+                >
                     {title}
                 </Text>
             </View>
@@ -95,6 +101,9 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: '600',
+    },
+    titleWithBack: {
+        marginLeft: 8,
     },
     notificationButton: {
         position: 'relative',

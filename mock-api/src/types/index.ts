@@ -112,6 +112,9 @@ export interface Transaction {
     status: 'pending' | 'completed' | 'failed';
     createdAt: string;
     sessionId?: string;
+    paymentMethodId?: string;
+    paymentMethodType?: PaymentMethod['type'];
+    receiptUrl?: string;
 }
 
 // Payment method type

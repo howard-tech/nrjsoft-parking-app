@@ -29,6 +29,8 @@ export type WalletStackParamList = {
     PaymentMethods: undefined;
     AddPaymentMethod: undefined;
     Subscriptions: undefined;
+    PaymentHistory: undefined;
+    PaymentCheckout: { amount?: number } | undefined;
 };
 
 // History Stack

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { PaymentMethod } from '../types';
-import { paymentMethodStore } from '../services/data.store';
+import { PaymentMethod, Transaction } from '../types';
+import { paymentMethodStore, transactionStore, walletStore } from '../services/data.store';
 
 export class PaymentController {
     // GET /payment-methods
@@ -84,6 +84,81 @@ export class PaymentController {
         res.status(201).json(paymentMethod);
     };
 
+    // POST /payment-methods/attach (accepts id + type)
+    attachPaymentMethod = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+        const { paymentMethodId, type = 'card', isDefault } = req.body;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const newMethod: PaymentMethod = {
+            id: paymentMethodId || `pm_${Date.now()}`,
+            userId,
+            type,
+            last4: type === 'card' ? '4242' : undefined,
+            brand: type === 'card' ? 'Visa' : undefined,
+            isDefault: Boolean(isDefault),
+            createdAt: new Date().toISOString(),
+        };
+
+        if (isDefault) {
+            Array.from(paymentMethodStore.values())
+                .filter((pm) => pm.userId === userId)
+                .forEach((pm) => paymentMethodStore.set(pm.id, { ...pm, isDefault: false }));
+        }
+
+        paymentMethodStore.set(newMethod.id, newMethod);
+
+        res.json(newMethod);
+    };
+
+    // POST /payment-methods/detach
+    detachPaymentMethod = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+        const { paymentMethodId } = req.body;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const paymentMethod = paymentMethodStore.get(paymentMethodId);
+        if (!paymentMethod || paymentMethod.userId !== userId) {
+            res.status(404).json({ error: 'Payment method not found' });
+            return;
+        }
+
+        paymentMethodStore.delete(paymentMethodId);
+        res.json({ success: true, message: 'Payment method detached' });
+    };
+
+    // POST /payment-methods/set-default
+    setDefaultPaymentMethod = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+        const { paymentMethodId } = req.body;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const target = paymentMethodStore.get(paymentMethodId);
+        if (!target || target.userId !== userId) {
+            res.status(404).json({ error: 'Payment method not found' });
+            return;
+        }
+
+        // unset others
+        Array.from(paymentMethodStore.values())
+            .filter((pm) => pm.userId === userId)
+            .forEach((pm) => paymentMethodStore.set(pm.id, { ...pm, isDefault: pm.id === paymentMethodId }));
+
+        res.json({ success: true });
+    };
+
     // DELETE /payment-methods/:id
     deletePaymentMethod = async (req: Request, res: Response): Promise<void> => {
         const userId = req.user?.id;
@@ -109,21 +184,23 @@ export class PaymentController {
     // POST /payments/intents
     createPaymentIntent = async (req: Request, res: Response): Promise<void> => {
         const userId = req.user?.id;
-        const { amount, currency = 'EUR', description, sessionId } = req.body;
+        const { amount, currency = 'EUR', description, sessionId, type = 'payment' } = req.body;
 
         if (!userId) {
             res.status(401).json({ error: 'Unauthorized' });
             return;
         }
 
-        if (!amount || amount <= 0) {
-            res.status(400).json({ error: 'Valid amount required' });
-            return;
+        if (type !== 'setup') {
+            if (!amount || amount <= 0) {
+                res.status(400).json({ error: 'Valid amount required' });
+                return;
+            }
         }
 
         const intent = {
             id: `pi_${Date.now()}`,
-            amount,
+            amount: type === 'setup' ? 0 : amount,
             currency,
             description,
             sessionId,
@@ -156,6 +233,58 @@ export class PaymentController {
             intentId,
             status: 'succeeded',
             message: 'Payment completed successfully',
+        });
+    };
+
+    // POST /payments/charge (realistic payment flow)
+    chargePayment = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+        const { amount, currency = 'EUR', paymentMethodId, description } = req.body;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        if (!amount || amount <= 0 || !paymentMethodId) {
+            res.status(400).json({ error: 'Amount and paymentMethodId required' });
+            return;
+        }
+
+        const method = paymentMethodStore.get(paymentMethodId);
+        if (!method || method.userId !== userId) {
+            res.status(404).json({ error: 'Payment method not found' });
+            return;
+        }
+
+        const transaction: Transaction = {
+            id: `tx_${Date.now()}`,
+            walletId: `wallet_${userId}`,
+            userId,
+            type: 'payment',
+            amount,
+            currency,
+            description: description || 'Parking payment',
+            status: 'completed',
+            createdAt: new Date().toISOString(),
+            paymentMethodId,
+            paymentMethodType: method.type,
+            receiptUrl: `https://example.com/receipt/${Date.now()}`,
+        };
+
+        transactionStore.set(transaction.id, transaction);
+
+        // Optionally update wallet balance
+        const wallet = walletStore.get(transaction.walletId);
+        if (wallet) {
+            wallet.balance = Math.max(0, wallet.balance - amount);
+            walletStore.set(wallet.id, wallet);
+        }
+
+        res.json({
+            success: true,
+            transaction,
+            message: 'Payment processed',
         });
     };
 
@@ -195,5 +324,18 @@ export class PaymentController {
             amount,
             message: 'Google Pay payment successful',
         });
+    };
+
+    // GET /transactions
+    getTransactions = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const txs = Array.from(transactionStore.values()).filter((tx) => tx.userId === userId);
+        res.json({ items: txs, total: txs.length });
     };
 }

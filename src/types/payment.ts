@@ -9,6 +9,7 @@ export interface PaymentMethod {
     expYear?: number;
     isDefault?: boolean;
     label?: string;
+    createdAt?: string;
 }
 
 export type PaymentIntentStatus = 'requires_payment_method' | 'requires_confirmation' | 'processing' | 'succeeded' | 'canceled';
@@ -28,4 +29,18 @@ export interface PaymentResult {
     receiptUrl?: string;
     errorMessage?: string;
     status?: PaymentIntentStatus;
+}
+
+export type TransactionStatus = 'pending' | 'completed' | 'failed';
+
+export interface Transaction {
+    id: string;
+    amount: number;
+    currency: string;
+    description?: string;
+    status: TransactionStatus;
+    createdAt: string;
+    paymentMethodId?: string;
+    paymentMethodType?: PaymentMethodType;
+    receiptUrl?: string;
 }

@@ -1,5 +1,5 @@
 import { apiClient } from '@services/api';
-import { PaymentIntent, PaymentMethod, PaymentResult } from '@types/payment';
+import { PaymentIntent, PaymentMethod, PaymentResult, Transaction } from '@types/payment';
 import { stripeService } from './stripeService';
 import { applePayService } from './applePayService';
 import { googlePayService } from './googlePayService';
@@ -18,12 +18,16 @@ export const paymentService = {
         return response.data?.data ?? response.data?.methods ?? [];
     },
 
-    attachPaymentMethod: async (paymentMethodId: string): Promise<void> => {
-        await apiClient.post('/payment-methods/attach', { paymentMethodId });
+    attachPaymentMethod: async (paymentMethodId: string, type?: PaymentMethod['type']): Promise<void> => {
+        await apiClient.post('/payment-methods/attach', { paymentMethodId, type });
     },
 
     detachPaymentMethod: async (paymentMethodId: string): Promise<void> => {
         await apiClient.post('/payment-methods/detach', { paymentMethodId });
+    },
+
+    setDefaultPaymentMethod: async (paymentMethodId: string): Promise<void> => {
+        await apiClient.post('/payment-methods/set-default', { paymentMethodId });
     },
 
     createPaymentIntent: async (
@@ -65,4 +69,24 @@ export const paymentService = {
 
     processGooglePay: async (clientSecret: string): Promise<PaymentResult> =>
         googlePayService.confirmGooglePay(clientSecret),
+
+    chargePayment: async (
+        amount: number,
+        currency: string,
+        paymentMethodId: string,
+        description?: string
+    ): Promise<PaymentResult> => {
+        const response = await apiClient.post<{ data?: PaymentResult; result?: PaymentResult }>(
+            '/payments/charge',
+            { amount, currency, paymentMethodId, description }
+        );
+        return response.data?.data ?? response.data?.result ?? { success: true };
+    },
+
+    getTransactions: async (): Promise<Transaction[]> => {
+        const response = await apiClient.get<{ data?: Transaction[]; items?: Transaction[] }>(
+            '/transactions'
+        );
+        return response.data?.data ?? response.data?.items ?? [];
+    },
 };

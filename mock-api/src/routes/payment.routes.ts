@@ -16,4 +16,7 @@ router.post('/apple-pay', controller.processApplePay);
 // POST /payments/google-pay
 router.post('/google-pay', controller.processGooglePay);
 
+// POST /payments/charge
+router.post('/charge', controller.chargePayment);
+
 export default router;

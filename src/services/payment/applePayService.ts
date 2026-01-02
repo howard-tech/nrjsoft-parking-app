@@ -1,6 +1,7 @@
 import { PaymentResult } from '@types/payment';
 import { Platform } from 'react-native';
 import Config from 'react-native-config';
+import { PlatformPay } from '@stripe/stripe-react-native';
 
 export const applePayService = {
     /**
@@ -14,10 +15,20 @@ export const applePayService = {
      * Get Apple Pay initialization config
      */
     getInitConfig: () => {
+        const countryCode = Config.PAYMENT_COUNTRY_CODE || 'DE';
+        const currencyCode = Config.PAYMENT_CURRENCY_CODE || 'EUR';
+        const merchantName = Config.APP_NAME || 'NRJSoft Parking';
         return {
             merchantIdentifier: Config.STRIPE_MERCHANT_ID || 'merchant.com.nrjsoft.parking',
-            countryCode: 'DE',
-            currencyCode: 'EUR',
+            countryCode,
+            currencyCode,
+            cartItems: [
+                {
+                    label: merchantName,
+                    amount: '0.00',
+                    paymentType: PlatformPay.PaymentType.Immediate,
+                },
+            ],
         };
     },
 

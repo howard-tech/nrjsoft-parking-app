@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
@@ -10,7 +10,8 @@ import { paymentService } from '@services/payment/paymentService';
 import { googlePayService } from '@services/payment/googlePayService';
 import { applePayService } from '@services/payment/applePayService';
 import { PaymentMethod } from '@types/payment';
-import { usePlatformPay } from '@stripe/stripe-react-native';
+import { PlatformPay, usePlatformPay } from '@stripe/stripe-react-native';
+import Config from 'react-native-config';
 
 export const PaymentMethodsScreen: React.FC = () => {
     const theme = useTheme();
@@ -19,9 +20,12 @@ export const PaymentMethodsScreen: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [platformPayLoading, setPlatformPayLoading] = useState(false);
+    const [defaultUpdating, setDefaultUpdating] = useState<string | null>(null);
     const { isPlatformPaySupported, confirmPlatformPayPayment } = usePlatformPay();
+    const countryCode = Config.PAYMENT_COUNTRY_CODE || 'DE';
+    const currencyCode = Config.PAYMENT_CURRENCY_CODE || 'EUR';
 
-    const fetchMethods = async () => {
+    const fetchMethods = useCallback(async () => {
         try {
             const data = await paymentService.getPaymentMethods();
             setMethods(data);
@@ -32,15 +36,27 @@ export const PaymentMethodsScreen: React.FC = () => {
             setLoading(false);
             setRefreshing(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchMethods();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [fetchMethods]);
 
     const handleAddMethod = () => {
         navigation.navigate('AddPaymentMethod' as never);
+    };
+
+    const handleSetDefault = async (id: string) => {
+        setDefaultUpdating(id);
+        try {
+            await paymentService.setDefaultPaymentMethod(id);
+            fetchMethods();
+        } catch (error) {
+            console.error('Failed to set default payment method', error);
+            Alert.alert('Error', 'Could not set default payment method. Please try again.');
+        } finally {
+            setDefaultUpdating(null);
+        }
     };
 
     const handleDeleteMethod = (id: string) => {
@@ -66,6 +82,28 @@ export const PaymentMethodsScreen: React.FC = () => {
         );
     };
 
+    const extractPlatformPayResult = (
+        result: PlatformPay.ConfirmPaymentResult | PlatformPay.ConfirmSetupIntentResult
+    ) => {
+        if ('paymentIntent' in result && result.paymentIntent) {
+            return {
+                paymentMethodId: result.paymentIntent.paymentMethodId,
+                status: result.paymentIntent.status,
+                paymentMethod: result.paymentIntent.paymentMethod,
+            };
+        }
+
+        if ('setupIntent' in result && result.setupIntent) {
+            return {
+                paymentMethodId: result.setupIntent.paymentMethodId,
+                status: result.setupIntent.status,
+                paymentMethod: result.setupIntent.paymentMethod,
+            };
+        }
+
+        return { paymentMethodId: undefined, status: undefined, paymentMethod: undefined };
+    };
+
     const handleAddGooglePay = async () => {
         if (!googlePayService.isSupported()) {
             Alert.alert('Not Available', 'Google Pay is not available on this device.');
@@ -81,7 +119,7 @@ export const PaymentMethodsScreen: React.FC = () => {
             }
 
             // Create a setup intent for saving payment method (amount=0, type='setup')
-            const intent = await paymentService.createPaymentIntent(0, 'eur', {
+            const intent = await paymentService.createPaymentIntent(0, currencyCode.toLowerCase(), {
                 type: 'setup',
                 metadata: { source: 'google_pay' },
             });
@@ -93,9 +131,12 @@ export const PaymentMethodsScreen: React.FC = () => {
             // Confirm with Platform Pay (Google Pay on Android)
             const result = await confirmPlatformPayPayment(intent.clientSecret, {
                 googlePay: {
-                    ...googlePayService.getInitConfig(),
-                    currencyCode: 'EUR',
-                } as Parameters<typeof confirmPlatformPayPayment>[1]['googlePay'],
+                    ...googlePayService.getInitConfig({
+                        countryCode,
+                        currencyCode,
+                    }),
+                    currencyCode,
+                },
             });
 
             if (result.error) {
@@ -107,21 +148,15 @@ export const PaymentMethodsScreen: React.FC = () => {
             }
 
             // Inspect result status. Platform Pay can return paymentIntent or setupIntent.
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const anyResult = result as any;
-            const status = anyResult.paymentIntent?.status || anyResult.setupIntent?.status || 'Succeeded';
+            const { paymentMethodId, status } = extractPlatformPayResult(result);
+            const normalizedStatus = status ?? 'Succeeded';
 
-            if (status !== 'Succeeded' && status !== 'RequiresCapture') {
-                throw new Error('Google Pay confirmation failed with status: ' + status);
+            if (normalizedStatus !== 'Succeeded' && normalizedStatus !== 'RequiresCapture') {
+                throw new Error('Google Pay confirmation failed with status: ' + normalizedStatus);
             }
 
-            // 3. Extract paymentMethodId and attach to user server-side
-            const paymentMethodId = anyResult.paymentMethod?.id ||
-                anyResult.paymentIntent?.paymentMethodId ||
-                anyResult.setupIntent?.paymentMethodId;
-
             if (paymentMethodId) {
-                await paymentService.attachPaymentMethod(paymentMethodId);
+                await paymentService.attachPaymentMethod(paymentMethodId, 'google_pay');
                 Alert.alert('Success', 'Google Pay added successfully');
                 fetchMethods();
             } else {
@@ -149,7 +184,7 @@ export const PaymentMethodsScreen: React.FC = () => {
             }
 
             // Create a setup intent for saving payment method
-            const intent = await paymentService.createPaymentIntent(0, 'eur', {
+            const intent = await paymentService.createPaymentIntent(0, currencyCode.toLowerCase(), {
                 type: 'setup',
                 metadata: { source: 'apple_pay' },
             });
@@ -160,7 +195,7 @@ export const PaymentMethodsScreen: React.FC = () => {
 
             // Confirm with Platform Pay (Apple Pay on iOS)
             const result = await confirmPlatformPayPayment(intent.clientSecret, {
-                applePay: applePayService.getInitConfig() as any,
+                applePay: applePayService.getInitConfig(),
             });
 
             if (result.error) {
@@ -170,20 +205,15 @@ export const PaymentMethodsScreen: React.FC = () => {
                 throw new Error(result.error.message || 'Apple Pay failed');
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const anyResult = result as any;
-            const status = anyResult.paymentIntent?.status || anyResult.setupIntent?.status || 'Succeeded';
+            const { paymentMethodId, status } = extractPlatformPayResult(result);
+            const normalizedStatus = status ?? 'Succeeded';
 
-            if (status !== 'Succeeded' && status !== 'RequiresCapture') {
-                throw new Error('Apple Pay confirmation failed with status: ' + status);
+            if (normalizedStatus !== 'Succeeded' && normalizedStatus !== 'RequiresCapture') {
+                throw new Error('Apple Pay confirmation failed with status: ' + normalizedStatus);
             }
 
-            const paymentMethodId = anyResult.paymentMethod?.id ||
-                anyResult.paymentIntent?.paymentMethodId ||
-                anyResult.setupIntent?.paymentMethodId;
-
             if (paymentMethodId) {
-                await paymentService.attachPaymentMethod(paymentMethodId);
+                await paymentService.attachPaymentMethod(paymentMethodId, 'apple_pay');
                 Alert.alert('Success', 'Apple Pay added successfully');
                 fetchMethods();
             } else {
@@ -217,6 +247,19 @@ export const PaymentMethodsScreen: React.FC = () => {
                         <View style={[styles.badge, { backgroundColor: theme.colors.success.light }]}>
                             <Text style={[styles.badgeText, { color: theme.colors.success.main }]}>Default</Text>
                         </View>
+                    )}
+                    {!item.isDefault && (
+                        <TouchableOpacity
+                            onPress={() => handleSetDefault(item.id)}
+                            style={styles.setDefaultBtn}
+                            disabled={defaultUpdating === item.id}
+                        >
+                            {defaultUpdating === item.id ? (
+                                <ActivityIndicator color={theme.colors.primary.main} size="small" />
+                            ) : (
+                                <Text style={[styles.setDefaultText, { color: theme.colors.primary.main }]}>Set Default</Text>
+                            )}
+                        </TouchableOpacity>
                     )}
                     <TouchableOpacity onPress={() => handleDeleteMethod(item.id)} style={styles.deleteBtn}>
                         <Icon name="trash-can-outline" size={20} color={theme.colors.error.main} />
@@ -270,7 +313,7 @@ export const PaymentMethodsScreen: React.FC = () => {
             <View style={[styles.footer, { backgroundColor: theme.colors.neutral.surface, borderColor: theme.colors.neutral.border }]}>
                 {Platform.OS === 'android' && (
                     <TouchableOpacity
-                        style={[styles.platformButton, { backgroundColor: '#000' }]}
+                        style={[styles.platformButton, styles.platformButtonDark]}
                         onPress={handleAddGooglePay}
                         disabled={platformPayLoading}
                     >
@@ -286,7 +329,7 @@ export const PaymentMethodsScreen: React.FC = () => {
                 )}
                 {Platform.OS === 'ios' && (
                     <TouchableOpacity
-                        style={[styles.platformButton, { backgroundColor: '#000' }]}
+                        style={[styles.platformButton, styles.platformButtonDark]}
                         onPress={handleAddApplePay}
                         disabled={platformPayLoading}
                     >
@@ -301,6 +344,8 @@ export const PaymentMethodsScreen: React.FC = () => {
                     </TouchableOpacity>
                 )}
                 <Button title="Add Card" onPress={handleAddMethod} />
+                <Button title="Process Payment" onPress={() => navigation.navigate('PaymentCheckout' as never)} />
+                <Button title="Transaction History" onPress={() => navigation.navigate('PaymentHistory' as never)} />
             </View>
         </View>
     );
@@ -358,6 +403,18 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '500',
     },
+    setDefaultBtn: {
+        marginRight: 12,
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: '#CBD5E1',
+    },
+    setDefaultText: {
+        fontSize: 12,
+        fontWeight: '600',
+    },
     deleteBtn: {
         padding: 4,
     },
@@ -389,6 +446,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         borderRadius: 8,
         marginBottom: 12,
+    },
+    platformButtonDark: {
+        backgroundColor: '#000',
     },
     platformIcon: {
         marginRight: 8,

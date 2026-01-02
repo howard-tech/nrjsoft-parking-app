@@ -29,7 +29,8 @@ export const googlePayService = {
         const {
             testEnv = Config.GOOGLE_PAY_ENVIRONMENT !== 'PRODUCTION',
             merchantName = Config.APP_NAME || 'NRJSoft Parking',
-            countryCode = 'DE',
+            countryCode = Config.PAYMENT_COUNTRY_CODE || 'DE',
+            currencyCode = Config.PAYMENT_CURRENCY_CODE || 'EUR',
         } = config;
 
         return {
@@ -37,6 +38,8 @@ export const googlePayService = {
             merchantName,
             merchantCountryCode: countryCode,
             countryCode,
+            currencyCode,
+            amount: 0,
             billingAddressConfig: {
                 format: 'Full' as string, // Use 'Full' or 'Min' based on SDK requirements
                 isRequired: false,

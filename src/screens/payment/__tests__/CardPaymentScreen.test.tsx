@@ -24,7 +24,7 @@ jest.mock('@stripe/stripe-react-native', () => ({
     useStripe: () => ({
         createPaymentMethod: jest.fn().mockResolvedValue({
             paymentMethod: { id: 'pm_123' },
-            error: undefined
+            error: undefined,
         }),
     }),
     CardField: ({ onCardChange: _onCardChange }: { onCardChange: (details: { complete: boolean }) => void }) => {

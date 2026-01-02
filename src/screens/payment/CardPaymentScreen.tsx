@@ -13,6 +13,14 @@ export const CardPaymentScreen: React.FC = () => {
     const { createPaymentMethod } = useStripe();
     const [loading, setLoading] = useState(false);
     const [cardDetailsComplete, setCardDetailsComplete] = useState(false);
+    const cardFieldStyle = {
+        backgroundColor: theme.colors.neutral.surface,
+        textColor: theme.colors.neutral.textPrimary,
+        placeholderColor: theme.colors.neutral.textSecondary,
+        borderColor: theme.colors.neutral.border,
+        borderWidth: 1,
+        borderRadius: 8,
+    };
 
     const handleSaveCard = async () => {
         if (!cardDetailsComplete) {
@@ -28,7 +36,7 @@ export const CardPaymentScreen: React.FC = () => {
                 throw new Error(error?.message || 'Unable to create payment method');
             }
 
-            await paymentService.attachPaymentMethod(paymentMethod.id);
+            await paymentService.attachPaymentMethod(paymentMethod.id, 'card');
             Alert.alert('Success', 'Card added successfully');
             navigation.goBack();
         } catch (error) {
@@ -48,14 +56,7 @@ export const CardPaymentScreen: React.FC = () => {
                     <CardField
                         postalCodeEnabled={false}
                         style={styles.cardField}
-                        cardStyle={{
-                            backgroundColor: theme.colors.neutral.surface,
-                            textColor: theme.colors.neutral.textPrimary,
-                            placeholderColor: theme.colors.neutral.textSecondary,
-                            borderColor: theme.colors.neutral.border,
-                            borderWidth: 1,
-                            borderRadius: 8,
-                        }}
+                        cardStyle={cardFieldStyle}
                         onCardChange={(cardDetails) => {
                             setCardDetailsComplete(cardDetails.complete);
                         }}

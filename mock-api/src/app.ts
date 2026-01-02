@@ -16,6 +16,7 @@ import paymentRoutes from './routes/payment.routes';
 import onstreetRoutes from './routes/onstreet.routes';
 import notificationRoutes from './routes/notification.routes';
 import deviceRoutes from './routes/device.routes';
+import transactionRoutes from './routes/transactions.routes';
 import adminRoutes, { initializeGeneratedData } from './routes/admin.routes';
 
 import { authMiddleware } from './middleware/auth';
@@ -76,6 +77,7 @@ app.get('/api/v1', (req, res) => {
             '/api/v1/wallet',
             '/api/v1/payment-methods',
             '/api/v1/payments',
+            '/api/v1/transactions',
             '/api/v1/onstreet',
             '/api/v1/notifications',
             '/api/v1/devices',
@@ -93,6 +95,7 @@ app.use('/api/v1/sessions', authMiddleware, sessionRoutes);
 app.use('/api/v1/wallet', authMiddleware, walletRoutes);
 app.use('/api/v1/payment-methods', authMiddleware, paymentMethodsRoutes);
 app.use('/api/v1/payments', authMiddleware, paymentRoutes);
+app.use('/api/v1/transactions', authMiddleware, transactionRoutes);
 app.use('/api/v1/onstreet', authMiddleware, onstreetRoutes);
 app.use('/api/v1/notifications', authMiddleware, notificationRoutes);
 app.use('/api/v1/devices', authMiddleware, deviceRoutes);

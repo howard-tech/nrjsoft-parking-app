@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -13,9 +13,11 @@ import {
 import { useTheme } from '@theme';
 import { useLocation } from '@hooks/useLocation';
 import { onStreetService, OnStreetSession, OnStreetZone } from '@services/onstreet/onStreetService';
+import { notificationService } from '@services/notifications/notificationService';
 
 const DEFAULT_DURATION = 60;
 const DEFAULT_PLATE = 'DEMO-123';
+const REMINDER_THRESHOLD_MIN = 5;
 
 export const OnStreetParkingScreen: React.FC = () => {
     const theme = useTheme();
@@ -30,6 +32,8 @@ export const OnStreetParkingScreen: React.FC = () => {
     const [duration, setDuration] = useState<number>(DEFAULT_DURATION);
     const [activeSession, setActiveSession] = useState<OnStreetSession | null>(null);
     const [actionLoading, setActionLoading] = useState(false);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const reminderFiredRef = useRef(false);
 
     const themedStyles = useMemo(
         () =>
@@ -86,6 +90,37 @@ export const OnStreetParkingScreen: React.FC = () => {
         }
     }, [coords, fetchActiveSession, fetchZones]);
 
+    // Countdown for remaining minutes
+    useEffect(() => {
+        if (!activeSession?.remainingMinutes) {
+            return;
+        }
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
+        reminderFiredRef.current = false;
+        timerRef.current = setInterval(() => {
+            setActiveSession((session) => {
+                if (!session?.remainingMinutes) return session;
+                const nextRemaining = Math.max(0, session.remainingMinutes - 1);
+                if (nextRemaining <= REMINDER_THRESHOLD_MIN && !reminderFiredRef.current) {
+                    reminderFiredRef.current = true;
+                    notificationService.presentLocalNotification({
+                        title: 'Parking nearly up',
+                        body: `Your on-street session ends in ${nextRemaining} minutes.`,
+                    }).catch((err) => console.warn('Failed to fire reminder notification', err));
+                }
+                return { ...session, remainingMinutes: nextRemaining };
+            });
+        }, 60_000);
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+            }
+        };
+    }, [activeSession?.remainingMinutes]);
+
     const handleStart = useCallback(async () => {
         if (!activeZone) return;
         setActionLoading(true);
@@ -112,6 +147,7 @@ export const OnStreetParkingScreen: React.FC = () => {
             const session = await onStreetService.extendSession(activeSession.id, 15);
             if (session) {
                 setActiveSession(session);
+                reminderFiredRef.current = false;
                 Alert.alert('Extended', 'Session extended by 15 minutes.');
             }
         } catch (err) {

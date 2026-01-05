@@ -1,5 +1,8 @@
 # Sprint 1 Release Notes
 
+## Status
+- Completed (Scope delivered as planned)
+
 ## Scope
 - Foundations, mock API, and initial app shell: TASK-052, TASK-053, TASK-054, TASK-001, TASK-002, TASK-003, TASK-041, TASK-055.
 

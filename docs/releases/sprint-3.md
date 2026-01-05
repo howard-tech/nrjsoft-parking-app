@@ -1,5 +1,8 @@
 # Sprint 3 Release Notes
 
+## Status
+- Completed (Map & platform hardening scope delivered; subsequent demo refresh merged in Sprint 4)
+
 ## Scope
 - Smart map and platform hardening: TASK-010, TASK-011, TASK-012, TASK-013, TASK-014, TASK-048, TASK-049, TASK-050, TASK-051.
 
@@ -14,8 +17,8 @@
 - Task-050: Firebase analytics/perf/crashlytics services with navigation screen tracking, user ID sync, and error boundary reporting.
 - Task-051: security layer (Keychain/encrypted storage helpers, biometrics, device integrity checks, screen secure mode, SSL-pinned client).
 
-## In Progress
-- Next: begin Sprint 4 parking session features (TASK-015+).
+## Next
+- Sprint 4 (sessions/payments) has been delivered; see sprint-4.md for details.
 
 ## Testing
 - Lint: `npm run lint`

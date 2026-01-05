@@ -1,5 +1,8 @@
 # Sprint 2 Release Notes
 
+## Status
+- Completed (Auth & services scope delivered)
+
 ## Scope
 - Auth & services deliverables: TASK-004, TASK-005, TASK-006, TASK-046, TASK-007, TASK-008, TASK-009, TASK-033.
 

@@ -5,6 +5,11 @@ export interface OnStreetZone {
     name: string;
     latitude: number;
     longitude: number;
+    type?: string;
+    hourlyRate?: number;
+    maxDuration?: number;
+    currency?: string;
+    restrictions?: string;
     status?: 'available' | 'limited' | 'full';
     distanceMeters?: number;
     ratePerHour?: number;

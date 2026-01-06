@@ -25,6 +25,6 @@ export const inboxService = {
     },
 
     async markRead(id: string): Promise<void> {
-        await apiClient.post(`/notifications/${id}/read`);
+        await apiClient.put(`/notifications/${id}/read`);
     },
 };

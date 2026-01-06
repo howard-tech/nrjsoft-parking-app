@@ -15,6 +15,7 @@ import { MainTabNavigator } from './MainTabNavigator';
 import OnStreetStack from './stacks/OnStreetStack';
 import { PlaceholderScreen } from '@screens/common/PlaceholderScreen';
 import { SessionReceiptScreen } from '@screens/parking/SessionReceiptScreen';
+import NotificationsScreen from '@screens/notifications/NotificationsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -66,7 +67,7 @@ export const RootNavigator: React.FC = () => {
                         />
                         <Stack.Screen
                             name="Notifications"
-                            component={PlaceholderScreen}
+                            component={NotificationsScreen}
                             options={{
                                 presentation: 'modal',
                                 headerShown: true,

@@ -1,19 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
 import { AppHeader } from '@components/common/AppHeader';
+import { accountService } from '@services/account/accountService';
 
 export const AddVehicleScreen: React.FC = () => {
     const theme = useTheme();
+    const navigation = useNavigation();
     const [plate, setPlate] = useState('');
     const [model, setModel] = useState('');
+    const [saving, setSaving] = useState(false);
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!plate.trim()) {
             Alert.alert('Plate required', 'Please enter a license plate.');
             return;
         }
-        Alert.alert('Saved', 'Vehicle saved locally (stub).');
+        setSaving(true);
+        try {
+            await accountService.addVehicle({
+                plate: plate.trim(),
+                model: model.trim() || undefined,
+                isDefault: false,
+            });
+            Alert.alert('Saved', 'Vehicle added.');
+            navigation.goBack();
+        } catch (err) {
+            console.warn('Failed to add vehicle', err);
+            Alert.alert('Error', 'Could not save vehicle.');
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
@@ -59,8 +77,11 @@ export const AddVehicleScreen: React.FC = () => {
                     onPress={handleSave}
                     accessibilityRole="button"
                     accessibilityLabel="Save vehicle"
+                    disabled={saving}
                 >
-                    <Text style={[styles.saveText, { color: theme.colors.primary.contrast }]}>Save</Text>
+                    <Text style={[styles.saveText, { color: theme.colors.primary.contrast }]}>
+                        {saving ? 'Saving...' : 'Save'}
+                    </Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>

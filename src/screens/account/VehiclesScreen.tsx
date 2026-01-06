@@ -1,15 +1,62 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
-
-type Vehicle = { id: string; plate: string; model?: string; isDefault?: boolean };
+import { accountService, Vehicle } from '@services/account/accountService';
 
 export const VehiclesScreen: React.FC = () => {
     const theme = useTheme();
     const navigation = useNavigation();
-    const [vehicles] = useState<Vehicle[]>([]);
+    const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const loadVehicles = async () => {
+        setLoading(true);
+        try {
+            const data = await accountService.getVehicles();
+            setVehicles(data);
+        } catch (err) {
+            console.warn('Failed to load vehicles', err);
+            Alert.alert('Error', 'Unable to load vehicles right now.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', loadVehicles);
+        return unsubscribe;
+    }, [navigation]);
+
+    const handleSetDefault = async (vehicleId: string) => {
+        try {
+            const updated = await accountService.setDefaultVehicle(vehicleId);
+            setVehicles((prev) => prev.map((v) => ({ ...v, isDefault: v.id === updated.id })));
+        } catch (err) {
+            console.warn('Failed to set default vehicle', err);
+            Alert.alert('Error', 'Could not set default vehicle.');
+        }
+    };
+
+    const handleDelete = async (vehicleId: string) => {
+        Alert.alert('Delete vehicle', 'Are you sure you want to delete this vehicle?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: async () => {
+                    try {
+                        await accountService.deleteVehicle(vehicleId);
+                        setVehicles((prev) => prev.filter((v) => v.id !== vehicleId));
+                    } catch (err) {
+                        console.warn('Failed to delete vehicle', err);
+                        Alert.alert('Error', 'Could not delete vehicle.');
+                    }
+                },
+            },
+        ]);
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}>
@@ -30,6 +77,8 @@ export const VehiclesScreen: React.FC = () => {
                 data={vehicles}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.list}
+                refreshing={loading}
+                onRefresh={loadVehicles}
                 renderItem={({ item }) => (
                     <View
                         style={[
@@ -52,15 +101,37 @@ export const VehiclesScreen: React.FC = () => {
                         {item.isDefault && (
                             <Text style={[styles.badge, { color: theme.colors.success.main }]}>Default</Text>
                         )}
+                        <View style={styles.row}>
+                            {!item.isDefault ? (
+                                <TouchableOpacity
+                                    onPress={() => handleSetDefault(item.id)}
+                                    accessibilityRole="button"
+                                    accessibilityLabel="Set default vehicle"
+                                >
+                                    <Text style={[styles.action, { color: theme.colors.primary.main }]}>Set default</Text>
+                                </TouchableOpacity>
+                            ) : null}
+                            <TouchableOpacity
+                                onPress={() => handleDelete(item.id)}
+                                accessibilityRole="button"
+                                accessibilityLabel="Delete vehicle"
+                            >
+                                <Text style={[styles.action, { color: theme.colors.error.main }]}>Delete</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
                 ListEmptyComponent={
-                    <View style={styles.empty}>
-                        <Icon name="car-outline" size={48} color={theme.colors.neutral.textSecondary} />
-                        <Text style={[styles.emptyText, { color: theme.colors.neutral.textSecondary }]}>
-                            No vehicles yet. Add your car to speed up checkout.
-                        </Text>
-                    </View>
+                    loading ? (
+                        <ActivityIndicator color={theme.colors.primary.main} />
+                    ) : (
+                        <View style={styles.empty}>
+                            <Icon name="car-outline" size={48} color={theme.colors.neutral.textSecondary} />
+                            <Text style={[styles.emptyText, { color: theme.colors.neutral.textSecondary }]}>
+                                No vehicles yet. Add your car to speed up checkout.
+                            </Text>
+                        </View>
+                    )
                 }
             />
         </View>
@@ -100,4 +171,6 @@ const styles = StyleSheet.create({
     badge: { marginTop: 6, fontSize: 12, fontWeight: '700' },
     empty: { alignItems: 'center', marginTop: 32, gap: 8 },
     emptyText: { fontSize: 14, textAlign: 'center' },
+    row: { flexDirection: 'row', justifyContent: 'flex-start', marginTop: 8, gap: 16 },
+    action: { fontSize: 13, fontWeight: '700' },
 });

@@ -22,4 +22,8 @@ router.put('/vehicles/:id', controller.updateVehicle);
 // DELETE /me/vehicles/:id
 router.delete('/vehicles/:id', controller.deleteVehicle);
 
+// Notification preferences
+router.get('/notification-preferences', controller.getNotificationPreferences);
+router.put('/notification-preferences', controller.updateNotificationPreferences);
+
 export default router;

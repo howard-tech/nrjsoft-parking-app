@@ -11,6 +11,14 @@ import {
     setDefaultVehicle,
 } from '../services/data.store';
 
+type NotificationPreferences = {
+    push: boolean;
+    email: boolean;
+    sms: boolean;
+};
+
+const notificationPreferenceStore = new Map<string, NotificationPreferences>();
+
 export class UserController {
     // GET /me
     getProfile = async (req: Request, res: Response): Promise<void> => {
@@ -165,5 +173,52 @@ export class UserController {
         deleteVehicleStore(id);
 
         res.json({ success: true, message: 'Vehicle deleted' });
+    };
+
+    // GET /me/notification-preferences
+    getNotificationPreferences = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const prefs =
+            notificationPreferenceStore.get(userId) || {
+                push: true,
+                email: false,
+                sms: false,
+            };
+
+        res.json(prefs);
+    };
+
+    // PUT /me/notification-preferences
+    updateNotificationPreferences = async (req: Request, res: Response): Promise<void> => {
+        const userId = req.user?.id;
+        const { push, email, sms } = req.body;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const existing =
+            notificationPreferenceStore.get(userId) || {
+                push: true,
+                email: false,
+                sms: false,
+            };
+
+        const updated: NotificationPreferences = {
+            push: typeof push === 'boolean' ? push : existing.push,
+            email: typeof email === 'boolean' ? email : existing.email,
+            sms: typeof sms === 'boolean' ? sms : existing.sms,
+        };
+
+        notificationPreferenceStore.set(userId, updated);
+
+        res.json(updated);
     };
 }

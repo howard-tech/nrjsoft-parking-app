@@ -3,6 +3,8 @@ import {
     ActivityIndicator,
     Alert,
     FlatList,
+    Modal,
+    Pressable,
     RefreshControl,
     StyleSheet,
     Text,
@@ -34,6 +36,8 @@ export const OnStreetParkingScreen: React.FC = () => {
     const [actionLoading, setActionLoading] = useState(false);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const reminderFiredRef = useRef(false);
+    const [extendVisible, setExtendVisible] = useState(false);
+    const [extendMinutes, setExtendMinutes] = useState(15);
 
     const themedStyles = useMemo(
         () =>
@@ -142,13 +146,15 @@ export const OnStreetParkingScreen: React.FC = () => {
 
     const handleExtend = useCallback(async () => {
         if (!activeSession) return;
+        const minutes = Math.max(5, extendMinutes || 0);
         setActionLoading(true);
         try {
-            const session = await onStreetService.extendSession(activeSession.id, 15);
+            const session = await onStreetService.extendSession(activeSession.id, minutes);
             if (session) {
                 setActiveSession(session);
                 reminderFiredRef.current = false;
-                Alert.alert('Extended', 'Session extended by 15 minutes.');
+                setExtendVisible(false);
+                Alert.alert('Extended', `Session extended by ${minutes} minutes.`);
             }
         } catch (err) {
             console.warn('Failed to extend on-street session', err);
@@ -156,23 +162,32 @@ export const OnStreetParkingScreen: React.FC = () => {
         } finally {
             setActionLoading(false);
         }
-    }, [activeSession]);
+    }, [activeSession, extendMinutes]);
 
     const handleStop = useCallback(async () => {
         if (!activeSession) return;
-        setActionLoading(true);
-        try {
-            const session = await onStreetService.stopSession(activeSession.id);
-            if (session) {
-                setActiveSession(null);
-                Alert.alert('Stopped', 'Session ended.');
-            }
-        } catch (err) {
-            console.warn('Failed to stop on-street session', err);
-            Alert.alert('Error', 'Could not stop session.');
-        } finally {
-            setActionLoading(false);
-        }
+        Alert.alert('Stop session', 'Are you sure you want to end this session now?', [
+            { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Stop',
+                style: 'destructive',
+                onPress: async () => {
+                    setActionLoading(true);
+                    try {
+                        const session = await onStreetService.stopSession(activeSession.id);
+                        if (session) {
+                            setActiveSession(null);
+                            Alert.alert('Stopped', 'Session ended.');
+                        }
+                    } catch (err) {
+                        console.warn('Failed to stop on-street session', err);
+                        Alert.alert('Error', 'Could not stop session.');
+                    } finally {
+                        setActionLoading(false);
+                    }
+                },
+            },
+        ]);
     }, [activeSession]);
 
     const renderZone = ({ item }: { item: OnStreetZone }) => {
@@ -294,12 +309,12 @@ export const OnStreetParkingScreen: React.FC = () => {
                     <View style={styles.actionsRow}>
                         <TouchableOpacity
                             style={[styles.secondaryButton, { borderColor: theme.colors.primary.main }]}
-                            onPress={handleExtend}
+                            onPress={() => setExtendVisible(true)}
                             disabled={actionLoading}
                             accessibilityRole="button"
-                            accessibilityLabel="Extend session by 15 minutes"
+                            accessibilityLabel="Extend session"
                         >
-                            <Text style={[styles.secondaryButtonText, themedStyles.primary]}>+15 min</Text>
+                            <Text style={[styles.secondaryButtonText, themedStyles.primary]}>Extend</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[
@@ -321,6 +336,47 @@ export const OnStreetParkingScreen: React.FC = () => {
                     </View>
                 </View>
             )}
+
+            <Modal visible={extendVisible} transparent animationType="fade">
+                <View style={styles.modalOverlay}>
+                    <View style={[styles.modalCard, { backgroundColor: theme.colors.neutral.surface }]}>
+                        <Text style={styles.sectionTitle}>Extend session</Text>
+                        <Text style={styles.subtitle}>Enter minutes to add (min 5)</Text>
+                        <TextInput
+                            value={String(extendMinutes)}
+                            onChangeText={(text) => setExtendMinutes(Number(text) || 0)}
+                            keyboardType="numeric"
+                            style={[styles.input, { borderColor: theme.colors.neutral.border, marginTop: 12 }]}
+                            accessibilityLabel="Extend minutes"
+                        />
+                        <View style={styles.actionsRow}>
+                            <Pressable
+                                style={[styles.secondaryButton, { borderColor: theme.colors.neutral.border }]}
+                                onPress={() => setExtendVisible(false)}
+                                accessibilityLabel="Cancel extend"
+                            >
+                                <Text style={styles.secondaryButtonText}>Cancel</Text>
+                            </Pressable>
+                            <Pressable
+                                style={[
+                                    styles.primaryButton,
+                                    styles.buttonFlexible,
+                                    { backgroundColor: theme.colors.primary.main },
+                                ]}
+                                onPress={handleExtend}
+                                disabled={actionLoading}
+                                accessibilityLabel="Confirm extend"
+                            >
+                                {actionLoading ? (
+                                    <ActivityIndicator color={theme.colors.neutral.white} />
+                                ) : (
+                                    <Text style={styles.primaryButtonText}>Confirm</Text>
+                                )}
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -452,6 +508,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 16,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+    },
+    modalCard: {
+        width: '100%',
+        padding: 16,
+        borderRadius: 12,
     },
 });
 

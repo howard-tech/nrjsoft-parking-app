@@ -27,6 +27,12 @@ export const linking: LinkingOptions<RootStackParamList> = {
                     WalletTab: {
                         screens: {
                             WalletHome: 'wallet',
+                            PaymentCheckout: 'pay/:amount?',
+                        },
+                    },
+                    AccountTab: {
+                        screens: {
+                            Notifications: 'notifications',
                         },
                     },
                 },

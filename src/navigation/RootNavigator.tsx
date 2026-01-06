@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef, Linking } from '@react-navigation/native';
 import { RootStackParamList } from './types';
 import { useAuth } from '@hooks/useAuth';
 import { useTheme } from '@theme';
@@ -16,6 +16,7 @@ import OnStreetStack from './stacks/OnStreetStack';
 import { PlaceholderScreen } from '@screens/common/PlaceholderScreen';
 import { SessionReceiptScreen } from '@screens/parking/SessionReceiptScreen';
 import NotificationsScreen from '@screens/notifications/NotificationsScreen';
+import { handleDeepLink } from './deepLinkHandler';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -24,6 +25,13 @@ export const RootNavigator: React.FC = () => {
     const theme = useTheme();
     const navigationRef = useRef<NavigationContainerRef<RootStackParamList> | null>(null);
     const routeNameRef = useRef<string | undefined>(undefined);
+
+    useEffect(() => {
+        const subscription = Linking.addEventListener('url', (event) => {
+            handleDeepLink(navigationRef.current, event.url);
+        });
+        return () => subscription.remove();
+    }, []);
 
     if (checkSessionLoading) {
         return <LoadingState fullScreen message="Loading your session..." />;
@@ -39,6 +47,12 @@ export const RootNavigator: React.FC = () => {
                 if (currentRoute?.name) {
                     analyticsService.logScreenView(currentRoute.name);
                 }
+                // Handle initial URL
+                Linking.getInitialURL().then((url) => {
+                    if (url) {
+                        handleDeepLink(navigationRef.current, url);
+                    }
+                });
             }}
             onStateChange={() => {
                 const previousRouteName = routeNameRef.current;

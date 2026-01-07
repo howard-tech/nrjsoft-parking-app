@@ -132,6 +132,30 @@ export interface PaymentMethod {
     createdAt: string;
 }
 
+// Subscription types
+export interface SubscriptionPlan {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    currency: string;
+    interval: 'week' | 'month' | 'year';
+    benefits: string[];
+    vehicleLimit: number;
+    isPopular?: boolean;
+}
+
+export interface UserSubscription {
+    id: string;
+    userId: string;
+    planId: string;
+    status: 'active' | 'cancelled' | 'expired';
+    startDate: string;
+    endDate: string;
+    autoRenew: boolean;
+    nextBillingDate?: string;
+}
+
 // Notification type
 export interface Notification {
     id: string;

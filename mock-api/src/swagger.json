@@ -46,6 +46,10 @@
             "description": "Payment processing"
         },
         {
+            "name": "Subscriptions",
+            "description": "Subscriptions and packages"
+        },
+        {
             "name": "On-Street",
             "description": "On-street parking"
         },
@@ -449,6 +453,116 @@
                 "responses": {
                     "200": {
                         "description": "List of notifications"
+                    }
+                }
+            }
+        },
+        "/subscriptions/plans": {
+            "get": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "List subscription plans",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of plans"
+                    }
+                }
+            }
+        },
+        "/subscriptions/active": {
+            "get": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Get active subscription",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Active subscription"
+                    }
+                }
+            }
+        },
+        "/subscriptions": {
+            "post": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Subscribe to a plan",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Subscription created"
+                    }
+                }
+            }
+        },
+        "/subscriptions/{id}/cancel": {
+            "post": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Cancel subscription",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription cancelled"
+                    }
+                }
+            }
+        },
+        "/subscriptions/{id}": {
+            "patch": {
+                "tags": [
+                    "Subscriptions"
+                ],
+                "summary": "Update subscription",
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subscription updated"
                     }
                 }
             }

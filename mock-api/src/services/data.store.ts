@@ -1,6 +1,6 @@
 import {
     User, Vehicle, Garage, ParkingSession,
-    Zone, Wallet, Transaction, Notification, PaymentMethod
+    Zone, Wallet, Transaction, Notification, PaymentMethod, SubscriptionPlan, UserSubscription
 } from '../types';
 import { seededGarages } from '../generators/garageSeed';
 
@@ -15,6 +15,8 @@ export const walletStore: Map<string, Wallet> = new Map();
 export const transactionStore: Map<string, Transaction> = new Map();
 export const notificationStore: Map<string, Notification> = new Map();
 export const paymentMethodStore: Map<string, PaymentMethod> = new Map();
+export const subscriptionPlanStore: Map<string, SubscriptionPlan> = new Map();
+export const subscriptionStore: Map<string, UserSubscription> = new Map();
 
 // Seed garages near emulator location for map testing
 seededGarages.forEach((garage) => {
@@ -124,4 +126,6 @@ export function clearAllData(): void {
     transactionStore.clear();
     notificationStore.clear();
     paymentMethodStore.clear();
+    subscriptionPlanStore.clear();
+    subscriptionStore.clear();
 }

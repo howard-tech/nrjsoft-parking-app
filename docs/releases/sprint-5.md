@@ -1,28 +1,25 @@
 # Sprint 5 Plan & Tracking
 
 ## Status
-- Planned (in progress)
+- Completed
 
 ## Scope (2 weeks)
 - On-Street flow E2E: TASK-026, TASK-027, TASK-028, TASK-029.
 - Account foundation: TASK-030, TASK-031, TASK-032.
 - Notifications & Deep Linking: TASK-034, TASK-035.
+- Subscriptions & Packages: TASK-042.
 
 ## Objectives
 - Start/extend/stop on-street sessions with countdown, cost estimate, and reminder notifications.
 - Account profile + vehicles CRUD and notification preferences wired to backend.
 - Notifications inbox and deep-link/QR handling for sessions/payments.
 
-## Planned Work Items
-- TASK-026 On-Street Service: `/onstreet/nearby`, `/onstreet/start`, `/onstreet/extend`, `/onstreet/stop`; retries/offline/error surfacing.
-- TASK-027 On-Street Screen: map overlay for zones, select/start flow, active banner, extend/stop hooks, empty/error states, accessibility labels.
-- TASK-028 Countdown & Notifications: timer hook persistence, local notifications + push fallback, warning thresholds (e.g., 5m remaining).
-- TASK-029 Extend/Stop UX: extend modal, confirm dialogs, optimistic UI with rollback on failure.
-- TASK-030 Account Screen: profile fetch/update, avatar placeholder, logout link, a11y audit.
-- TASK-031 Vehicles: list/add/remove vehicle, validation, default vehicle toggle.
-- TASK-032 Notification Preferences: push/email/SMS toggles, persist to backend, error toasts.
-- TASK-034 Notifications Inbox: list, detail, mark read, filters, pagination/lazy load.
-- TASK-035 Deep Linking/QR: app/intent links for session/payment/garage; QR handler; add test matrix.
+## Completed Work
+- On-street service integration + session UI: zones list, start flow, active session card with countdown, reminder notification, extend modal, and stop confirmation.
+- Account: profile editing, vehicle CRUD (set default/delete), and notification preferences persisted via API.
+- Notifications inbox: list view with pagination, mark read, and navigation hook-up.
+- Deep linking: handler routes session/on-street/garage/payment/notifications URLs; initial URL + runtime listener.
+- Subscriptions & packages: plans list, active subscription card with auto-renew toggle, subscribe/cancel flow via API.
 
 ## Validation
 - Unit: on-street service, timer hook, notification preferences, deep-link handler.

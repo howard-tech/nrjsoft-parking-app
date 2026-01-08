@@ -4,10 +4,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@theme';
 import { accountService, Vehicle } from '@services/account/accountService';
+import { useToast } from '@components/common/ToastProvider';
 
 export const VehiclesScreen: React.FC = () => {
     const theme = useTheme();
     const navigation = useNavigation();
+    const { showToast } = useToast();
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -19,6 +21,7 @@ export const VehiclesScreen: React.FC = () => {
         } catch (err) {
             console.warn('Failed to load vehicles', err);
             Alert.alert('Error', 'Unable to load vehicles right now.');
+            showToast('Unable to load vehicles.', 'error');
         } finally {
             setLoading(false);
         }
@@ -36,6 +39,7 @@ export const VehiclesScreen: React.FC = () => {
         } catch (err) {
             console.warn('Failed to set default vehicle', err);
             Alert.alert('Error', 'Could not set default vehicle.');
+            showToast('Could not set default vehicle.', 'error');
         }
     };
 
@@ -52,6 +56,7 @@ export const VehiclesScreen: React.FC = () => {
                     } catch (err) {
                         console.warn('Failed to delete vehicle', err);
                         Alert.alert('Error', 'Could not delete vehicle.');
+                        showToast('Could not delete vehicle.', 'error');
                     }
                 },
             },
@@ -79,6 +84,9 @@ export const VehiclesScreen: React.FC = () => {
                 contentContainerStyle={styles.list}
                 refreshing={loading}
                 onRefresh={loadVehicles}
+                initialNumToRender={8}
+                windowSize={5}
+                removeClippedSubviews
                 renderItem={({ item }) => (
                     <View
                         style={[

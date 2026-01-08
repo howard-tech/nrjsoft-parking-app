@@ -15,7 +15,8 @@ const shortcuts: Shortcut[] = [
     { key: 'profile', title: 'Profile', icon: 'user', target: { screen: 'Profile' } },
     { key: 'vehicles', title: 'Vehicles', icon: 'truck', target: { screen: 'Vehicles' } },
     { key: 'payments', title: 'Payment Preferences', icon: 'credit-card', target: { screen: 'PaymentPreferences' } },
-    { key: 'notifications', title: 'Notifications', icon: 'bell', target: { screen: 'NotificationSettings' } },
+    { key: 'notificationsInbox', title: 'Notifications Inbox', icon: 'bell', target: { screen: 'Notifications' } },
+    { key: 'notifications', title: 'Notification Preferences', icon: 'sliders', target: { screen: 'NotificationSettings' } },
     { key: 'history', title: 'History', icon: 'clock', target: { screen: 'History' } },
     { key: 'help', title: 'Help', icon: 'help-circle', target: { screen: 'Help' } },
 ];

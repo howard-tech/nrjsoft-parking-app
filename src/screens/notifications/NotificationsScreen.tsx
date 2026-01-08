@@ -1,30 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTheme } from '@theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { inboxService, NotificationItem } from '@services/notifications/inboxService';
 import { AppHeader } from '@components/common/AppHeader';
+import { useToast } from '@components/common/ToastProvider';
 
 export const NotificationsScreen: React.FC = () => {
     const theme = useTheme();
+    const { showToast } = useToast();
     const [items, setItems] = useState<NotificationItem[]>([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const load = async (reset = false) => {
+    const load = useCallback(async (reset = false) => {
         if (loading) return;
         setLoading(true);
+        setError(null);
         const nextPage = reset ? 1 : page;
         try {
             const { items: data, hasMore: more } = await inboxService.list(nextPage);
-            setItems(reset ? data : [...items, ...data]);
+            setItems((prev) => (reset ? data : [...prev, ...data]));
             setHasMore(more);
             setPage(reset ? 2 : nextPage + 1);
+        } catch (err) {
+            console.warn('Failed to load notifications', err);
+            setError('Unable to load notifications. Pull to retry.');
+            showToast('Unable to load notifications.', 'error');
         } finally {
             setLoading(false);
         }
-    };
+    }, [loading, page, showToast]);
 
     useEffect(() => {
         load(true);
@@ -37,30 +45,36 @@ export const NotificationsScreen: React.FC = () => {
             await inboxService.markRead(id);
         } catch (err) {
             console.warn('Failed to mark read', err);
+            showToast('Failed to update notification.', 'error');
         }
     };
 
-    const renderItem = ({ item }: { item: NotificationItem }) => (
-        <TouchableOpacity
-            style={[
-                styles.card,
-                {
-                    backgroundColor: theme.colors.neutral.surface,
-                    borderColor: theme.colors.neutral.border,
-                    opacity: item.read ? 0.7 : 1,
-                },
-            ]}
-            onPress={() => markRead(item.id)}
-        >
-            <View style={styles.row}>
-                <Text style={[styles.title, { color: theme.colors.neutral.textPrimary }]}>{item.title}</Text>
-                {!item.read && <Icon name="circle" size={10} color={theme.colors.primary.main} />}
-            </View>
-            <Text style={[styles.body, { color: theme.colors.neutral.textSecondary }]}>{item.body}</Text>
-            <Text style={[styles.meta, { color: theme.colors.neutral.textSecondary }]}>
-                {new Date(item.createdAt).toLocaleString()}
-            </Text>
-        </TouchableOpacity>
+    const renderItem = useCallback(
+        ({ item }: { item: NotificationItem }) => (
+            <TouchableOpacity
+                style={[
+                    styles.card,
+                    {
+                        backgroundColor: theme.colors.neutral.surface,
+                        borderColor: theme.colors.neutral.border,
+                        opacity: item.read ? 0.7 : 1,
+                    },
+                ]}
+                onPress={() => markRead(item.id)}
+                accessibilityRole="button"
+                accessibilityLabel={`Notification ${item.title}`}
+            >
+                <View style={styles.row}>
+                    <Text style={[styles.title, { color: theme.colors.neutral.textPrimary }]}>{item.title}</Text>
+                    {!item.read && <Icon name="circle" size={10} color={theme.colors.primary.main} />}
+                </View>
+                <Text style={[styles.body, { color: theme.colors.neutral.textSecondary }]}>{item.body}</Text>
+                <Text style={[styles.meta, { color: theme.colors.neutral.textSecondary }]}>
+                    {new Date(item.createdAt).toLocaleString()}
+                </Text>
+            </TouchableOpacity>
+        ),
+        [theme.colors.neutral.border, theme.colors.neutral.surface, theme.colors.neutral.textPrimary, theme.colors.neutral.textSecondary, theme.colors.primary.main]
     );
 
     return (
@@ -74,12 +88,15 @@ export const NotificationsScreen: React.FC = () => {
                 onEndReached={() => hasMore && load()}
                 onEndReachedThreshold={0.5}
                 refreshControl={<RefreshControl refreshing={loading} onRefresh={() => load(true)} />}
+                initialNumToRender={10}
+                windowSize={5}
+                removeClippedSubviews
                 ListEmptyComponent={
                     !loading ? (
                         <View style={styles.empty}>
                             <Icon name="bell-off" size={48} color={theme.colors.neutral.textSecondary} />
                             <Text style={[styles.emptyText, { color: theme.colors.neutral.textSecondary }]}>
-                                No notifications yet.
+                                {error ?? 'No notifications yet.'}
                             </Text>
                         </View>
                     ) : null

@@ -7,5 +7,6 @@ export * from './PhoneInput';
 export * from './TabBarIcon';
 export * from './OfflineBanner';
 export * from './ErrorBoundary';
+export * from './ToastProvider';
 export * from './EmptyState';
 export * from './LoadingState';

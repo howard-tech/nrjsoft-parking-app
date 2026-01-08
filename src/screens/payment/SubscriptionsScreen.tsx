@@ -1,25 +1,29 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@theme';
 import { subscriptionService, SubscriptionPlan, UserSubscription } from '@services/payment/subscriptionService';
 import { paymentService } from '@services/payment/paymentService';
 import { useNavigation } from '@react-navigation/native';
+import { useToast } from '@components/common/ToastProvider';
 
 export const SubscriptionsScreen: React.FC = () => {
     const theme = useTheme();
     const navigation = useNavigation();
+    const { showToast } = useToast();
     const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
     const [active, setActive] = useState<UserSubscription | null>(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const activePlan = useMemo(
         () => plans.find((plan) => plan.id === active?.planId),
         [active?.planId, plans]
     );
 
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         setLoading(true);
+        setError(null);
         try {
             const [plansData, activeData] = await Promise.all([
                 subscriptionService.getPlans(),
@@ -29,11 +33,12 @@ export const SubscriptionsScreen: React.FC = () => {
             setActive(activeData);
         } catch (err) {
             console.warn('Failed to load subscriptions', err);
-            Alert.alert('Error', 'Unable to load subscriptions.');
+            setError('Unable to load subscriptions. Pull to retry.');
+            showToast('Unable to load subscriptions.', 'error');
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
 
     useEffect(() => {
         loadData();
@@ -60,6 +65,7 @@ export const SubscriptionsScreen: React.FC = () => {
         } catch (err) {
             console.warn('Failed to subscribe', err);
             Alert.alert('Error', 'Could not subscribe. Please try again.');
+            showToast('Could not subscribe.', 'error');
         } finally {
             setProcessing(false);
         }
@@ -80,6 +86,7 @@ export const SubscriptionsScreen: React.FC = () => {
                     } catch (err) {
                         console.warn('Failed to cancel subscription', err);
                         Alert.alert('Error', 'Unable to cancel subscription.');
+                        showToast('Unable to cancel subscription.', 'error');
                     } finally {
                         setProcessing(false);
                     }
@@ -97,6 +104,7 @@ export const SubscriptionsScreen: React.FC = () => {
         } catch (err) {
             console.warn('Failed to update auto-renew', err);
             Alert.alert('Error', 'Unable to update auto-renew.');
+            showToast('Unable to update auto-renew.', 'error');
         } finally {
             setProcessing(false);
         }
@@ -112,12 +120,18 @@ export const SubscriptionsScreen: React.FC = () => {
     }
 
     return (
-        <ScrollView style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}>
+        <ScrollView
+            style={[styles.container, { backgroundColor: theme.colors.neutral.background }]}
+            contentContainerStyle={styles.scrollContent}
+        >
             <View style={styles.header}>
                 <Text style={[styles.title, { color: theme.colors.neutral.textPrimary }]}>Subscriptions</Text>
                 <Text style={[styles.subtitle, { color: theme.colors.neutral.textSecondary }]}>
                     Predictable billing for frequent parkers.
                 </Text>
+                {error ? (
+                    <Text style={[styles.errorText, { color: theme.colors.error.main }]}>{error}</Text>
+                ) : null}
             </View>
 
             {active && activePlan ? (
@@ -137,12 +151,15 @@ export const SubscriptionsScreen: React.FC = () => {
                             onValueChange={handleToggleAutoRenew}
                             trackColor={{ true: theme.colors.primary.light, false: theme.colors.neutral.border }}
                             thumbColor={active.autoRenew ? theme.colors.primary.main : theme.colors.neutral.surface}
+                            accessibilityLabel="Toggle auto-renew"
                         />
                     </View>
                     <TouchableOpacity
                         style={[styles.secondaryButton, { borderColor: theme.colors.error.main }]}
                         onPress={handleCancel}
                         disabled={processing}
+                        accessibilityRole="button"
+                        accessibilityLabel="Cancel subscription"
                     >
                         <Text style={[styles.secondaryText, { color: theme.colors.error.main }]}>Cancel Subscription</Text>
                     </TouchableOpacity>
@@ -188,6 +205,8 @@ export const SubscriptionsScreen: React.FC = () => {
                             ]}
                             onPress={() => handleSubscribe(plan)}
                             disabled={processing || isActivePlan}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Subscribe to ${plan.name}`}
                         >
                             <Text style={styles.primaryText}>{isActivePlan ? 'Current Plan' : 'Subscribe'}</Text>
                         </TouchableOpacity>
@@ -200,9 +219,11 @@ export const SubscriptionsScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    scrollContent: { paddingBottom: 24 },
     header: { padding: 20 },
     title: { fontSize: 24, fontWeight: '800' },
     subtitle: { marginTop: 6, fontSize: 14 },
+    errorText: { marginTop: 8, fontSize: 12, fontWeight: '600' },
     sectionHeader: { paddingHorizontal: 20, paddingBottom: 8 },
     sectionTitle: { fontSize: 12, fontWeight: '700', textTransform: 'uppercase' },
     card: {

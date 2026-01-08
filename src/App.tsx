@@ -22,6 +22,7 @@ import { useLocalization } from './hooks/useLocalization';
 import { useNotifications } from './hooks/useNotifications';
 import { OfflineBanner } from '@components/common/OfflineBanner';
 import { ErrorBoundary } from '@components/common/ErrorBoundary';
+import { ToastProvider } from '@components/common/ToastProvider';
 import { analyticsService, crashReportingService, performanceService } from '@services/analytics';
 import { deviceSecurity } from '@services/security';
 
@@ -119,9 +120,11 @@ const AppContent = () => {
                     <StripeProvider
                         publishableKey={Config.STRIPE_PUBLISHABLE_KEY || ''}
                     >
-                        <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
-                        <OfflineBanner />
-                        <RootNavigator />
+                        <ToastProvider>
+                            <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+                            <OfflineBanner />
+                            <RootNavigator />
+                        </ToastProvider>
                     </StripeProvider>
                 </ErrorBoundary>
             </ThemeProvider>

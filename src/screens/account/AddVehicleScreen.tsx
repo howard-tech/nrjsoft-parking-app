@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTheme } from '@theme';
 import { AppHeader } from '@components/common/AppHeader';
 import { accountService } from '@services/account/accountService';
+import { AccountStackParamList } from '@navigation/types';
+import { RouteProp } from '@react-navigation/native';
+import { useToast } from '@components/common/ToastProvider';
 
 export const AddVehicleScreen: React.FC = () => {
     const theme = useTheme();
     const navigation = useNavigation();
+    const route = useRoute<RouteProp<AccountStackParamList, 'AddVehicle'>>();
+    const { showToast } = useToast();
     const [plate, setPlate] = useState('');
     const [model, setModel] = useState('');
     const [saving, setSaving] = useState(false);
+
+    useEffect(() => {
+        if (route.params && 'scannedPlate' in route.params) {
+            const scanned = (route.params as { scannedPlate?: string }).scannedPlate;
+            if (scanned) {
+                setPlate(scanned);
+            }
+            navigation.setParams({ scannedPlate: undefined } as never);
+        }
+    }, [navigation, route.params]);
 
     const handleSave = async () => {
         if (!plate.trim()) {
@@ -24,11 +39,12 @@ export const AddVehicleScreen: React.FC = () => {
                 model: model.trim() || undefined,
                 isDefault: false,
             });
-            Alert.alert('Saved', 'Vehicle added.');
+            showToast('Vehicle added.', 'success');
             navigation.goBack();
         } catch (err) {
             console.warn('Failed to add vehicle', err);
             Alert.alert('Error', 'Could not save vehicle.');
+            showToast('Could not save vehicle.', 'error');
         } finally {
             setSaving(false);
         }
@@ -55,7 +71,16 @@ export const AddVehicleScreen: React.FC = () => {
                     value={plate}
                     onChangeText={setPlate}
                     autoCapitalize="characters"
+                    accessibilityLabel="License plate"
                 />
+                <TouchableOpacity
+                    style={[styles.scanButton, { borderColor: theme.colors.primary.main }]}
+                    onPress={() => navigation.navigate('LicensePlateScanner' as never)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Scan license plate"
+                >
+                    <Text style={[styles.scanText, { color: theme.colors.primary.main }]}>Scan Plate</Text>
+                </TouchableOpacity>
 
                 <Text style={[styles.label, styles.labelSpacing, { color: theme.colors.neutral.textSecondary }]}>Model</Text>
                 <TextInput
@@ -70,6 +95,7 @@ export const AddVehicleScreen: React.FC = () => {
                     placeholderTextColor={theme.colors.neutral.textSecondary}
                     value={model}
                     onChangeText={setModel}
+                    accessibilityLabel="Vehicle model"
                 />
 
                 <TouchableOpacity
@@ -100,6 +126,14 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         fontSize: 16,
     },
+    scanButton: {
+        marginTop: 8,
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingVertical: 10,
+        alignItems: 'center',
+    },
+    scanText: { fontSize: 14, fontWeight: '700' },
     saveButton: {
         marginTop: 20,
         borderRadius: 12,

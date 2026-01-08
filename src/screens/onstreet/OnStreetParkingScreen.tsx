@@ -245,6 +245,9 @@ export const OnStreetParkingScreen: React.FC = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={renderZone}
                 refreshControl={<RefreshControl refreshing={loading} onRefresh={() => fetchZones(true)} />}
+                initialNumToRender={6}
+                windowSize={5}
+                removeClippedSubviews
                 ListEmptyComponent={
                     loading ? (
                         <ActivityIndicator color={theme.colors.primary.main} />

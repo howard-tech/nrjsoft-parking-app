@@ -45,7 +45,8 @@ export type AccountStackParamList = {
     AccountHome: undefined;
     Profile: undefined;
     Vehicles: undefined;
-    AddVehicle: undefined;
+    AddVehicle: { scannedPlate?: string } | undefined;
+    LicensePlateScanner: undefined;
     NotificationSettings: undefined;
     PaymentPreferences: undefined;
     Help: undefined;

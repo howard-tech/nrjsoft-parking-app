@@ -5,9 +5,11 @@ import { AccountHomeScreen } from '@screens/account/AccountHomeScreen';
 import { VehiclesScreen } from '@screens/account/VehiclesScreen';
 import { AddVehicleScreen } from '@screens/account/AddVehicleScreen';
 import { HistoryScreen } from '@screens/account/HistoryScreen';
+import LicensePlateScannerScreen from '@screens/account/LicensePlateScannerScreen';
 import NotificationSettingsScreen from '@screens/account/NotificationSettingsScreen';
 import ProfileScreen from '@screens/account/ProfileScreen';
 import NotificationsScreen from '@screens/notifications/NotificationsScreen';
+import HelpSupportScreen from '@screens/account/HelpSupportScreen';
 import { PlaceholderScreen } from '@screens/common/PlaceholderScreen';
 
 const Stack = createNativeStackNavigator<AccountStackParamList>();
@@ -19,9 +21,10 @@ const AccountStack = () => {
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="Vehicles" component={VehiclesScreen} />
             <Stack.Screen name="AddVehicle" component={AddVehicleScreen} />
+            <Stack.Screen name="LicensePlateScanner" component={LicensePlateScannerScreen} />
             <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
             <Stack.Screen name="PaymentPreferences" component={PlaceholderScreen} />
-            <Stack.Screen name="Help" component={PlaceholderScreen} />
+            <Stack.Screen name="Help" component={HelpSupportScreen} />
             <Stack.Screen name="DeleteAccount" component={PlaceholderScreen} />
             <Stack.Screen name="History" component={HistoryScreen} />
             <Stack.Screen name="Notifications" component={NotificationsScreen} />

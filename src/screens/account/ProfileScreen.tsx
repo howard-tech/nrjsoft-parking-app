@@ -51,6 +51,7 @@ export const ProfileScreen: React.FC = () => {
                     onChangeText={(text) => setProfile((prev) => (prev ? { ...prev, name: text } : prev))}
                     placeholder="Your name"
                     placeholderTextColor={theme.colors.neutral.textSecondary}
+                    accessibilityLabel="Name"
                 />
 
                 <Text style={[styles.label, styles.spacing, { color: theme.colors.neutral.textSecondary }]}>Email</Text>
@@ -65,6 +66,7 @@ export const ProfileScreen: React.FC = () => {
                     autoCapitalize="none"
                     placeholder="you@example.com"
                     placeholderTextColor={theme.colors.neutral.textSecondary}
+                    accessibilityLabel="Email"
                 />
 
                 <TouchableOpacity

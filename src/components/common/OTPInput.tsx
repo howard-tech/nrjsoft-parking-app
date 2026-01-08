@@ -62,6 +62,8 @@ export const OTPInput: React.FC<OTPInputProps> = ({
                             onKeyPress={(e) => handleKeyPress(e, index)}
                             textAlign="center"
                             autoFocus={index === 0}
+                            testID={`otp-input-${index}`}
+                            accessibilityLabel={`OTP digit ${index + 1}`}
                         />
                     </View>
                 );

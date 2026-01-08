@@ -28,7 +28,7 @@ jobs:
         run: npm run typecheck
 
       - name: Run tests
-        run: npm test -- --coverage --watchAll=false
+        run: npm test -- --coverage --watchAll=false --watchman=false
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3

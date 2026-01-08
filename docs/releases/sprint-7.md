@@ -1,22 +1,37 @@
-# Sprint 7 Release Notes
+# Sprint 7: Release Candidates & Deployment
 
-## Status
-- In Progress
+**Status**: Planning
+**Dates**: 2026-01-08 to 2026-01-22
+
+## Goals
+- Finalize and polish the application for initial store submission (Beta/Internal Testing).
+- Implement robust deployment pipelines.
+- Enhance test coverage and performance monitoring.
 
 ## Scope
-- Testing & CI: TASK-038, TASK-039, TASK-045.
-- Deployment prep: TASK-040, TASK-056, TASK-057 (pending store access).
 
-## Completed
-- Expanded Jest configuration for coverage reporting and module alias support.
-- Added unit tests for auth, payment, and session services plus a core Button component.
-- Added Detox configuration and smoke E2E tests for auth, parking, payment, and on-street flows.
-- Added OTP input test IDs for reliable E2E automation.
-- Updated CI test commands to disable watchman.
+### TASK-040: Store Deployment Preparation
+- [ ] Prepare App Store Connect (iOS)
+- [ ] Prepare Google Play Console (Android)
+- [ ] Generate production signing keys and certificates
+- [ ] Configure `fastlane` metadata (screenshots, descriptions)
 
-## Testing
-- Unit: `npm test -- --runInBand --watchman=false`
+### TASK-056: Production CI/CD Setup
+- [ ] Configure GitHub Actions for production builds (`release` branch)
+- [ ] Set up secrets for signing keys and API credentials
+- [ ] Automate TestFlight upload (iOS)
+- [ ] Automate Internal Testing track upload (Android)
 
-## Notes
-- E2E tests assume a running mock API and location permissions.
-- Store submission tasks remain pending external credentials and console setup.
+### TASK-057: Performance & Monitoring
+- [ ] Integrate Firebase Crashlytics
+- [ ] Set up Performance Monitoring (start time, network latency)
+- [ ] Verify analytics events for key user flows
+
+### TASK-058: Final Polish & Bug Fixes
+- [ ] UI/UX review and refinement (animations, transitions)
+- [ ] Address any blocking issues from Detox verification
+
+## Deployment Checklist
+- [ ] End-to-End tests pass on CI
+- [ ] Version bump (1.0.0 -> 1.0.1)
+- [ ] Change log updated

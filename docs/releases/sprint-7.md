@@ -1,37 +1,40 @@
-# Sprint 7: Release Candidates & Deployment
+# Sprint 7: Testing & Deployment
 
-**Status**: Planning
-**Dates**: 2026-01-08 to 2026-01-22
+**Status**: In Progress
 
 ## Goals
-- Finalize and polish the application for initial store submission (Beta/Internal Testing).
-- Implement robust deployment pipelines.
-- Enhance test coverage and performance monitoring.
+- Stabilize test coverage (unit + E2E) before store submission.
+- Prepare CI/CD and release pipelines for Android/iOS.
+- Document store readiness and outstanding blockers.
 
 ## Scope
 
-### TASK-040: Store Deployment Preparation
-- [ ] Prepare App Store Connect (iOS)
-- [ ] Prepare Google Play Console (Android)
-- [ ] Generate production signing keys and certificates
-- [ ] Configure `fastlane` metadata (screenshots, descriptions)
+### TASK-038: Testing Setup & Unit Tests
+- [x] Jest configuration and coverage reporting
+- [x] Unit tests for auth, payment, and session services
+- [x] Component tests for core UI elements
 
-### TASK-056: Production CI/CD Setup
-- [ ] Configure GitHub Actions for production builds (`release` branch)
-- [ ] Set up secrets for signing keys and API credentials
-- [ ] Automate TestFlight upload (iOS)
-- [ ] Automate Internal Testing track upload (Android)
+### TASK-039: E2E Testing (Detox)
+- [x] Detox configuration for iOS and Android
+- [x] Smoke tests for auth, parking, payment, and on-street flows
+- [ ] Android E2E build stability (pending native Gradle fixes)
 
-### TASK-057: Performance & Monitoring
-- [ ] Integrate Firebase Crashlytics
-- [ ] Set up Performance Monitoring (start time, network latency)
-- [ ] Verify analytics events for key user flows
+### TASK-045: CI/CD Pipeline Setup
+- [x] GitHub Actions workflows for lint/test/build
+- [ ] Enable automated runs when CI billing hold is lifted
 
-### TASK-058: Final Polish & Bug Fixes
-- [ ] UI/UX review and refinement (animations, transitions)
-- [ ] Address any blocking issues from Detox verification
+### TASK-040: App Store Submission & Go-Live
+- [ ] App Store Connect setup and metadata
+- [ ] Google Play Console setup and metadata
+- [ ] Release checklists and submission notes
+
+### TASK-056: iOS Deployment Preparation
+- [ ] Certificates, provisioning profiles, and TestFlight setup
+
+### TASK-057: Android Deployment Preparation
+- [ ] Signing keys, Play Store internal track, and rollout config
 
 ## Deployment Checklist
-- [ ] End-to-End tests pass on CI
-- [ ] Version bump (1.0.0 -> 1.0.1)
-- [ ] Change log updated
+- [ ] Detox E2E pass on Android and iOS
+- [ ] Version bump and release notes updated
+- [ ] Store metadata finalized (screenshots, descriptions, privacy policy)

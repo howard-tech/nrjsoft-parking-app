@@ -1,6 +1,8 @@
 module.exports = {
+    preset: 'react-native',
     rootDir: '.',
     testMatch: ['<rootDir>/e2e.*.test.ts'],
+    setupFilesAfterEnv: ['detox/runners/jest/setup'],
     testTimeout: 120000,
     maxWorkers: 1,
     globalSetup: 'detox/runners/jest/globalSetup',
